@@ -66,7 +66,7 @@
 <script setup lang="ts">
 import type { MetricType, ChartDataPoint } from '~/types';
 
-const { metricConfigs, getEntriesInRange, getMetricAverage, getMetricTrend } = useMoodly();
+const { entries, metricConfigs, getEntriesInRange, getMetricAverage, getMetricTrend } = useMoodly();
 
 const selectedDays = ref(7);
 const periods = [

@@ -5,6 +5,7 @@ export default defineNuxtConfig({
   modules: ['@nuxt/fonts', '@nuxt/icon', '@nuxt/image'],
   
   app: {
+    baseURL: '/moodly/',
     head: {
       title: 'Moodly - Daily Check-In Journal',
       meta: [
