@@ -6,6 +6,8 @@ export default defineNuxtConfig({
 
   app: {
     baseURL: "/moodly/",
+    buildAssetsDir: "/_nuxt/",
+    cdnURL: "/moodly/",
     head: {
       title: "Moodly - Daily Check-In Journal",
       meta: [
