@@ -8,6 +8,12 @@ const metrics = ref({
   focus: 3
 });
 
+const checkboxes = ref({
+  healthyFood: false,
+  gym: false,
+  misc: false
+});
+
 const note = ref('');
 const showToast = ref(false);
 
@@ -16,12 +22,17 @@ onMounted(() => {
   const todayEntry = getTodayEntry();
   if (todayEntry) {
     metrics.value = { ...todayEntry.metrics };
+    checkboxes.value = todayEntry.checkboxes ? { ...todayEntry.checkboxes } : {
+      healthyFood: false,
+      gym: false,
+      misc: false
+    };
     note.value = todayEntry.note || '';
   }
 });
 
 const handleSave = () => {
-  saveEntry(metrics.value, note.value || undefined);
+  saveEntry(metrics.value, checkboxes.value, note.value || undefined);
   showToast.value = true;
   setTimeout(() => {
     showToast.value = false;
@@ -33,7 +44,7 @@ const handleSave = () => {
   <div class="page home-page">
     <div class="page-header">
       <h1 class="page-title">
-        <span class="wave">👋</span>
+        <Icon name="solar:hand-heart-bold" size="32" class="wave" />
         How are you feeling today?
       </h1>
       <p class="page-subtitle">
@@ -48,6 +59,36 @@ const handleSave = () => {
         v-model="metrics[config.key]"
         :config="config"
       />
+    </div>
+
+    <div class="checkboxes-section">
+      <h3 class="checkboxes-title">
+        <Icon name="solar:clipboard-check-bold" size="18" />
+        Daily Check-ins
+      </h3>
+      <div class="checkbox-group">
+        <label class="checkbox-item">
+          <input type="checkbox" v-model="checkboxes.healthyFood" />
+          <span class="checkbox-label">
+            <Icon name="solar:leaf-bold" size="18" />
+            Healthy Food
+          </span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" v-model="checkboxes.gym" />
+          <span class="checkbox-label">
+            <Icon name="solar:dumbbell-large-bold" size="18" />
+            Gym
+          </span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" v-model="checkboxes.misc" />
+          <span class="checkbox-label">
+            <Icon name="solar:star-bold" size="18" />
+            Misc
+          </span>
+        </label>
+      </div>
     </div>
 
     <div class="note-section">
@@ -103,14 +144,15 @@ const handleSave = () => {
 }
 
 .wave {
-  display: inline-block;
+  display: inline-flex;
+  color: var(--primary);
   animation: wave 2s ease-in-out infinite;
 }
 
 @keyframes wave {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(20deg); }
-  75% { transform: rotate(-20deg); }
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.1) rotate(10deg); }
+  75% { transform: scale(1.1) rotate(-10deg); }
 }
 
 .page-subtitle {
@@ -123,6 +165,61 @@ const handleSave = () => {
   display: grid;
   gap: 1rem;
   margin-bottom: 2rem;
+}
+
+.checkboxes-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: var(--card-bg);
+  border: 2px solid var(--border);
+  border-radius: 0.75rem;
+}
+
+.checkboxes-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 1rem 0;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  transition: background 0.2s ease;
+}
+
+.checkbox-item:hover {
+  background: var(--hover-bg);
+}
+
+.checkbox-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--primary);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  user-select: none;
 }
 
 .note-section {

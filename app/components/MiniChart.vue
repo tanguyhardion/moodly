@@ -2,7 +2,7 @@
   <div class="mini-chart">
     <div class="chart-header">
       <h4 class="chart-title">
-        <Icon :name="icon" size="18" />
+        <Icon :name="icon" size="18" :style="{ color: color }" />
         {{ title }}
       </h4>
       <div class="chart-trend" :class="trend">

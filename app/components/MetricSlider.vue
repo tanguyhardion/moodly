@@ -86,12 +86,16 @@ const handleInput = (event: Event) => {
   width: 36px;
   height: 36px;
   border-radius: 0.5rem;
-  background: currentColor;
-  opacity: 0.1;
+  position: relative;
 }
 
-.metric-icon :deep(svg) {
-  opacity: 1;
+.metric-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  opacity: 0.15;
+  border-radius: 0.5rem;
 }
 
 .metric-name {

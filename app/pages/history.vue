@@ -1,20 +1,18 @@
 <template>
   <div class="page history-page">
     <div class="page-header">
-      <div class="header-content">
-        <h1 class="page-title">
-          <Icon name="solar:history-bold" size="28" />
-          Your Journey
-        </h1>
-        <ExportButton v-if="entries.length > 0" class="export-btn-wrapper" />
-      </div>
+      <ExportButton v-if="entries.length > 0" class="export-btn-wrapper" />
+      <h1 class="page-title">
+        <Icon name="solar:history-bold" size="28" />
+        Your Journey
+      </h1>
       <p class="page-subtitle">
         {{ entries.length }} {{ entries.length === 1 ? 'entry' : 'entries' }} recorded
       </p>
     </div>
 
     <div v-if="entries.length === 0" class="empty-state">
-      <div class="empty-icon">📝</div>
+      <Icon name="solar:document-add-bold" size="64" class="empty-icon" />
       <h3>No entries yet</h3>
       <p>Start your journey by creating your first check-in</p>
       <NuxtLink to="/" class="btn btn-primary">
@@ -59,23 +57,17 @@ const handleDelete = (id: string) => {
 }
 
 .page-header {
+  position: relative;
   text-align: center;
   margin-bottom: 2rem;
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
+  padding-top: 0.5rem;
 }
 
 .page-title {
   font-size: 2rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0;
+  margin: 0 0 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -83,12 +75,9 @@ const handleDelete = (id: string) => {
 }
 
 .export-btn-wrapper {
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
-}
-
-.export-btn-wrapper:hover {
-  opacity: 1;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .page-subtitle {
@@ -103,7 +92,7 @@ const handleDelete = (id: string) => {
 }
 
 .empty-icon {
-  font-size: 4rem;
+  color: var(--text-tertiary);
   margin-bottom: 1rem;
 }
 

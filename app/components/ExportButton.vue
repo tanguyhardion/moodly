@@ -3,9 +3,9 @@
     <button
       class="export-btn"
       @click="toggleMenu"
-      :title="'Export data'"
+      title="Export your history"
     >
-      <Icon name="solar:download-minimalistic-bold" size="20" />
+      <Icon name="solar:download-minimalistic-bold" size="22" />
     </button>
 
     <Transition name="menu">
@@ -83,31 +83,58 @@ if (import.meta.client) {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border: none;
-  border-radius: 0.5rem;
-  background: var(--surface-secondary);
+  width: 44px;
+  height: 44px;
+  border: 2px solid transparent;
+  border-radius: 0.75rem;
+  background: var(--card-bg);
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.export-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 0.75rem;
+  padding: 2px;
+  background: linear-gradient(135deg, #FF6B9D 0%, #FFA06B 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .export-btn:hover {
-  background: var(--surface-tertiary);
+  background: var(--card-bg);
   color: var(--text-primary);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 157, 0.15);
+}
+
+.export-btn:hover::before {
+  opacity: 1;
+}
+
+.export-btn:active {
+  transform: translateY(0);
 }
 
 .export-menu {
   position: absolute;
   top: calc(100% + 0.5rem);
   right: 0;
-  background: var(--surface-primary);
-  border: 1px solid var(--border-color);
+  background: var(--nav-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
   border-radius: 0.75rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   min-width: 150px;
   z-index: 100;
@@ -129,12 +156,12 @@ if (import.meta.client) {
 }
 
 .export-option:hover {
-  background: var(--surface-secondary);
-  color: var(--accent-primary);
+  background: var(--hover-bg);
+  color: var(--primary);
 }
 
 .export-option:not(:last-child) {
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border);
 }
 
 /* Menu transition */

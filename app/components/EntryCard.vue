@@ -27,6 +27,21 @@
       </div>
     </div>
 
+    <div v-if="entry.checkboxes" class="checkboxes-display">
+      <div class="checkbox-display-item" :class="{ checked: entry.checkboxes.healthyFood }">
+        <Icon name="solar:salad-bold" size="16" />
+        <span>Healthy Food</span>
+      </div>
+      <div class="checkbox-display-item" :class="{ checked: entry.checkboxes.gym }">
+        <Icon name="solar:running-bold" size="16" />
+        <span>Gym</span>
+      </div>
+      <div class="checkbox-display-item" :class="{ checked: entry.checkboxes.misc }">
+        <Icon name="solar:check-circle-bold" size="16" />
+        <span>Misc</span>
+      </div>
+    </div>
+
     <div v-if="entry.note" class="entry-note">
       <Icon name="solar:notes-bold" size="16" />
       <p>{{ entry.note }}</p>
@@ -152,6 +167,37 @@ const formattedDate = computed(() => {
   background: var(--metric-color);
   border-radius: 3px;
   transition: width 0.5s ease;
+}
+
+.checkboxes-display {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.checkbox-display-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  background: var(--slider-track);
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  opacity: 0.5;
+  transition: all 0.2s ease;
+}
+
+.checkbox-display-item.checked {
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.2) 0%, rgba(255, 160, 107, 0.2) 100%);
+  color: var(--primary);
+  opacity: 1;
+}
+
+.checkbox-display-item.checked :deep(svg) {
+  color: var(--primary);
 }
 
 .entry-note {

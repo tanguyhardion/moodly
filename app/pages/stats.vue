@@ -1,13 +1,10 @@
 <template>
   <div class="page stats-page">
     <div class="page-header">
-      <div class="header-content">
-        <h1 class="page-title">
-          <Icon name="solar:chart-bold" size="28" />
-          Statistics
-        </h1>
-        <ExportButton v-if="entries.length > 0" class="export-btn-wrapper" />
-      </div>
+      <h1 class="page-title">
+        <Icon name="solar:chart-bold" size="28" />
+        Statistics
+      </h1>
       <p class="page-subtitle">Your progress over the last {{ selectedDays }} days</p>
     </div>
 
@@ -24,7 +21,7 @@
     </div>
 
     <div v-if="recentEntries.length === 0" class="empty-state">
-      <div class="empty-icon">📊</div>
+      <Icon name="solar:graph-new-bold" size="64" class="empty-icon" />
       <h3>No data for this period</h3>
       <p>Create more entries to see your statistics</p>
       <NuxtLink to="/" class="btn btn-primary">
@@ -47,14 +44,59 @@
         />
       </div>
 
+      <div class="checkins-card">
+        <h3 class="checkins-title">
+          <Icon name="solar:clipboard-check-bold" size="22" style="color: #FF6B9D;" />
+          Daily Check-ins
+        </h3>
+        <div class="checkins-grid">
+          <div class="checkin-stat">
+            <div class="checkin-icon healthy-food">
+              <Icon name="solar:leaf-bold" size="24" />
+            </div>
+            <div class="checkin-info">
+              <span class="checkin-label">Healthy Food</span>
+              <div class="checkin-progress-container">
+                <div class="checkin-progress-bar" :style="{ width: checkInRate.healthyFood + '%' }"></div>
+              </div>
+              <span class="checkin-percentage">{{ checkInRate.healthyFood }}%</span>
+            </div>
+          </div>
+          <div class="checkin-stat">
+            <div class="checkin-icon gym">
+              <Icon name="solar:dumbbell-large-bold" size="24" />
+            </div>
+            <div class="checkin-info">
+              <span class="checkin-label">Gym</span>
+              <div class="checkin-progress-container">
+                <div class="checkin-progress-bar" :style="{ width: checkInRate.gym + '%' }"></div>
+              </div>
+              <span class="checkin-percentage">{{ checkInRate.gym }}%</span>
+            </div>
+          </div>
+          <div class="checkin-stat">
+            <div class="checkin-icon misc">
+              <Icon name="solar:star-bold" size="24" />
+            </div>
+            <div class="checkin-info">
+              <span class="checkin-label">Misc</span>
+              <div class="checkin-progress-container">
+                <div class="checkin-progress-bar" :style="{ width: checkInRate.misc + '%' }"></div>
+              </div>
+              <span class="checkin-percentage">{{ checkInRate.misc }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="insights-card">
         <h3 class="insights-title">
-          <Icon name="solar:lightbulb-bolt-bold" size="22" />
+          <Icon name="solar:lightbulb-bolt-bold" size="22" style="color: #FFD60A;" />
           Insights
         </h3>
         <div class="insights-list">
           <div v-for="insight in insights" :key="insight.text" class="insight-item">
-            <span class="insight-emoji">{{ insight.emoji }}</span>
+            <Icon :name="insight.icon" size="24" class="insight-icon" />
             <p class="insight-text">{{ insight.text }}</p>
           </div>
         </div>
@@ -95,6 +137,23 @@ const getChartData = (metric: MetricType): ChartDataPoint[] => {
   }));
 };
 
+const checkInRate = computed(() => {
+  if (recentEntries.value.length === 0) {
+    return { healthyFood: 0, gym: 0, misc: 0 };
+  }
+
+  const totalEntries = recentEntries.value.length;
+  const healthyFoodCount = recentEntries.value.filter(entry => entry.checkboxes?.healthyFood).length;
+  const gymCount = recentEntries.value.filter(entry => entry.checkboxes?.gym).length;
+  const miscCount = recentEntries.value.filter(entry => entry.checkboxes?.misc).length;
+
+  return {
+    healthyFood: Math.round((healthyFoodCount / totalEntries) * 100),
+    gym: Math.round((gymCount / totalEntries) * 100),
+    misc: Math.round((miscCount / totalEntries) * 100)
+  };
+});
+
 const insights = computed(() => {
   if (recentEntries.value.length === 0) return [];
 
@@ -111,14 +170,14 @@ const insights = computed(() => {
 
   if (best.average >= 4) {
     results.push({
-      emoji: '🌟',
+      icon: 'solar:star-bold',
       text: `Your ${best.name.toLowerCase()} has been excellent! Keep it up!`
     });
   }
 
   if (worst.average < 3) {
     results.push({
-      emoji: '💭',
+      icon: 'solar:chat-round-line-bold',
       text: `Consider focusing on improving your ${worst.name.toLowerCase()}.`
     });
   }
@@ -127,7 +186,7 @@ const insights = computed(() => {
   const hasAllMetrics = recentEntries.value.length >= selectedDays.value * 0.7;
   if (hasAllMetrics) {
     results.push({
-      emoji: '🔥',
+      icon: 'solar:fire-bold',
       text: `Great consistency! You've checked in regularly.`
     });
   }
@@ -137,13 +196,41 @@ const insights = computed(() => {
     const trend = getMetricTrend(config.key, selectedDays.value);
     if (trend === 'up') {
       results.push({
-        emoji: '📈',
+        icon: 'solar:graph-up-bold',
         text: `Your ${config.name.toLowerCase()} is trending upward!`
       });
     }
   });
 
-  return results.slice(0, 4);
+  // Check-in insights
+  if (checkInRate.value.healthyFood >= 80) {
+    results.push({
+      icon: 'solar:leaf-bold',
+      text: `Excellent job maintaining a healthy diet!`
+    });
+  }
+
+  if (checkInRate.value.gym >= 70) {
+    results.push({
+      icon: 'solar:dumbbell-large-bold',
+      text: `You're crushing your gym goals!`
+    });
+  }
+
+  const avgCheckInRate = Math.round((checkInRate.value.healthyFood + checkInRate.value.gym + checkInRate.value.misc) / 3);
+  if (avgCheckInRate >= 75) {
+    results.push({
+      icon: 'solar:star-shine-bold',
+      text: `Amazing consistency with your daily check-ins!`
+    });
+  } else if (avgCheckInRate < 30) {
+    results.push({
+      icon: 'solar:target-bold',
+      text: `Try to stay more consistent with your daily check-ins.`
+    });
+  }
+
+  return results.slice(0, 5);
 });
 </script>
 
@@ -158,32 +245,15 @@ const insights = computed(() => {
   margin-bottom: 2rem;
 }
 
-.header-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
-}
-
 .page-title {
   font-size: 2rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0;
+  margin: 0 0 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-}
-
-.export-btn-wrapper {
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
-}
-
-.export-btn-wrapper:hover {
-  opacity: 1;
 }
 
 .page-subtitle {
@@ -229,7 +299,7 @@ const insights = computed(() => {
 }
 
 .empty-icon {
-  font-size: 4rem;
+  color: var(--text-tertiary);
   margin-bottom: 1rem;
 }
 
@@ -277,6 +347,104 @@ const insights = computed(() => {
   margin-bottom: 2rem;
 }
 
+.checkins-card {
+  padding: 1.5rem;
+  background: var(--card-bg);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.checkins-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 1.5rem;
+}
+
+.checkins-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.checkin-stat {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--note-bg);
+  border-radius: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.checkin-stat:hover {
+  transform: translateY(-2px);
+}
+
+.checkin-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  flex-shrink: 0;
+}
+
+.checkin-icon.healthy-food {
+  background: linear-gradient(135deg, #34C759 0%, #30D158 100%);
+  color: white;
+}
+
+.checkin-icon.gym {
+  background: linear-gradient(135deg, #FF453A 0%, #FF6B6B 100%);
+  color: white;
+}
+
+.checkin-icon.misc {
+  background: linear-gradient(135deg, #FFD60A 0%, #FFCC00 100%);
+  color: white;
+}
+
+.checkin-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.checkin-label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.checkin-progress-container {
+  width: 100%;
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.checkin-progress-bar {
+  height: 100%;
+  background: linear-gradient(135deg, #FF6B9D 0%, #FFA06B 100%);
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.checkin-percentage {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
 .insights-card {
   padding: 1.5rem;
   background: var(--card-bg);
@@ -308,8 +476,8 @@ const insights = computed(() => {
   border-radius: 0.75rem;
 }
 
-.insight-emoji {
-  font-size: 1.5rem;
+.insight-icon {
+  color: var(--primary);
   flex-shrink: 0;
 }
 

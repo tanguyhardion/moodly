@@ -3,7 +3,7 @@
     <nav class="navbar">
       <div class="nav-content">
         <NuxtLink to="/" class="logo">
-          <span class="logo-icon">✨</span>
+          <Icon name="solar:star-shine-bold" size="28" class="logo-icon" />
           <span class="logo-text">Moodly</span>
         </NuxtLink>
 
@@ -49,7 +49,6 @@ const { darkMode, toggleDarkMode } = useMoodly();
 .app-container {
   min-height: 100vh;
   position: relative;
-  overflow-x: hidden;
 }
 
 .navbar {
@@ -87,7 +86,7 @@ const { darkMode, toggleDarkMode } = useMoodly();
 }
 
 .logo-icon {
-  font-size: 1.5rem;
+  color: var(--primary);
 }
 
 .nav-links {
@@ -166,6 +165,11 @@ const { darkMode, toggleDarkMode } = useMoodly();
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
+}
+
+/* Prevent horizontal scroll on body */
+:global(body) {
+  overflow-x: hidden;
 }
 
 .shape {

@@ -14,6 +14,11 @@ export interface MoodEntry {
     sleep: number;
     focus: number;
   };
+  checkboxes?: {
+    healthyFood: boolean;
+    gym: boolean;
+    misc: boolean;
+  };
   note?: string;
   createdAt: number; // timestamp
 }

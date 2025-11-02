@@ -51,7 +51,7 @@ export function useMoodly() {
   });
 
   // Save or update entry
-  const saveEntry = (metrics: MoodEntry['metrics'], note?: string) => {
+  const saveEntry = (metrics: MoodEntry['metrics'], checkboxes?: MoodEntry['checkboxes'], note?: string) => {
     const today = new Date().toISOString().split('T')[0]!;
     const existingIndex = entries.value.findIndex((entry: MoodEntry) => entry.date === today);
     const existingEntry = existingIndex >= 0 ? entries.value[existingIndex] : null;
@@ -60,6 +60,7 @@ export function useMoodly() {
       id: existingEntry ? existingEntry.id : generateId(),
       date: today,
       metrics,
+      checkboxes,
       note,
       createdAt: existingEntry ? existingEntry.createdAt : Date.now()
     };
@@ -146,13 +147,16 @@ export function useMoodly() {
       return;
     }
 
-    const headers = ['Date', 'Mood', 'Energy', 'Sleep', 'Focus', 'Note', 'Created At'];
+    const headers = ['Date', 'Mood', 'Energy', 'Sleep', 'Focus', 'Healthy Food', 'Gym', 'Misc', 'Note', 'Created At'];
     const rows = entries.value.map(entry => [
       entry.date,
       entry.metrics.mood,
       entry.metrics.energy,
       entry.metrics.sleep,
       entry.metrics.focus,
+      entry.checkboxes?.healthyFood ? 'Yes' : 'No',
+      entry.checkboxes?.gym ? 'Yes' : 'No',
+      entry.checkboxes?.misc ? 'Yes' : 'No',
       entry.note ? `"${entry.note.replace(/"/g, '""')}"` : '',
       new Date(entry.createdAt).toISOString()
     ]);
@@ -169,7 +173,7 @@ export function useMoodly() {
     }
 
     // Create an HTML table that Excel can open
-    const headers = ['Date', 'Mood', 'Energy', 'Sleep', 'Focus', 'Note', 'Created At'];
+    const headers = ['Date', 'Mood', 'Energy', 'Sleep', 'Focus', 'Healthy Food', 'Gym', 'Misc', 'Note', 'Created At'];
     let html = '<html><head><meta charset="utf-8"></head><body><table border="1">';
     html += '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
     
@@ -180,6 +184,9 @@ export function useMoodly() {
       html += `<td>${entry.metrics.energy}</td>`;
       html += `<td>${entry.metrics.sleep}</td>`;
       html += `<td>${entry.metrics.focus}</td>`;
+      html += `<td>${entry.checkboxes?.healthyFood ? 'Yes' : 'No'}</td>`;
+      html += `<td>${entry.checkboxes?.gym ? 'Yes' : 'No'}</td>`;
+      html += `<td>${entry.checkboxes?.misc ? 'Yes' : 'No'}</td>`;
       html += `<td>${entry.note || ''}</td>`;
       html += `<td>${new Date(entry.createdAt).toISOString()}</td>`;
       html += '</tr>';
@@ -209,6 +216,13 @@ export function useMoodly() {
       markdown += `- **Energy**: ${entry.metrics.energy}/5 ${metricConfigs[1]?.emojis[entry.metrics.energy - 1] || ''}\n`;
       markdown += `- **Sleep**: ${entry.metrics.sleep}/5 ${metricConfigs[2]?.emojis[entry.metrics.sleep - 1] || ''}\n`;
       markdown += `- **Focus**: ${entry.metrics.focus}/5 ${metricConfigs[3]?.emojis[entry.metrics.focus - 1] || ''}\n\n`;
+      
+      if (entry.checkboxes) {
+        markdown += '### Daily Check-ins\n\n';
+        markdown += `- **Healthy Food**: ${entry.checkboxes.healthyFood ? '✅' : '❌'}\n`;
+        markdown += `- **Gym**: ${entry.checkboxes.gym ? '✅' : '❌'}\n`;
+        markdown += `- **Misc**: ${entry.checkboxes.misc ? '✅' : '❌'}\n\n`;
+      }
       
       if (entry.note) {
         markdown += '### Note\n\n';
