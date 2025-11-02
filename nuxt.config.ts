@@ -3,11 +3,10 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   modules: ["@nuxt/fonts", "@nuxt/icon", "@nuxt/image"],
+  ssr: false,
 
   app: {
     baseURL: "/moodly/",
-    buildAssetsDir: "/_nuxt/",
-    cdnURL: "/moodly/",
     head: {
       title: "Moodly - Daily Check-In Journal",
       meta: [
@@ -23,7 +22,9 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    preset: "github_pages",
+    prerender: {
+      routes: ["/"],
+    },
   },
 
   css: ["~/assets/css/main.css"],
