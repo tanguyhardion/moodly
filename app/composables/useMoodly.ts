@@ -45,27 +45,38 @@ export function useMoodly() {
     return entries.value.find((entry: MoodEntry) => entry.date === today);
   };
 
+  // Get entry for a specific date
+  const getEntryByDate = (date: string): MoodEntry | undefined => {
+    return entries.value.find((entry: MoodEntry) => entry.date === date);
+  };
+
   // Check if entry exists for today
   const hasTodayEntry = computed(() => {
     return getTodayEntry() !== undefined;
   });
+
+  // Check if entry exists for a specific date
+  const hasEntryForDate = (date: string): boolean => {
+    return getEntryByDate(date) !== undefined;
+  };
 
   // Save or update entry
   const saveEntry = (
     metrics: MoodEntry["metrics"],
     checkboxes?: MoodEntry["checkboxes"],
     note?: string,
+    date?: string,
   ) => {
-    const today = new Date().toISOString().split("T")[0]!;
+    const targetDate = date || new Date().toISOString().split("T")[0]!;
     const existingIndex = entries.value.findIndex(
-      (entry: MoodEntry) => entry.date === today,
+      (entry: MoodEntry) => entry.date === targetDate,
     );
     const existingEntry =
       existingIndex >= 0 ? entries.value[existingIndex] : null;
 
     const entry: MoodEntry = {
       id: existingEntry ? existingEntry.id : generateId(),
-      date: today,
+      date: targetDate,
       metrics,
       checkboxes,
       note,
@@ -294,7 +305,9 @@ export function useMoodly() {
     darkMode,
     metricConfigs,
     getTodayEntry,
+    getEntryByDate,
     hasTodayEntry,
+    hasEntryForDate,
     saveEntry,
     deleteEntry,
     getEntriesInRange,

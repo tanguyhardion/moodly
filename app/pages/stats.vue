@@ -520,7 +520,7 @@ const insights = computed(() => {
 
 .insight-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.75rem;
   padding: 1rem;
   background: var(--note-bg);
@@ -536,6 +536,5 @@ const insights = computed(() => {
   margin: 0;
   color: var(--text-secondary);
   line-height: 1.6;
-  padding-top: 0.25rem;
 }
 </style>
