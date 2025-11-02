@@ -8,32 +8,32 @@
    ============================================ */
 :root {
   /* Colors - Pastel Palette */
-  --primary: #FF6B9D;
-  --primary-light: #FFA6C9;
-  --secondary: #4ECDC4;
-  --accent: #FFC93C;
-  
+  --primary: #ff6b9d;
+  --primary-light: #ffa6c9;
+  --secondary: #4ecdc4;
+  --accent: #ffc93c;
+
   /* Background */
-  --bg-primary: #FFF5F7;
-  --bg-secondary: #FFF;
-  --card-bg: #FFFFFF;
+  --bg-primary: #fff5f7;
+  --bg-secondary: #fff;
+  --card-bg: #ffffff;
   --nav-bg: rgba(255, 255, 255, 0.8);
-  --note-bg: #FFF9F5;
-  
+  --note-bg: #fff9f5;
+
   /* Text */
-  --text-primary: #2D3748;
+  --text-primary: #2d3748;
   --text-secondary: #718096;
-  --text-tertiary: #A0AEC0;
-  
+  --text-tertiary: #a0aec0;
+
   /* Borders & UI */
-  --border: #E2E8F0;
-  --hover-bg: #F7FAFC;
-  --active-bg: #FFF0F5;
-  
+  --border: #e2e8f0;
+  --hover-bg: #f7fafc;
+  --active-bg: #fff0f5;
+
   /* Sliders & Controls */
-  --slider-track: #E2E8F0;
-  --marker-inactive: #CBD5E0;
-  
+  --slider-track: #e2e8f0;
+  --marker-inactive: #cbd5e0;
+
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
@@ -45,30 +45,30 @@
    ============================================ */
 :root.dark {
   /* Colors */
-  --primary: #FF8DB5;
-  --primary-light: #FFB3D1;
-  --secondary: #6EDDD5;
-  --accent: #FFD66B;
-  
+  --primary: #ff8db5;
+  --primary-light: #ffb3d1;
+  --secondary: #6eddd5;
+  --accent: #ffd66b;
+
   /* Background */
-  --bg-primary: #1A202C;
-  --bg-secondary: #2D3748;
-  --card-bg: #2D3748;
+  --bg-primary: #1a202c;
+  --bg-secondary: #2d3748;
+  --card-bg: #2d3748;
   --nav-bg: rgba(45, 55, 72, 0.8);
   --note-bg: #374151;
-  
+
   /* Text */
-  --text-primary: #F7FAFC;
-  --text-secondary: #CBD5E0;
-  --text-tertiary: #A0AEC0;
-  
+  --text-primary: #f7fafc;
+  --text-secondary: #cbd5e0;
+  --text-tertiary: #a0aec0;
+
   /* Borders & UI */
-  --border: #4A5568;
+  --border: #4a5568;
   --hover-bg: #374151;
-  --active-bg: #3D2937;
-  
+  --active-bg: #3d2937;
+
   /* Sliders & Controls */
-  --slider-track: #4A5568;
+  --slider-track: #4a5568;
   --marker-inactive: #718096;
 }
 
@@ -88,19 +88,26 @@ html {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.6;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* ============================================
    Typography
    ============================================ */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   line-height: 1.2;
   font-weight: 700;
 }

@@ -7,7 +7,13 @@
       </h4>
       <div class="chart-trend" :class="trend">
         <Icon
-          :name="trend === 'up' ? 'solar:arrow-up-bold' : trend === 'down' ? 'solar:arrow-down-bold' : 'solar:minus-bold'"
+          :name="
+            trend === 'up'
+              ? 'solar:arrow-up-bold'
+              : trend === 'down'
+                ? 'solar:arrow-down-bold'
+                : 'solar:minus-bold'
+          "
           size="16"
         />
       </div>
@@ -25,7 +31,7 @@
         class="bar"
         :style="{
           height: `${(point.value / 5) * 100}%`,
-          background: color
+          background: color,
         }"
         :title="`${point.label}: ${point.value}`"
       ></div>
@@ -34,14 +40,14 @@
 </template>
 
 <script setup lang="ts">
-import type { ChartDataPoint } from '~/types';
+import type { ChartDataPoint } from "~/types";
 
 interface Props {
   title: string;
   icon: string;
   color: string;
   average: number;
-  trend: 'up' | 'down' | 'neutral';
+  trend: "up" | "down" | "neutral";
   chartData: ChartDataPoint[];
 }
 

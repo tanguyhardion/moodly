@@ -5,7 +5,9 @@
         <Icon name="solar:chart-bold" size="28" />
         Statistics
       </h1>
-      <p class="page-subtitle">Your progress over the last {{ selectedDays }} days</p>
+      <p class="page-subtitle">
+        Your progress over the last {{ selectedDays }} days
+      </p>
     </div>
 
     <div class="period-selector">
@@ -46,7 +48,11 @@
 
       <div class="checkins-card">
         <h3 class="checkins-title">
-          <Icon name="solar:clipboard-check-bold" size="22" style="color: #FF6B9D;" />
+          <Icon
+            name="solar:clipboard-check-bold"
+            size="22"
+            style="color: #ff6b9d"
+          />
           Daily Check-ins
         </h3>
         <div class="checkins-grid">
@@ -57,9 +63,14 @@
             <div class="checkin-info">
               <span class="checkin-label">Healthy Food</span>
               <div class="checkin-progress-container">
-                <div class="checkin-progress-bar" :style="{ width: checkInRate.healthyFood + '%' }"></div>
+                <div
+                  class="checkin-progress-bar"
+                  :style="{ width: checkInRate.healthyFood + '%' }"
+                ></div>
               </div>
-              <span class="checkin-percentage">{{ checkInRate.healthyFood }}%</span>
+              <span class="checkin-percentage"
+                >{{ checkInRate.healthyFood }}%</span
+              >
             </div>
           </div>
           <div class="checkin-stat">
@@ -69,7 +80,10 @@
             <div class="checkin-info">
               <span class="checkin-label">Gym</span>
               <div class="checkin-progress-container">
-                <div class="checkin-progress-bar" :style="{ width: checkInRate.gym + '%' }"></div>
+                <div
+                  class="checkin-progress-bar"
+                  :style="{ width: checkInRate.gym + '%' }"
+                ></div>
               </div>
               <span class="checkin-percentage">{{ checkInRate.gym }}%</span>
             </div>
@@ -81,7 +95,10 @@
             <div class="checkin-info">
               <span class="checkin-label">Misc</span>
               <div class="checkin-progress-container">
-                <div class="checkin-progress-bar" :style="{ width: checkInRate.misc + '%' }"></div>
+                <div
+                  class="checkin-progress-bar"
+                  :style="{ width: checkInRate.misc + '%' }"
+                ></div>
               </div>
               <span class="checkin-percentage">{{ checkInRate.misc }}%</span>
             </div>
@@ -91,11 +108,19 @@
 
       <div class="insights-card">
         <h3 class="insights-title">
-          <Icon name="solar:lightbulb-bolt-bold" size="22" style="color: #FFD60A;" />
+          <Icon
+            name="solar:lightbulb-bolt-bold"
+            size="22"
+            style="color: #ffd60a"
+          />
           Insights
         </h3>
         <div class="insights-list">
-          <div v-for="insight in insights" :key="insight.text" class="insight-item">
+          <div
+            v-for="insight in insights"
+            :key="insight.text"
+            class="insight-item"
+          >
             <Icon :name="insight.icon" size="24" class="insight-icon" />
             <p class="insight-text">{{ insight.text }}</p>
           </div>
@@ -106,16 +131,22 @@
 </template>
 
 <script setup lang="ts">
-import type { MetricType, ChartDataPoint } from '~/types';
+import type { MetricType, ChartDataPoint } from "~/types";
 
-const { entries, metricConfigs, getEntriesInRange, getMetricAverage, getMetricTrend } = useMoodly();
+const {
+  entries,
+  metricConfigs,
+  getEntriesInRange,
+  getMetricAverage,
+  getMetricTrend,
+} = useMoodly();
 
 const selectedDays = ref(7);
 const periods = [
-  { label: '7 Days', days: 7 },
-  { label: '14 Days', days: 14 },
-  { label: '30 Days', days: 30 },
-  { label: '90 Days', days: 90 }
+  { label: "7 Days", days: 7 },
+  { label: "14 Days", days: 14 },
+  { label: "30 Days", days: 30 },
+  { label: "90 Days", days: 90 },
 ];
 
 const recentEntries = computed(() => {
@@ -125,15 +156,20 @@ const recentEntries = computed(() => {
 const getChartData = (metric: MetricType): ChartDataPoint[] => {
   const entries = recentEntries.value;
   const maxPoints = 10;
-  
+
   // Sample entries if there are too many
   const step = Math.ceil(entries.length / maxPoints);
-  const sampledEntries = entries.filter((_, index) => index % step === 0).slice(0, maxPoints);
-  
-  return sampledEntries.reverse().map(entry => ({
+  const sampledEntries = entries
+    .filter((_, index) => index % step === 0)
+    .slice(0, maxPoints);
+
+  return sampledEntries.reverse().map((entry) => ({
     date: entry.date,
     value: entry.metrics[metric],
-    label: new Date(entry.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    label: new Date(entry.date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    }),
   }));
 };
 
@@ -143,14 +179,20 @@ const checkInRate = computed(() => {
   }
 
   const totalEntries = recentEntries.value.length;
-  const healthyFoodCount = recentEntries.value.filter(entry => entry.checkboxes?.healthyFood).length;
-  const gymCount = recentEntries.value.filter(entry => entry.checkboxes?.gym).length;
-  const miscCount = recentEntries.value.filter(entry => entry.checkboxes?.misc).length;
+  const healthyFoodCount = recentEntries.value.filter(
+    (entry) => entry.checkboxes?.healthyFood,
+  ).length;
+  const gymCount = recentEntries.value.filter(
+    (entry) => entry.checkboxes?.gym,
+  ).length;
+  const miscCount = recentEntries.value.filter(
+    (entry) => entry.checkboxes?.misc,
+  ).length;
 
   return {
     healthyFood: Math.round((healthyFoodCount / totalEntries) * 100),
     gym: Math.round((gymCount / totalEntries) * 100),
-    misc: Math.round((miscCount / totalEntries) * 100)
+    misc: Math.round((miscCount / totalEntries) * 100),
   };
 });
 
@@ -158,27 +200,31 @@ const insights = computed(() => {
   if (recentEntries.value.length === 0) return [];
 
   const results = [];
-  
+
   // Find best and worst metrics
-  const averages = metricConfigs.map(config => ({
+  const averages = metricConfigs.map((config) => ({
     name: config.name,
-    average: getMetricAverage(config.key, selectedDays.value)
+    average: getMetricAverage(config.key, selectedDays.value),
   }));
 
-  const best = averages.reduce((prev, curr) => prev.average > curr.average ? prev : curr);
-  const worst = averages.reduce((prev, curr) => prev.average < curr.average ? prev : curr);
+  const best = averages.reduce((prev, curr) =>
+    prev.average > curr.average ? prev : curr,
+  );
+  const worst = averages.reduce((prev, curr) =>
+    prev.average < curr.average ? prev : curr,
+  );
 
   if (best.average >= 4) {
     results.push({
-      icon: 'solar:star-bold',
-      text: `Your ${best.name.toLowerCase()} has been excellent! Keep it up!`
+      icon: "solar:star-bold",
+      text: `Your ${best.name.toLowerCase()} has been excellent! Keep it up!`,
     });
   }
 
   if (worst.average < 3) {
     results.push({
-      icon: 'solar:chat-round-line-bold',
-      text: `Consider focusing on improving your ${worst.name.toLowerCase()}.`
+      icon: "solar:chat-round-line-bold",
+      text: `Consider focusing on improving your ${worst.name.toLowerCase()}.`,
     });
   }
 
@@ -186,18 +232,18 @@ const insights = computed(() => {
   const hasAllMetrics = recentEntries.value.length >= selectedDays.value * 0.7;
   if (hasAllMetrics) {
     results.push({
-      icon: 'solar:fire-bold',
-      text: `Great consistency! You've checked in regularly.`
+      icon: "solar:fire-bold",
+      text: `Great consistency! You've checked in regularly.`,
     });
   }
 
   // Check trends
-  metricConfigs.forEach(config => {
+  metricConfigs.forEach((config) => {
     const trend = getMetricTrend(config.key, selectedDays.value);
-    if (trend === 'up') {
+    if (trend === "up") {
       results.push({
-        icon: 'solar:graph-up-bold',
-        text: `Your ${config.name.toLowerCase()} is trending upward!`
+        icon: "solar:graph-up-bold",
+        text: `Your ${config.name.toLowerCase()} is trending upward!`,
       });
     }
   });
@@ -205,28 +251,33 @@ const insights = computed(() => {
   // Check-in insights
   if (checkInRate.value.healthyFood >= 80) {
     results.push({
-      icon: 'solar:leaf-bold',
-      text: `Excellent job maintaining a healthy diet!`
+      icon: "solar:leaf-bold",
+      text: `Excellent job maintaining a healthy diet!`,
     });
   }
 
   if (checkInRate.value.gym >= 70) {
     results.push({
-      icon: 'solar:dumbbell-large-bold',
-      text: `You're crushing your gym goals!`
+      icon: "solar:dumbbell-large-bold",
+      text: `You're crushing your gym goals!`,
     });
   }
 
-  const avgCheckInRate = Math.round((checkInRate.value.healthyFood + checkInRate.value.gym + checkInRate.value.misc) / 3);
+  const avgCheckInRate = Math.round(
+    (checkInRate.value.healthyFood +
+      checkInRate.value.gym +
+      checkInRate.value.misc) /
+      3,
+  );
   if (avgCheckInRate >= 75) {
     results.push({
-      icon: 'solar:star-shine-bold',
-      text: `Amazing consistency with your daily check-ins!`
+      icon: "solar:star-shine-bold",
+      text: `Amazing consistency with your daily check-ins!`,
     });
   } else if (avgCheckInRate < 30) {
     results.push({
-      icon: 'solar:target-bold',
-      text: `Try to stay more consistent with your daily check-ins.`
+      icon: "solar:target-bold",
+      text: `Try to stay more consistent with your daily check-ins.`,
     });
   }
 
@@ -288,7 +339,7 @@ const insights = computed(() => {
 }
 
 .period-btn.active {
-  background: linear-gradient(135deg, #FF6B9D 0%, #FFA06B 100%);
+  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
   border-color: transparent;
   color: white;
 }
@@ -330,7 +381,7 @@ const insights = computed(() => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #FF6B9D 0%, #FFA06B 100%);
+  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
   color: white;
   box-shadow: 0 4px 12px rgba(255, 107, 157, 0.3);
 }
@@ -395,17 +446,17 @@ const insights = computed(() => {
 }
 
 .checkin-icon.healthy-food {
-  background: linear-gradient(135deg, #34C759 0%, #30D158 100%);
+  background: linear-gradient(135deg, #34c759 0%, #30d158 100%);
   color: white;
 }
 
 .checkin-icon.gym {
-  background: linear-gradient(135deg, #FF453A 0%, #FF6B6B 100%);
+  background: linear-gradient(135deg, #ff453a 0%, #ff6b6b 100%);
   color: white;
 }
 
 .checkin-icon.misc {
-  background: linear-gradient(135deg, #FFD60A 0%, #FFCC00 100%);
+  background: linear-gradient(135deg, #ffd60a 0%, #ffcc00 100%);
   color: white;
 }
 
@@ -433,7 +484,7 @@ const insights = computed(() => {
 
 .checkin-progress-bar {
   height: 100%;
-  background: linear-gradient(135deg, #FF6B9D 0%, #FFA06B 100%);
+  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
   border-radius: 4px;
   transition: width 0.6s ease;
 }

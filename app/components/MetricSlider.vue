@@ -6,7 +6,7 @@
       </div>
       <h3 class="metric-name">{{ config.name }}</h3>
     </div>
-    
+
     <div class="emoji-display">
       <span class="emoji">{{ currentEmoji }}</span>
       <span class="label">{{ currentLabel }}</span>
@@ -23,14 +23,19 @@
         :style="{ '--slider-color': config.color }"
       />
       <div class="slider-markers">
-        <span v-for="i in 5" :key="i" class="marker" :class="{ active: modelValue >= i }"></span>
+        <span
+          v-for="i in 5"
+          :key="i"
+          class="marker"
+          :class="{ active: modelValue >= i }"
+        ></span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { MetricConfig } from '~/types';
+import type { MetricConfig } from "~/types";
 
 interface Props {
   modelValue: number;
@@ -39,7 +44,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits<{
-  'update:modelValue': [value: number];
+  "update:modelValue": [value: number];
 }>();
 
 const currentEmoji = computed(() => {
@@ -54,7 +59,7 @@ const currentLabel = computed(() => {
 
 const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement;
-  emit('update:modelValue', parseInt(target.value));
+  emit("update:modelValue", parseInt(target.value));
 };
 </script>
 
@@ -90,7 +95,7 @@ const handleInput = (event: Event) => {
 }
 
 .metric-icon::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: currentColor;

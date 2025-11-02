@@ -1,10 +1,6 @@
 <template>
   <div class="export-container">
-    <button
-      class="export-btn"
-      @click="toggleMenu"
-      title="Export your history"
-    >
+    <button class="export-btn" @click="toggleMenu" title="Export your history">
       <Icon name="solar:download-minimalistic-bold" size="22" />
     </button>
 
@@ -25,14 +21,15 @@
 </template>
 
 <script setup lang="ts">
-const { exportToJSON, exportToCSV, exportToExcel, exportToMarkdown } = useMoodly();
+const { exportToJSON, exportToCSV, exportToExcel, exportToMarkdown } =
+  useMoodly();
 const showMenu = ref(false);
 
 const formats = [
-  { type: 'json', label: 'JSON', icon: 'solar:code-file-bold' },
-  { type: 'csv', label: 'CSV', icon: 'solar:document-text-bold' },
-  { type: 'excel', label: 'Excel', icon: 'solar:document-bold' },
-  { type: 'markdown', label: 'Markdown', icon: 'solar:file-text-bold' }
+  { type: "json", label: "JSON", icon: "solar:code-file-bold" },
+  { type: "csv", label: "CSV", icon: "solar:document-text-bold" },
+  { type: "excel", label: "Excel", icon: "solar:document-bold" },
+  { type: "markdown", label: "Markdown", icon: "solar:file-text-bold" },
 ];
 
 const toggleMenu = () => {
@@ -41,16 +38,16 @@ const toggleMenu = () => {
 
 const handleExport = (type: string) => {
   switch (type) {
-    case 'json':
+    case "json":
       exportToJSON();
       break;
-    case 'csv':
+    case "csv":
       exportToCSV();
       break;
-    case 'excel':
+    case "excel":
       exportToExcel();
       break;
-    case 'markdown':
+    case "markdown":
       exportToMarkdown();
       break;
   }
@@ -62,13 +59,13 @@ if (import.meta.client) {
   onMounted(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      if (!target.closest('.export-container')) {
+      if (!target.closest(".export-container")) {
         showMenu.value = false;
       }
     };
-    document.addEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
     onUnmounted(() => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     });
   });
 }
@@ -97,15 +94,19 @@ if (import.meta.client) {
 }
 
 .export-btn::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: 0.75rem;
   padding: 2px;
-  background: linear-gradient(135deg, #FF6B9D 0%, #FFA06B 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   mask-composite: exclude;
   opacity: 0;
   transition: opacity 0.3s ease;

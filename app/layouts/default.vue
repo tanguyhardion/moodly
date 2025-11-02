@@ -22,7 +22,11 @@
           </NuxtLink>
         </div>
 
-        <button @click="toggleDarkMode" class="theme-toggle" title="Toggle theme">
+        <button
+          @click="toggleDarkMode"
+          class="theme-toggle"
+          title="Toggle theme"
+        >
           <Icon v-if="darkMode" name="solar:sun-bold" size="20" />
           <Icon v-else name="solar:moon-bold" size="20" />
         </button>
@@ -183,7 +187,7 @@ const { darkMode, toggleDarkMode } = useMoodly();
 .shape-1 {
   width: 400px;
   height: 400px;
-  background: linear-gradient(135deg, #FF6B9D 0%, #FFA06B 100%);
+  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
   top: -200px;
   left: -200px;
   animation-delay: 0s;
@@ -192,7 +196,7 @@ const { darkMode, toggleDarkMode } = useMoodly();
 .shape-2 {
   width: 500px;
   height: 500px;
-  background: linear-gradient(135deg, #A78BFA 0%, #4ECDC4 100%);
+  background: linear-gradient(135deg, #a78bfa 0%, #4ecdc4 100%);
   bottom: -250px;
   right: -250px;
   animation-delay: -10s;
@@ -201,7 +205,7 @@ const { darkMode, toggleDarkMode } = useMoodly();
 .shape-3 {
   width: 300px;
   height: 300px;
-  background: linear-gradient(135deg, #FFC93C 0%, #FF6B9D 100%);
+  background: linear-gradient(135deg, #ffc93c 0%, #ff6b9d 100%);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -209,7 +213,8 @@ const { darkMode, toggleDarkMode } = useMoodly();
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) scale(1);
   }
   33% {

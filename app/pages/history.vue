@@ -7,7 +7,8 @@
         Your Journey
       </h1>
       <p class="page-subtitle">
-        {{ entries.length }} {{ entries.length === 1 ? 'entry' : 'entries' }} recorded
+        {{ entries.length }}
+        {{ entries.length === 1 ? "entry" : "entries" }} recorded
       </p>
     </div>
 
@@ -44,7 +45,7 @@ const sortedEntries = computed(() => {
 });
 
 const handleDelete = (id: string) => {
-  if (confirm('Are you sure you want to delete this entry?')) {
+  if (confirm("Are you sure you want to delete this entry?")) {
     deleteEntry(id);
   }
 };
@@ -123,7 +124,7 @@ const handleDelete = (id: string) => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #FF6B9D 0%, #FFA06B 100%);
+  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
   color: white;
   box-shadow: 0 4px 12px rgba(255, 107, 157, 0.3);
 }

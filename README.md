@@ -16,6 +16,7 @@ A beautiful, cozy daily journal app to track your mood, energy, sleep, and focus
 ## 🎨 Design Philosophy
 
 Moodly embraces a warm, inviting design with:
+
 - Soft pastel color gradients
 - Rounded cards with subtle shadows
 - Smooth animations for sliders and transitions
@@ -98,6 +99,7 @@ npm run generate
 ## 🔒 Privacy
 
 Moodly is 100% private:
+
 - All data is stored in your browser's local storage
 - No servers, no accounts, no tracking
 - Your data never leaves your device
@@ -123,6 +125,7 @@ Moodly is 100% private:
 ## 🎨 Customization
 
 The app uses CSS variables for easy theming. Edit `app/assets/css/main.css` to customize:
+
 - Color palette
 - Typography
 - Spacing
@@ -133,6 +136,7 @@ The app uses CSS variables for easy theming. Edit `app/assets/css/main.css` to c
 ## 📱 Browser Support
 
 Modern browsers with ES2020+ support:
+
 - Chrome 90+
 - Firefox 88+
 - Safari 14+

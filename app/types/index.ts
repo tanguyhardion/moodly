@@ -1,4 +1,4 @@
-export type MetricType = 'mood' | 'energy' | 'sleep' | 'focus';
+export type MetricType = "mood" | "energy" | "sleep" | "focus";
 
 export interface MetricValue {
   value: number; // 1-5 scale

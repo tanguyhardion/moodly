@@ -27,7 +27,7 @@ export function useLocalStorage<T>(key: string, defaultValue: T) {
         }
       }
     },
-    { deep: true }
+    { deep: true },
   );
 
   return data;

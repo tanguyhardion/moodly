@@ -5,7 +5,11 @@
         <Icon name="solar:calendar-bold" size="18" />
         <span>{{ formattedDate }}</span>
       </div>
-      <button v-if="showDelete" @click.stop="$emit('delete')" class="delete-btn">
+      <button
+        v-if="showDelete"
+        @click.stop="$emit('delete')"
+        class="delete-btn"
+      >
         <Icon name="solar:trash-bin-trash-bold" size="18" />
       </button>
     </div>
@@ -22,21 +26,33 @@
           <span class="metric-value">{{ entry.metrics[metric.key] }}/5</span>
         </div>
         <div class="metric-bar">
-          <div class="metric-fill" :style="{ width: `${(entry.metrics[metric.key] / 5) * 100}%` }"></div>
+          <div
+            class="metric-fill"
+            :style="{ width: `${(entry.metrics[metric.key] / 5) * 100}%` }"
+          ></div>
         </div>
       </div>
     </div>
 
     <div v-if="entry.checkboxes" class="checkboxes-display">
-      <div class="checkbox-display-item" :class="{ checked: entry.checkboxes.healthyFood }">
+      <div
+        class="checkbox-display-item"
+        :class="{ checked: entry.checkboxes.healthyFood }"
+      >
         <Icon name="solar:salad-bold" size="16" />
         <span>Healthy Food</span>
       </div>
-      <div class="checkbox-display-item" :class="{ checked: entry.checkboxes.gym }">
+      <div
+        class="checkbox-display-item"
+        :class="{ checked: entry.checkboxes.gym }"
+      >
         <Icon name="solar:running-bold" size="16" />
         <span>Gym</span>
       </div>
-      <div class="checkbox-display-item" :class="{ checked: entry.checkboxes.misc }">
+      <div
+        class="checkbox-display-item"
+        :class="{ checked: entry.checkboxes.misc }"
+      >
         <Icon name="solar:check-circle-bold" size="16" />
         <span>Misc</span>
       </div>
@@ -50,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MoodEntry, MetricConfig } from '~/types';
+import type { MoodEntry, MetricConfig } from "~/types";
 
 interface Props {
   entry: MoodEntry;
@@ -70,15 +86,15 @@ const formattedDate = computed(() => {
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
 
-  if (props.entry.date === today.toISOString().split('T')[0]) {
-    return 'Today';
-  } else if (props.entry.date === yesterday.toISOString().split('T')[0]) {
-    return 'Yesterday';
+  if (props.entry.date === today.toISOString().split("T")[0]) {
+    return "Today";
+  } else if (props.entry.date === yesterday.toISOString().split("T")[0]) {
+    return "Yesterday";
   } else {
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      month: 'short', 
-      day: 'numeric' 
+    return date.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
     });
   }
 });
@@ -191,7 +207,11 @@ const formattedDate = computed(() => {
 }
 
 .checkbox-display-item.checked {
-  background: linear-gradient(135deg, rgba(255, 107, 157, 0.2) 0%, rgba(255, 160, 107, 0.2) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 157, 0.2) 0%,
+    rgba(255, 160, 107, 0.2) 100%
+  );
   color: var(--primary);
   opacity: 1;
 }

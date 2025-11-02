@@ -5,16 +5,16 @@ const metrics = ref({
   mood: 3,
   energy: 3,
   sleep: 3,
-  focus: 3
+  focus: 3,
 });
 
 const checkboxes = ref({
   healthyFood: false,
   gym: false,
-  misc: false
+  misc: false,
 });
 
-const note = ref('');
+const note = ref("");
 const showToast = ref(false);
 
 // Load today's entry if it exists
@@ -22,12 +22,14 @@ onMounted(() => {
   const todayEntry = getTodayEntry();
   if (todayEntry) {
     metrics.value = { ...todayEntry.metrics };
-    checkboxes.value = todayEntry.checkboxes ? { ...todayEntry.checkboxes } : {
-      healthyFood: false,
-      gym: false,
-      misc: false
-    };
-    note.value = todayEntry.note || '';
+    checkboxes.value = todayEntry.checkboxes
+      ? { ...todayEntry.checkboxes }
+      : {
+          healthyFood: false,
+          gym: false,
+          misc: false,
+        };
+    note.value = todayEntry.note || "";
   }
 });
 
@@ -48,7 +50,11 @@ const handleSave = () => {
         How are you feeling today?
       </h1>
       <p class="page-subtitle">
-        {{ hasTodayEntry ? 'Update your daily check-in' : 'Take a moment to check in with yourself' }}
+        {{
+          hasTodayEntry
+            ? "Update your daily check-in"
+            : "Take a moment to check in with yourself"
+        }}
       </p>
     </div>
 
@@ -108,7 +114,7 @@ const handleSave = () => {
     <div class="actions">
       <button @click="handleSave" class="btn btn-primary">
         <Icon name="solar:check-circle-bold" size="20" />
-        {{ hasTodayEntry ? 'Update Entry' : 'Save Entry' }}
+        {{ hasTodayEntry ? "Update Entry" : "Save Entry" }}
       </button>
     </div>
 
@@ -150,9 +156,16 @@ const handleSave = () => {
 }
 
 @keyframes wave {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  25% { transform: scale(1.1) rotate(10deg); }
-  75% { transform: scale(1.1) rotate(-10deg); }
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.1) rotate(10deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(-10deg);
+  }
 }
 
 .page-subtitle {
@@ -278,7 +291,7 @@ const handleSave = () => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #FF6B9D 0%, #FFA06B 100%);
+  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
   color: white;
   box-shadow: 0 4px 12px rgba(255, 107, 157, 0.3);
 }
