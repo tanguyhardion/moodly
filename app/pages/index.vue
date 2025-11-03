@@ -144,11 +144,17 @@ const formatDateDisplay = (date: Date) => {
             color="pink"
             :is-dark="darkMode"
             trim-weeks
-            expanded
-            borderless
-          />
+            is-inline
+          >
+            <template #default="{ togglePopover }">
+              <button @click="togglePopover" class="date-button">
+                <Icon name="solar:calendar-bold" size="20" />
+                <span>{{ formatDateDisplay(selectedDate) }}</span>
+                <Icon name="solar:alt-arrow-down-bold" size="16" />
+              </button>
+            </template>
+          </VDatePicker>
         </ClientOnly>
-        <p class="date-display">{{ formatDateDisplay(selectedDate) }}</p>
       </div>
     </div>
 
@@ -289,8 +295,36 @@ const formatDateDisplay = (date: Date) => {
 .date-picker-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   gap: 1rem;
+}
+
+.date-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.1) 0%, rgba(255, 160, 107, 0.1) 100%);
+  border: 2px solid rgba(255, 107, 157, 0.2);
+  border-radius: 0.75rem;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.date-button:hover {
+  border-color: rgba(255, 107, 157, 0.4);
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.15) 0%, rgba(255, 160, 107, 0.15) 100%);
+  transform: translateY(-1px);
+}
+
+.date-button:active {
+  transform: translateY(0);
 }
 
 .date-display {
@@ -467,18 +501,27 @@ const formatDateDisplay = (date: Date) => {
 /* Custom v-calendar styling */
 :deep(.vc-container) {
   width: 100%;
-  max-width: 100%;
+  max-width: 320px;
   border: none !important;
-  background: transparent !important;
+  background: var(--card-bg) !important;
   font-family: inherit;
 }
 
 :deep(.vc-pane) {
-  background: transparent !important;
+  background: var(--card-bg) !important;
+}
+
+/* Popover container */
+:deep(.vc-popover-content-wrapper) {
+  background: var(--card-bg) !important;
+  border: 2px solid var(--border) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+  border-radius: 0.75rem !important;
 }
 
 :deep(.vc-header) {
   padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
 }
 
 :deep(.vc-title) {
@@ -569,11 +612,6 @@ const formatDateDisplay = (date: Date) => {
 }
 
 /* Month/Year Picker Popover - Critical for theme consistency */
-:deep(.vc-popover-content-wrapper) {
-  background: var(--card-bg) !important;
-  border: 1px solid var(--border) !important;
-  box-shadow: var(--shadow-lg) !important;
-}
 
 :deep(.vc-popover-content) {
   background: var(--card-bg) !important;
