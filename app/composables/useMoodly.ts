@@ -1,4 +1,5 @@
 import type { MoodEntry, MetricType, MetricConfig } from "~/types";
+import * as XLSX from "xlsx";
 
 export function useMoodly() {
   const entries = useLocalStorage<MoodEntry[]>("moodly-entries", []);
@@ -223,7 +224,7 @@ export function useMoodly() {
       return;
     }
 
-    // Create an HTML table that Excel can open
+    // Create worksheet data
     const headers = [
       "Date",
       "Mood",
@@ -236,29 +237,47 @@ export function useMoodly() {
       "Note",
       "Created At",
     ];
-    let html =
-      '<html><head><meta charset="utf-8"></head><body><table border="1">';
-    html += "<tr>" + headers.map((h) => `<th>${h}</th>`).join("") + "</tr>";
 
-    entries.value.forEach((entry) => {
-      html += "<tr>";
-      html += `<td>${entry.date}</td>`;
-      html += `<td>${entry.metrics.mood}</td>`;
-      html += `<td>${entry.metrics.energy}</td>`;
-      html += `<td>${entry.metrics.sleep}</td>`;
-      html += `<td>${entry.metrics.focus}</td>`;
-      html += `<td>${entry.checkboxes?.healthyFood ? "Yes" : "No"}</td>`;
-      html += `<td>${entry.checkboxes?.gym ? "Yes" : "No"}</td>`;
-      html += `<td>${entry.checkboxes?.misc ? "Yes" : "No"}</td>`;
-      html += `<td>${entry.note || ""}</td>`;
-      html += `<td>${new Date(entry.createdAt).toISOString()}</td>`;
-      html += "</tr>";
+    const rows = entries.value.map((entry) => [
+      entry.date,
+      entry.metrics.mood,
+      entry.metrics.energy,
+      entry.metrics.sleep,
+      entry.metrics.focus,
+      entry.checkboxes?.healthyFood ? "Yes" : "No",
+      entry.checkboxes?.gym ? "Yes" : "No",
+      entry.checkboxes?.misc ? "Yes" : "No",
+      entry.note || "",
+      new Date(entry.createdAt).toISOString(),
+    ]);
+
+    // Create workbook and worksheet
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+
+    // Set column widths
+    worksheet["!cols"] = [
+      { wch: 12 }, // Date
+      { wch: 6 },  // Mood
+      { wch: 8 },  // Energy
+      { wch: 6 },  // Sleep
+      { wch: 6 },  // Focus
+      { wch: 14 }, // Healthy Food
+      { wch: 6 },  // Gym
+      { wch: 6 },  // Misc
+      { wch: 30 }, // Note
+      { wch: 22 }, // Created At
+    ];
+
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Moodly Data");
+
+    // Generate buffer and create blob
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const dataBlob = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-
-    html += "</table></body></html>";
-
-    const dataBlob = new Blob([html], { type: "application/vnd.ms-excel" });
-    downloadFile(dataBlob, `moodly-data-${getCurrentDateString()}.xls`);
+    downloadFile(dataBlob, `moodly-data-${getCurrentDateString()}.xlsx`);
   };
 
   const exportToMarkdown = () => {

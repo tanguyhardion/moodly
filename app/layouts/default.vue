@@ -2,21 +2,34 @@
   <div class="app-container">
     <nav class="navbar">
       <div class="nav-content">
-        <NuxtLink to="/" class="logo">
-          <Icon name="solar:star-shine-bold" size="28" class="logo-icon" />
-          <span class="logo-text">Moodly</span>
-        </NuxtLink>
+        <div class="nav-section">
+          <button
+            @click="toggleMobileMenu"
+            class="burger-menu"
+            title="Toggle menu"
+          >
+            <Icon v-if="!mobileMenuOpen" name="solar:hamburger-menu-bold" size="24" />
+            <Icon v-else name="solar:close-circle-bold" size="24" />
+          </button>
+        </div>
 
-        <div class="nav-links">
-          <NuxtLink to="/" class="nav-link">
+        <div class="logo-section">
+          <NuxtLink to="/" class="logo" @click="mobileMenuOpen = false">
+            <Icon name="solar:star-shine-bold" size="28" class="logo-icon" />
+            <span class="logo-text">Moodly</span>
+          </NuxtLink>
+        </div>
+
+        <div class="nav-links" :class="{ 'mobile-open': mobileMenuOpen }">
+          <NuxtLink to="/" class="nav-link" @click="mobileMenuOpen = false">
             <Icon name="solar:home-2-bold" size="20" />
             <span>Home</span>
           </NuxtLink>
-          <NuxtLink to="/history" class="nav-link">
+          <NuxtLink to="/history" class="nav-link" @click="mobileMenuOpen = false">
             <Icon name="solar:history-bold" size="20" />
             <span>History</span>
           </NuxtLink>
-          <NuxtLink to="/stats" class="nav-link">
+          <NuxtLink to="/stats" class="nav-link" @click="mobileMenuOpen = false">
             <Icon name="solar:chart-bold" size="20" />
             <span>Stats</span>
           </NuxtLink>
@@ -47,6 +60,12 @@
 
 <script setup lang="ts">
 const { darkMode, toggleDarkMode } = useMoodly();
+
+const mobileMenuOpen = ref(false);
+
+const toggleMobileMenu = () => {
+  mobileMenuOpen.value = !mobileMenuOpen.value;
+};
 </script>
 
 <style scoped>
@@ -72,6 +91,36 @@ const { darkMode, toggleDarkMode } = useMoodly();
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
+  position: relative;
+}
+
+.nav-section {
+  display: none;
+  align-items: center;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.burger-menu {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  border-radius: 0.625rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.burger-menu:hover {
+  background: var(--hover-bg);
 }
 
 .logo {
@@ -98,6 +147,10 @@ const { darkMode, toggleDarkMode } = useMoodly();
   gap: 0.5rem;
   flex: 1;
   justify-content: center;
+}
+
+.logo-text {
+  display: inline;
 }
 
 .nav-link {
@@ -128,6 +181,55 @@ const { darkMode, toggleDarkMode } = useMoodly();
 }
 
 @media (min-width: 640px) {
+  .nav-link span {
+    display: inline;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-section {
+    display: flex;
+  }
+
+  .burger-menu {
+    display: flex;
+  }
+
+  .logo-text {
+    display: inline;
+  }
+
+  .logo-section {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: var(--nav-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    gap: 0;
+    justify-content: flex-start;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .nav-links.mobile-open {
+    padding: 1rem 1.5rem;
+    max-height: 300px;
+  }
+
+  .nav-link {
+    padding: 0.75rem 1rem;
+    border-radius: 0.625rem;
+  }
+
   .nav-link span {
     display: inline;
   }
