@@ -39,21 +39,21 @@
         class="checkbox-display-item"
         :class="{ checked: entry.checkboxes.healthyFood }"
       >
-        <Icon name="solar:salad-bold" size="16" />
+        <Icon name="solar:leaf-bold" size="16" />
         <span>Healthy Food</span>
       </div>
       <div
         class="checkbox-display-item"
         :class="{ checked: entry.checkboxes.gym }"
       >
-        <Icon name="solar:running-bold" size="16" />
+        <Icon name="solar:dumbbell-large-bold" size="16" />
         <span>Gym</span>
       </div>
       <div
         class="checkbox-display-item"
         :class="{ checked: entry.checkboxes.misc }"
       >
-        <Icon name="solar:check-circle-bold" size="16" />
+        <Icon name="solar:star-bold" size="16" />
         <span>Misc</span>
       </div>
     </div>
