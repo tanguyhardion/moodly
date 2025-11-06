@@ -11,6 +11,7 @@ const metrics = ref({
 
 const checkboxes = ref({
   healthyFood: false,
+  caffeine: false,
   gym: false,
   misc: false,
 });
@@ -33,7 +34,9 @@ const dateToString = (date: Date): string => {
 };
 
 // Computed property to check if entry exists for selected date
-const hasEntry = computed(() => hasEntryForDate(dateToString(selectedDate.value)));
+const hasEntry = computed(() =>
+  hasEntryForDate(dateToString(selectedDate.value)),
+);
 
 // Function to load entry for the selected date
 const loadEntry = () => {
@@ -44,6 +47,7 @@ const loadEntry = () => {
       ? { ...entry.checkboxes }
       : {
           healthyFood: false,
+          caffeine: false,
           gym: false,
           misc: false,
         };
@@ -58,6 +62,7 @@ const loadEntry = () => {
     };
     checkboxes.value = {
       healthyFood: false,
+      caffeine: false,
       gym: false,
       misc: false,
     };
@@ -136,8 +141,8 @@ const formatDateDisplay = (date: Date) => {
       </label>
       <div class="date-picker-wrapper">
         <ClientOnly>
-          <VDatePicker 
-            v-model="selectedDate" 
+          <VDatePicker
+            v-model="selectedDate"
             :max-date="maxDate"
             :masks="{ title: 'MMMM YYYY' }"
             mode="date"
@@ -178,6 +183,13 @@ const formatDateDisplay = (date: Date) => {
           <span class="checkbox-label">
             <Icon name="solar:leaf-bold" size="18" />
             Healthy Food
+          </span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" v-model="checkboxes.caffeine" />
+          <span class="checkbox-label">
+            <Icon name="solar:cup-hot-bold" size="18" />
+            Caffeine
           </span>
         </label>
         <label class="checkbox-item">
@@ -306,7 +318,11 @@ const formatDateDisplay = (date: Date) => {
   gap: 0.75rem;
   width: 100%;
   padding: 1rem 1.25rem;
-  background: linear-gradient(135deg, rgba(255, 107, 157, 0.1) 0%, rgba(255, 160, 107, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 157, 0.1) 0%,
+    rgba(255, 160, 107, 0.1) 100%
+  );
   border: 2px solid rgba(255, 107, 157, 0.2);
   border-radius: 0.75rem;
   color: var(--text-primary);
@@ -319,7 +335,11 @@ const formatDateDisplay = (date: Date) => {
 
 .date-button:hover {
   border-color: rgba(255, 107, 157, 0.4);
-  background: linear-gradient(135deg, rgba(255, 107, 157, 0.15) 0%, rgba(255, 160, 107, 0.15) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 157, 0.15) 0%,
+    rgba(255, 160, 107, 0.15) 100%
+  );
   transform: translateY(-1px);
 }
 
@@ -334,7 +354,11 @@ const formatDateDisplay = (date: Date) => {
   font-weight: 600;
   text-align: center;
   padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, rgba(255, 107, 157, 0.1) 0%, rgba(255, 160, 107, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 157, 0.1) 0%,
+    rgba(255, 160, 107, 0.1) 100%
+  );
   border-radius: 0.5rem;
   border: 1px solid rgba(255, 107, 157, 0.2);
 }

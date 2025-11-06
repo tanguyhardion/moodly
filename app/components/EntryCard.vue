@@ -44,6 +44,14 @@
       </div>
       <div
         class="checkbox-display-item"
+        :class="{ checked: entry.checkboxes.caffeine }"
+        v-if="entry.checkboxes.caffeine !== undefined"
+      >
+        <Icon name="solar:cup-hot-bold" size="16" />
+        <span>Caffeine</span>
+      </div>
+      <div
+        class="checkbox-display-item"
         :class="{ checked: entry.checkboxes.gym }"
       >
         <Icon name="solar:dumbbell-large-bold" size="16" />

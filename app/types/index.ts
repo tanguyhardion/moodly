@@ -16,6 +16,7 @@ export interface MoodEntry {
   };
   checkboxes?: {
     healthyFood: boolean;
+    caffeine: boolean;
     gym: boolean;
     misc: boolean;
   };

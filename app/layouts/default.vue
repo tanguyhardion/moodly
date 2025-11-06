@@ -8,7 +8,11 @@
             class="burger-menu"
             title="Toggle menu"
           >
-            <Icon v-if="!mobileMenuOpen" name="solar:hamburger-menu-bold" size="24" />
+            <Icon
+              v-if="!mobileMenuOpen"
+              name="solar:hamburger-menu-bold"
+              size="24"
+            />
             <Icon v-else name="solar:close-circle-bold" size="24" />
           </button>
         </div>
@@ -25,11 +29,19 @@
             <Icon name="solar:home-2-bold" size="20" />
             <span>Home</span>
           </NuxtLink>
-          <NuxtLink to="/history" class="nav-link" @click="mobileMenuOpen = false">
+          <NuxtLink
+            to="/history"
+            class="nav-link"
+            @click="mobileMenuOpen = false"
+          >
             <Icon name="solar:history-bold" size="20" />
             <span>History</span>
           </NuxtLink>
-          <NuxtLink to="/stats" class="nav-link" @click="mobileMenuOpen = false">
+          <NuxtLink
+            to="/stats"
+            class="nav-link"
+            @click="mobileMenuOpen = false"
+          >
             <Icon name="solar:chart-bold" size="20" />
             <span>Stats</span>
           </NuxtLink>

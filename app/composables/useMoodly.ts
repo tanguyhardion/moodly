@@ -258,13 +258,13 @@ export function useMoodly() {
     // Set column widths
     worksheet["!cols"] = [
       { wch: 12 }, // Date
-      { wch: 6 },  // Mood
-      { wch: 8 },  // Energy
-      { wch: 6 },  // Sleep
-      { wch: 6 },  // Focus
+      { wch: 6 }, // Mood
+      { wch: 8 }, // Energy
+      { wch: 6 }, // Sleep
+      { wch: 6 }, // Focus
       { wch: 14 }, // Healthy Food
-      { wch: 6 },  // Gym
-      { wch: 6 },  // Misc
+      { wch: 6 }, // Gym
+      { wch: 6 }, // Misc
       { wch: 30 }, // Note
       { wch: 22 }, // Created At
     ];
@@ -273,7 +273,10 @@ export function useMoodly() {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Moodly Data");
 
     // Generate buffer and create blob
-    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
     const dataBlob = new Blob([excelBuffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });

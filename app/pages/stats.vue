@@ -74,6 +74,23 @@
             </div>
           </div>
           <div class="checkin-stat">
+            <div class="checkin-icon caffeine">
+              <Icon name="solar:cup-hot-bold" size="24" />
+            </div>
+            <div class="checkin-info">
+              <span class="checkin-label">Caffeine</span>
+              <div class="checkin-progress-container">
+                <div
+                  class="checkin-progress-bar"
+                  :style="{ width: checkInRate.caffeine + '%' }"
+                ></div>
+              </div>
+              <span class="checkin-percentage"
+                >{{ checkInRate.caffeine }}%</span
+              >
+            </div>
+          </div>
+          <div class="checkin-stat">
             <div class="checkin-icon gym">
               <Icon name="solar:dumbbell-large-bold" size="24" />
             </div>
@@ -175,12 +192,15 @@ const getChartData = (metric: MetricType): ChartDataPoint[] => {
 
 const checkInRate = computed(() => {
   if (recentEntries.value.length === 0) {
-    return { healthyFood: 0, gym: 0, misc: 0 };
+    return { healthyFood: 0, caffeine: 0, gym: 0, misc: 0 };
   }
 
   const totalEntries = recentEntries.value.length;
   const healthyFoodCount = recentEntries.value.filter(
     (entry) => entry.checkboxes?.healthyFood,
+  ).length;
+  const caffeineCount = recentEntries.value.filter(
+    (entry) => entry.checkboxes?.caffeine,
   ).length;
   const gymCount = recentEntries.value.filter(
     (entry) => entry.checkboxes?.gym,
@@ -191,6 +211,7 @@ const checkInRate = computed(() => {
 
   return {
     healthyFood: Math.round((healthyFoodCount / totalEntries) * 100),
+    caffeine: Math.round((caffeineCount / totalEntries) * 100),
     gym: Math.round((gymCount / totalEntries) * 100),
     misc: Math.round((miscCount / totalEntries) * 100),
   };
@@ -447,6 +468,11 @@ const insights = computed(() => {
 
 .checkin-icon.healthy-food {
   background: linear-gradient(135deg, #34c759 0%, #30d158 100%);
+  color: white;
+}
+
+.checkin-icon.caffeine {
+  background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
   color: white;
 }
 
