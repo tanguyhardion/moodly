@@ -1,43 +1,71 @@
 /* ============================================
    MOODLY - Global Styles
-   Cozy, modern design with pastel gradients
+   Modern, elegant design with refined aesthetics
    ============================================ */
 
 /* ============================================
    CSS Variables - Light Mode
    ============================================ */
 :root {
-  /* Colors - Pastel Palette */
+  /* Colors - Enhanced Palette */
   --primary: #ff6b9d;
   --primary-light: #ffa6c9;
+  --primary-dark: #e94a7c;
   --secondary: #4ecdc4;
+  --secondary-light: #7eddd7;
   --accent: #ffc93c;
+  --accent-light: #ffd966;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
 
-  /* Background */
-  --bg-primary: #fff5f7;
-  --bg-secondary: #fff;
+  /* Background - Enhanced with gradients */
+  --bg-primary: linear-gradient(135deg, #fff5f7 0%, #fef8fa 100%);
+  --bg-secondary: #ffffff;
   --card-bg: #ffffff;
-  --nav-bg: rgba(255, 255, 255, 0.8);
-  --note-bg: #fff9f5;
+  --card-bg-hover: #fefefe;
+  --nav-bg: rgba(255, 255, 255, 0.85);
+  --note-bg: linear-gradient(135deg, #fff9f5 0%, #fffbf8 100%);
 
   /* Text */
-  --text-primary: #2d3748;
-  --text-secondary: #718096;
-  --text-tertiary: #a0aec0;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
+  --text-muted: #d1d5db;
 
   /* Borders & UI */
-  --border: #e2e8f0;
-  --hover-bg: #f7fafc;
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  --border-hover: #d1d5db;
+  --hover-bg: #f9fafb;
   --active-bg: #fff0f5;
+  --focus-ring: rgba(255, 107, 157, 0.2);
 
   /* Sliders & Controls */
-  --slider-track: #e2e8f0;
+  --slider-track: #e5e7eb;
   --marker-inactive: #cbd5e0;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  /* Shadows - Enhanced */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-colored: 0 10px 30px -5px rgba(255, 107, 157, 0.3);
+
+  /* Spacing System */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+
+  /* Border Radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
 
   /* Date picker icon filter */
   --calendar-icon-filter: none;
@@ -47,32 +75,50 @@
    CSS Variables - Dark Mode
    ============================================ */
 :root.dark {
-  /* Colors */
+  /* Colors - Enhanced Dark Palette */
   --primary: #ff8db5;
   --primary-light: #ffb3d1;
+  --primary-dark: #ff6b9d;
   --secondary: #6eddd5;
+  --secondary-light: #8ee6df;
   --accent: #ffd66b;
+  --accent-light: #ffe08a;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --error: #f87171;
 
-  /* Background */
-  --bg-primary: #1a202c;
-  --bg-secondary: #2d3748;
-  --card-bg: #2d3748;
-  --nav-bg: rgba(45, 55, 72, 0.8);
-  --note-bg: #374151;
+  /* Background - Enhanced gradients */
+  --bg-primary: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --bg-secondary: #1e293b;
+  --card-bg: #1e293b;
+  --card-bg-hover: #273548;
+  --nav-bg: rgba(30, 41, 59, 0.85);
+  --note-bg: linear-gradient(135deg, #334155 0%, #3d4a5c 100%);
 
   /* Text */
-  --text-primary: #f7fafc;
+  --text-primary: #f1f5f9;
   --text-secondary: #cbd5e0;
-  --text-tertiary: #a0aec0;
+  --text-tertiary: #94a3b8;
+  --text-muted: #64748b;
 
   /* Borders & UI */
-  --border: #4a5568;
-  --hover-bg: #374151;
+  --border: #334155;
+  --border-light: #475569;
+  --border-hover: #475569;
+  --hover-bg: #334155;
   --active-bg: #3d2937;
+  --focus-ring: rgba(255, 141, 181, 0.3);
 
   /* Sliders & Controls */
-  --slider-track: #4a5568;
-  --marker-inactive: #718096;
+  --slider-track: #334155;
+  --marker-inactive: #64748b;
+
+  /* Shadows - Enhanced for dark mode */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
+  --shadow-colored: 0 10px 30px -5px rgba(255, 141, 181, 0.4);
 
   /* Date picker icon filter */
   --calendar-icon-filter: invert(1);
@@ -103,6 +149,7 @@ body {
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
+  letter-spacing: -0.011em;
 }
 
 /* ============================================
@@ -116,18 +163,22 @@ h5,
 h6 {
   line-height: 1.2;
   font-weight: 700;
+  letter-spacing: -0.025em;
 }
 
 h1 {
   font-size: 2.5rem;
+  font-weight: 800;
 }
 
 h2 {
   font-size: 2rem;
+  font-weight: 700;
 }
 
 h3 {
   font-size: 1.5rem;
+  font-weight: 600;
 }
 
 /* ============================================

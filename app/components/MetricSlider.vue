@@ -65,16 +65,36 @@ const handleInput = (event: Event) => {
 
 <style scoped>
 .metric-slider {
-  padding: 1.5rem;
+  padding: 1.75rem;
   background: var(--card-bg);
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-slider::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, var(--slider-color) 50%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .metric-slider:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-hover);
+}
+
+.metric-slider:hover::before {
+  opacity: 0.5;
 }
 
 .metric-header {
@@ -88,10 +108,15 @@ const handleInput = (event: Event) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 0.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 0.625rem;
   position: relative;
+  transition: transform 0.3s ease;
+}
+
+.metric-slider:hover .metric-icon {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .metric-icon::before {
@@ -99,8 +124,13 @@ const handleInput = (event: Event) => {
   position: absolute;
   inset: 0;
   background: currentColor;
-  opacity: 0.15;
-  border-radius: 0.5rem;
+  opacity: 0.12;
+  border-radius: 0.625rem;
+  transition: opacity 0.3s ease;
+}
+
+.metric-slider:hover .metric-icon::before {
+  opacity: 0.18;
 }
 
 .metric-name {
@@ -112,20 +142,28 @@ const handleInput = (event: Event) => {
 
 .emoji-display {
   text-align: center;
-  margin: 1.5rem 0;
-  animation: fadeInScale 0.3s ease;
+  margin: 1.75rem 0;
+  animation: fadeInScale 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0.5rem;
 }
 
 .emoji {
-  font-size: 3rem;
+  font-size: 3.5rem;
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.625rem;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+  transition: transform 0.3s ease;
+}
+
+.metric-slider:hover .emoji {
+  transform: scale(1.05);
 }
 
 .label {
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   color: var(--text-secondary);
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .slider-container {
@@ -135,76 +173,89 @@ const handleInput = (event: Event) => {
 
 .slider {
   width: 100%;
-  height: 8px;
-  border-radius: 4px;
+  height: 10px;
+  border-radius: 5px;
   background: var(--slider-track);
   outline: none;
   -webkit-appearance: none;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: var(--slider-color);
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15), 0 0 0 3px rgba(255, 255, 255, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid white;
 }
 
 .slider::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: scale(1.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 0 0 4px rgba(255, 255, 255, 0.9);
+}
+
+.slider::-webkit-slider-thumb:active {
+  transform: scale(1.15);
 }
 
 .slider::-moz-range-thumb {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: var(--slider-color);
   cursor: pointer;
-  border: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
+  border: 2px solid white;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15), 0 0 0 3px rgba(255, 255, 255, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .slider::-moz-range-thumb:hover {
-  transform: scale(1.2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: scale(1.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 0 0 4px rgba(255, 255, 255, 0.9);
+}
+
+.slider::-moz-range-thumb:active {
+  transform: scale(1.15);
 }
 
 .slider-markers {
   display: flex;
   justify-content: space-between;
-  margin-top: 0.5rem;
-  padding: 0 4px;
+  margin-top: 0.625rem;
+  padding: 0 6px;
 }
 
 .marker {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: var(--marker-inactive);
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
 }
 
 .marker.active {
   background: var(--slider-color);
-  transform: scale(1.2);
+  transform: scale(1.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 @keyframes fadeInScale {
   from {
     opacity: 0;
-    transform: scale(0.8);
+    transform: scale(0.85) translateY(10px);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) translateY(0);
   }
 }
 </style>

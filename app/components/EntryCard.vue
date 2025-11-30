@@ -117,17 +117,37 @@ const formattedDate = computed(() => {
 
 <style scoped>
 .entry-card {
-  padding: 1.5rem;
+  padding: 1.75rem;
   background: var(--card-bg);
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.entry-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ff6b9d 0%, #ffa06b 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .entry-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-hover);
+}
+
+.entry-card:hover::before {
+  opacity: 1;
 }
 
 .entry-header {
@@ -151,14 +171,22 @@ const formattedDate = computed(() => {
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 0.375rem;
-  transition: all 0.2s ease;
+  padding: 0.375rem;
+  border-radius: var(--radius-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .delete-btn:hover {
-  color: #ff6b6b;
-  background: rgba(255, 107, 107, 0.1);
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  transform: scale(1.1);
+}
+
+.delete-btn:active {
+  transform: scale(0.95);
 }
 
 .metrics-grid {
@@ -187,17 +215,19 @@ const formattedDate = computed(() => {
 }
 
 .metric-bar {
-  height: 6px;
+  height: 8px;
   background: var(--slider-track);
-  border-radius: 3px;
+  border-radius: 4px;
   overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .metric-fill {
   height: 100%;
   background: var(--metric-color);
-  border-radius: 3px;
-  transition: width 0.5s ease;
+  border-radius: 4px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .checkboxes-display {
@@ -210,25 +240,28 @@ const formattedDate = computed(() => {
 .checkbox-display-item {
   display: flex;
   align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
   background: var(--slider-track);
-  border-radius: 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 500;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font-size: 0.8125rem;
+  font-weight: 600;
   color: var(--text-secondary);
   opacity: 0.5;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .checkbox-display-item.checked {
   background: linear-gradient(
     135deg,
-    rgba(255, 107, 157, 0.2) 0%,
-    rgba(255, 160, 107, 0.2) 100%
+    rgba(255, 107, 157, 0.15) 0%,
+    rgba(255, 160, 107, 0.15) 100%
   );
+  border-color: rgba(255, 107, 157, 0.3);
   color: var(--primary);
   opacity: 1;
+  transform: scale(1.02);
 }
 
 .checkbox-display-item.checked :deep(svg) {
@@ -237,18 +270,25 @@ const formattedDate = computed(() => {
 
 .entry-note {
   display: flex;
-  gap: 0.5rem;
-  padding: 0.75rem;
+  gap: 0.75rem;
+  padding: 1rem 1.125rem;
   background: var(--note-bg);
-  border-radius: 0.5rem;
-  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--primary);
+  border: 1px solid var(--border-light);
+  border-left: 4px solid var(--primary);
+  transition: all 0.3s ease;
+}
+
+.entry-note:hover {
+  box-shadow: var(--shadow-sm);
 }
 
 .entry-note p {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   color: var(--text-secondary);
-  line-height: 1.5;
+  line-height: 1.6;
   flex: 1;
 }
 </style>

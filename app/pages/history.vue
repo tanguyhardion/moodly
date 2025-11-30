@@ -151,26 +151,43 @@ const handleDelete = async (id: string) => {
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.875rem 2rem;
+  gap: 0.625rem;
+  padding: 1rem 2.5rem;
   border: none;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  font-size: 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 1.0625rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
+  letter-spacing: -0.01em;
+  position: relative;
+  overflow: hidden;
 }
 
 .btn-primary {
   background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
   color: white;
-  box-shadow: 0 4px 12px rgba(255, 107, 157, 0.3);
+  box-shadow: var(--shadow-colored);
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #e94a7c 0%, #ff8a52 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(255, 107, 157, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px -5px rgba(255, 107, 157, 0.4);
+}
+
+.btn-primary:hover::before {
+  opacity: 1;
 }
 
 .entries-list {

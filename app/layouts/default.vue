@@ -98,8 +98,10 @@ const handleAuthenticated = async () => {
   top: 0;
   z-index: 100;
   background: var(--nav-bg);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .nav-content {
@@ -147,14 +149,16 @@ const handleAuthenticated = async () => {
   align-items: center;
   gap: 0.5rem;
   text-decoration: none;
-  font-weight: 700;
-  font-size: 1.25rem;
+  font-weight: 800;
+  font-size: 1.35rem;
   color: var(--text-primary);
-  transition: transform 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: -0.02em;
 }
 
 .logo:hover {
   transform: scale(1.05);
+  color: var(--primary);
 }
 
 .logo-icon {
@@ -176,23 +180,44 @@ const handleAuthenticated = async () => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.625rem 1rem;
-  border-radius: 0.625rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius-md);
   text-decoration: none;
   color: var(--text-secondary);
   font-weight: 600;
   font-size: 0.875rem;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-md);
+  background: var(--hover-bg);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: -1;
+}
+
+.nav-link:hover::before {
+  opacity: 1;
 }
 
 .nav-link:hover {
-  background: var(--hover-bg);
   color: var(--text-primary);
+  transform: translateY(-1px);
 }
 
 .nav-link.router-link-active {
-  background: var(--active-bg);
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.15) 0%, rgba(255, 160, 107, 0.15) 100%);
   color: var(--primary);
+  box-shadow: 0 0 0 1px rgba(255, 107, 157, 0.2);
+}
+
+.nav-link.router-link-active::before {
+  display: none;
 }
 
 .nav-link span {
@@ -258,19 +283,25 @@ const handleAuthenticated = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border: none;
   background: var(--hover-bg);
   color: var(--text-primary);
-  border-radius: 0.625rem;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 0 1px var(--border-light);
 }
 
 .theme-toggle:hover {
   background: var(--active-bg);
-  transform: rotate(15deg);
+  transform: rotate(20deg) scale(1.05);
+  box-shadow: 0 4px 12px rgba(255, 107, 157, 0.2);
+}
+
+.theme-toggle:active {
+  transform: rotate(20deg) scale(0.95);
 }
 
 .main-content {
@@ -300,49 +331,53 @@ const handleAuthenticated = async () => {
 .shape {
   position: absolute;
   border-radius: 50%;
-  opacity: 0.3;
-  filter: blur(60px);
-  animation: float 20s ease-in-out infinite;
+  opacity: 0.25;
+  filter: blur(80px);
+  animation: float 25s ease-in-out infinite;
+  will-change: transform;
 }
 
 .shape-1 {
-  width: 400px;
-  height: 400px;
+  width: 450px;
+  height: 450px;
   background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
-  top: -200px;
-  left: -200px;
+  top: -225px;
+  left: -225px;
   animation-delay: 0s;
 }
 
 .shape-2 {
-  width: 500px;
-  height: 500px;
+  width: 550px;
+  height: 550px;
   background: linear-gradient(135deg, #a78bfa 0%, #4ecdc4 100%);
-  bottom: -250px;
-  right: -250px;
-  animation-delay: -10s;
+  bottom: -275px;
+  right: -275px;
+  animation-delay: -12s;
 }
 
 .shape-3 {
-  width: 300px;
-  height: 300px;
+  width: 350px;
+  height: 350px;
   background: linear-gradient(135deg, #ffc93c 0%, #ff6b9d 100%);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  animation-delay: -5s;
+  animation-delay: -6s;
 }
 
 @keyframes float {
   0%,
   100% {
-    transform: translate(0, 0) scale(1);
+    transform: translate(0, 0) scale(1) rotate(0deg);
   }
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
+  25% {
+    transform: translate(40px, -60px) scale(1.05) rotate(5deg);
   }
-  66% {
-    transform: translate(-20px, 30px) scale(0.9);
+  50% {
+    transform: translate(-30px, 40px) scale(0.95) rotate(-5deg);
+  }
+  75% {
+    transform: translate(20px, -30px) scale(1.02) rotate(3deg);
   }
 }
 

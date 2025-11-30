@@ -56,16 +56,36 @@ defineProps<Props>();
 
 <style scoped>
 .mini-chart {
-  padding: 1.5rem;
+  padding: 1.75rem;
   background: var(--card-bg);
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.mini-chart::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, currentColor 50%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .mini-chart:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-hover);
+}
+
+.mini-chart:hover::before {
+  opacity: 0.3;
 }
 
 .chart-header {
@@ -89,61 +109,82 @@ defineProps<Props>();
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 0.5rem;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
   font-size: 0.75rem;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.mini-chart:hover .chart-trend {
+  transform: scale(1.1);
 }
 
 .chart-trend.up {
-  background: rgba(76, 217, 100, 0.15);
-  color: #4cd964;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.15) 100%);
+  color: var(--success);
 }
 
 .chart-trend.down {
-  background: rgba(255, 107, 107, 0.15);
-  color: #ff6b6b;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.15) 100%);
+  color: var(--error);
 }
 
 .chart-trend.neutral {
-  background: rgba(158, 158, 158, 0.15);
-  color: #9e9e9e;
+  background: linear-gradient(135deg, rgba(107, 114, 128, 0.2) 0%, rgba(107, 114, 128, 0.15) 100%);
+  color: var(--text-tertiary);
 }
 
 .chart-value {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .value {
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: 2.25rem;
+  font-weight: 800;
   color: var(--text-primary);
+  letter-spacing: -0.025em;
 }
 
 .value-label {
-  font-size: 1rem;
+  font-size: 1.0625rem;
   color: var(--text-secondary);
   margin-left: 0.25rem;
+  font-weight: 500;
 }
 
 .chart-bars {
   display: flex;
   align-items: flex-end;
-  gap: 0.25rem;
-  height: 60px;
+  gap: 0.375rem;
+  height: 70px;
+  padding: 0.25rem;
 }
 
 .bar {
   flex: 1;
-  border-radius: 4px 4px 0 0;
-  transition: all 0.3s ease;
-  min-height: 2px;
-  opacity: 0.8;
+  border-radius: 6px 6px 0 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 3px;
+  opacity: 0.75;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
 }
 
 .bar:hover {
   opacity: 1;
-  transform: scaleY(1.1);
+  transform: scaleY(1.15) scaleX(1.1);
+  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1;
 }
 </style>

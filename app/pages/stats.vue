@@ -407,26 +407,31 @@ const insights = computed(() => {
 }
 
 .period-btn {
-  padding: 0.5rem 1rem;
+  padding: 0.625rem 1.25rem;
   border: 2px solid var(--border);
   background: var(--card-bg);
   color: var(--text-secondary);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-md);
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
 }
 
 .period-btn:hover {
   border-color: var(--primary);
   color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .period-btn.active {
   background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
   border-color: transparent;
   color: white;
+  box-shadow: var(--shadow-colored);
+  transform: translateY(-2px);
 }
 
 .empty-state {
@@ -454,26 +459,43 @@ const insights = computed(() => {
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.875rem 2rem;
+  gap: 0.625rem;
+  padding: 1rem 2.5rem;
   border: none;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  font-size: 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 1.0625rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
+  letter-spacing: -0.01em;
+  position: relative;
+  overflow: hidden;
 }
 
 .btn-primary {
   background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
   color: white;
-  box-shadow: 0 4px 12px rgba(255, 107, 157, 0.3);
+  box-shadow: var(--shadow-colored);
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #e94a7c 0%, #ff8a52 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(255, 107, 157, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px -5px rgba(255, 107, 157, 0.4);
+}
+
+.btn-primary:hover::before {
+  opacity: 1;
 }
 
 .charts-grid {
@@ -484,11 +506,18 @@ const insights = computed(() => {
 }
 
 .checkins-card {
-  padding: 1.5rem;
+  padding: 1.75rem;
   background: var(--card-bg);
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
   margin-bottom: 2rem;
+  transition: all 0.3s ease;
+}
+
+.checkins-card:hover {
+  box-shadow: var(--shadow-xl);
+  border-color: var(--border-hover);
 }
 
 .checkins-title {
@@ -509,25 +538,34 @@ const insights = computed(() => {
 .checkin-stat {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem;
+  gap: 1.25rem;
+  padding: 1.25rem;
   background: var(--note-bg);
-  border-radius: 0.75rem;
-  transition: transform 0.2s ease;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .checkin-stat:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-hover);
 }
 
 .checkin-icon {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
   flex-shrink: 0;
+  transition: transform 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.checkin-stat:hover .checkin-icon {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .checkin-icon.healthy-food {
@@ -592,10 +630,17 @@ const insights = computed(() => {
 }
 
 .insights-card {
-  padding: 1.5rem;
+  padding: 1.75rem;
   background: var(--card-bg);
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  transition: all 0.3s ease;
+}
+
+.insights-card:hover {
+  box-shadow: var(--shadow-xl);
+  border-color: var(--border-hover);
 }
 
 .insights-title {
@@ -616,10 +661,18 @@ const insights = computed(() => {
 .insight-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1rem;
+  gap: 1rem;
+  padding: 1.125rem 1.25rem;
   background: var(--note-bg);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.insight-item:hover {
+  transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--border-hover);
 }
 
 .insight-icon {
