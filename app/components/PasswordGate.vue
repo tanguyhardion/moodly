@@ -18,10 +18,14 @@
           @input="showError = false"
           autofocus
         />
-        <button type="submit" class="submit-btn" :disabled="!password || isValidating">
+        <button
+          type="submit"
+          class="submit-btn"
+          :disabled="!password || isValidating"
+        >
           <Icon v-if="!isValidating" name="solar:login-3-bold" size="20" />
           <Icon v-else name="svg-spinners:ring-resize" size="20" />
-          {{ isValidating ? 'Validating...' : 'Unlock' }}
+          {{ isValidating ? "Validating..." : "Unlock" }}
         </button>
       </form>
 
@@ -66,7 +70,7 @@ const handleSubmit = async () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ masterPassword: password.value }),
-      }
+      },
     );
 
     const data = await response.json();

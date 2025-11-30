@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <PasswordGate @authenticated="handleAuthenticated" />
-    
+
     <nav class="navbar">
       <div class="nav-content">
         <div class="nav-section">

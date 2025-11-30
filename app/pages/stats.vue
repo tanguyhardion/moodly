@@ -117,7 +117,9 @@
                   :style="{ width: checkInRate.hardWork + '%' }"
                 ></div>
               </div>
-              <span class="checkin-percentage">{{ checkInRate.hardWork }}%</span>
+              <span class="checkin-percentage"
+                >{{ checkInRate.hardWork }}%</span
+              >
             </div>
           </div>
           <div class="checkin-stat">

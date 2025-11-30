@@ -20,7 +20,7 @@ export class MoodlyBackendService {
 
   private async makeRequest<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
   ): Promise<T> {
     const masterPassword = getMasterPassword();
     if (!masterPassword) {
@@ -46,16 +46,13 @@ export class MoodlyBackendService {
 
   async verifyPassword(password: string): Promise<boolean> {
     try {
-      const response = await fetch(
-        `${this.backendUrl}/api/verify-password`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ masterPassword: password }),
-        }
-      );
+      const response = await fetch(`${this.backendUrl}/api/verify-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ masterPassword: password }),
+      });
 
       const data = await response.json();
       return data.success;
@@ -68,7 +65,7 @@ export class MoodlyBackendService {
   async getEntries(): Promise<MoodEntry[]> {
     const masterPassword = getMasterPassword();
     return this.makeRequest<MoodEntry[]>(
-      `get-entries?masterPassword=${encodeURIComponent(masterPassword!)}`
+      `get-entries?masterPassword=${encodeURIComponent(masterPassword!)}`,
     );
   }
 

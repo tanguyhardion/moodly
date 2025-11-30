@@ -1,5 +1,5 @@
 import type { MoodEntry, MetricType, MetricConfig } from "~/types";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import * as XLSX from "xlsx";
 import { moodlyBackendService } from "~/utils/moodly-backend";
 
@@ -100,13 +100,15 @@ export function useMoodly() {
       metrics,
       checkboxes,
       note,
-      createdAt: existingEntry ? existingEntry.createdAt : new Date().toISOString(),
+      createdAt: existingEntry
+        ? existingEntry.createdAt
+        : new Date().toISOString(),
     };
 
     try {
       isLoading.value = true;
       const savedEntry = await moodlyBackendService.saveEntry(entry);
-      
+
       if (existingIndex >= 0) {
         entries.value[existingIndex] = savedEntry;
       } else {
@@ -130,7 +132,7 @@ export function useMoodly() {
     try {
       isLoading.value = true;
       await moodlyBackendService.deleteEntry(id);
-      
+
       const index = entries.value.findIndex(
         (entry: MoodEntry) => entry.id === id,
       );
@@ -209,7 +211,7 @@ export function useMoodly() {
   onMounted(async () => {
     if (import.meta.client) {
       document.documentElement.classList.toggle("dark", darkMode.value);
-      
+
       // Check if authenticated before loading
       const masterPassword = sessionStorage.getItem("moodly-master-password");
       if (masterPassword && !isInitialized.value) {
