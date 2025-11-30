@@ -83,7 +83,10 @@ export function useMetrics() {
   };
 
   // Helper: Get entries for date range
-  const getEntriesInRange = (entries: MoodEntry[], days: number): MoodEntry[] => {
+  const getEntriesInRange = (
+    entries: MoodEntry[],
+    days: number,
+  ): MoodEntry[] => {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
     const startDateStr = startDate.toISOString().split("T")[0] || "";

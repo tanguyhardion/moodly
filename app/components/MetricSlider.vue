@@ -76,13 +76,18 @@ const handleInput = (event: Event) => {
 }
 
 .metric-slider::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, transparent 0%, var(--slider-color) 50%, transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--slider-color) 50%,
+    transparent 100%
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -191,14 +196,18 @@ const handleInput = (event: Event) => {
   border-radius: 50%;
   background: var(--slider-color);
   cursor: pointer;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15), 0 0 0 3px rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.15),
+    0 0 0 3px rgba(255, 255, 255, 0.8);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 2px solid white;
 }
 
 .slider::-webkit-slider-thumb:hover {
   transform: scale(1.25);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 0 0 4px rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.25),
+    0 0 0 4px rgba(255, 255, 255, 0.9);
 }
 
 .slider::-webkit-slider-thumb:active {
@@ -212,13 +221,17 @@ const handleInput = (event: Event) => {
   background: var(--slider-color);
   cursor: pointer;
   border: 2px solid white;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15), 0 0 0 3px rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.15),
+    0 0 0 3px rgba(255, 255, 255, 0.8);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .slider::-moz-range-thumb:hover {
   transform: scale(1.25);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 0 0 4px rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.25),
+    0 0 0 4px rgba(255, 255, 255, 0.9);
 }
 
 .slider::-moz-range-thumb:active {

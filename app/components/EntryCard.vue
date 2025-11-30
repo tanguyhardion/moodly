@@ -129,7 +129,7 @@ const formattedDate = computed(() => {
 }
 
 .entry-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;

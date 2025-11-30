@@ -2,167 +2,46 @@
   <div class="page stats-page">
     <LoadingState v-if="!isReady" message="Loading your statistics..." />
     <div v-else class="stats-content-wrapper">
-    <div class="page-header">
-      <h1 class="page-title">
-        <Icon name="solar:chart-bold" size="28" />
-        Statistics
-      </h1>
-      <p class="page-subtitle">
-        Your progress over the last {{ selectedDays }} days
-      </p>
-    </div>
-
-    <div class="period-selector">
-      <button
-        v-for="period in periods"
-        :key="period.days"
-        @click="selectedDays = period.days"
-        class="period-btn"
-        :class="{ active: selectedDays === period.days }"
-      >
-        {{ period.label }}
-      </button>
-    </div>
-
-    <div v-if="recentEntries.length === 0" class="empty-state">
-      <Icon name="solar:graph-new-bold" size="64" class="empty-icon" />
-      <h3>No data for this period</h3>
-      <p>Create more entries to see your statistics</p>
-      <NuxtLink to="/" class="btn btn-primary">
-        <Icon name="solar:add-circle-bold" size="20" />
-        Create Entry
-      </NuxtLink>
-    </div>
-
-    <div v-else class="stats-content">
-      <div class="charts-grid">
-        <MiniChart
-          v-for="config in metricConfigs"
-          :key="config.key"
-          :title="config.name"
-          :icon="config.icon"
-          :color="config.color"
-          :average="getMetricAverage(config.key, selectedDays)"
-          :trend="getMetricTrend(config.key, selectedDays)"
-          :chart-data="getChartData(config.key)"
-        />
+      <div class="page-header">
+        <h1 class="page-title">
+          <Icon name="solar:chart-bold" size="28" />
+          Statistics
+        </h1>
+        <p class="page-subtitle">
+          Your progress over the last {{ selectedDays }} days
+        </p>
       </div>
 
-      <div class="checkins-card">
-        <h3 class="checkins-title">
-          <Icon
-            name="solar:clipboard-check-bold"
-            size="22"
-            style="color: #ff6b9d"
+      <PeriodSelector v-model="selectedDays" :periods="periods" />
+
+      <div v-if="recentEntries.length === 0" class="empty-state">
+        <Icon name="solar:graph-new-bold" size="64" class="empty-icon" />
+        <h3>No data for this period</h3>
+        <p>Create more entries to see your statistics</p>
+        <NuxtLink to="/" class="btn btn-primary">
+          <Icon name="solar:add-circle-bold" size="20" />
+          Create Entry
+        </NuxtLink>
+      </div>
+
+      <div v-else class="stats-content">
+        <div class="charts-grid">
+          <MiniChart
+            v-for="config in metricConfigs"
+            :key="config.key"
+            :title="config.name"
+            :icon="config.icon"
+            :color="config.color"
+            :average="getMetricAverage(config.key, selectedDays)"
+            :trend="getMetricTrend(config.key, selectedDays)"
+            :chart-data="getChartData(config.key)"
           />
-          Daily Check-ins
-        </h3>
-        <div class="checkins-grid">
-          <div class="checkin-stat">
-            <div class="checkin-icon healthy-food">
-              <Icon name="solar:leaf-bold" size="24" />
-            </div>
-            <div class="checkin-info">
-              <span class="checkin-label">Healthy Food</span>
-              <div class="checkin-progress-container">
-                <div
-                  class="checkin-progress-bar"
-                  :style="{ width: checkInRate.healthyFood + '%' }"
-                ></div>
-              </div>
-              <span class="checkin-percentage"
-                >{{ checkInRate.healthyFood }}%</span
-              >
-            </div>
-          </div>
-          <div class="checkin-stat">
-            <div class="checkin-icon caffeine">
-              <Icon name="solar:cup-hot-bold" size="24" />
-            </div>
-            <div class="checkin-info">
-              <span class="checkin-label">Caffeine</span>
-              <div class="checkin-progress-container">
-                <div
-                  class="checkin-progress-bar"
-                  :style="{ width: checkInRate.caffeine + '%' }"
-                ></div>
-              </div>
-              <span class="checkin-percentage"
-                >{{ checkInRate.caffeine }}%</span
-              >
-            </div>
-          </div>
-          <div class="checkin-stat">
-            <div class="checkin-icon gym">
-              <Icon name="solar:dumbbell-large-bold" size="24" />
-            </div>
-            <div class="checkin-info">
-              <span class="checkin-label">Gym</span>
-              <div class="checkin-progress-container">
-                <div
-                  class="checkin-progress-bar"
-                  :style="{ width: checkInRate.gym + '%' }"
-                ></div>
-              </div>
-              <span class="checkin-percentage">{{ checkInRate.gym }}%</span>
-            </div>
-          </div>
-          <div class="checkin-stat">
-            <div class="checkin-icon hard-work">
-              <Icon name="solar:laptop-bold" size="24" />
-            </div>
-            <div class="checkin-info">
-              <span class="checkin-label">Hard Work</span>
-              <div class="checkin-progress-container">
-                <div
-                  class="checkin-progress-bar"
-                  :style="{ width: checkInRate.hardWork + '%' }"
-                ></div>
-              </div>
-              <span class="checkin-percentage"
-                >{{ checkInRate.hardWork }}%</span
-              >
-            </div>
-          </div>
-          <div class="checkin-stat">
-            <div class="checkin-icon misc">
-              <Icon name="solar:star-bold" size="24" />
-            </div>
-            <div class="checkin-info">
-              <span class="checkin-label">Misc</span>
-              <div class="checkin-progress-container">
-                <div
-                  class="checkin-progress-bar"
-                  :style="{ width: checkInRate.misc + '%' }"
-                ></div>
-              </div>
-              <span class="checkin-percentage">{{ checkInRate.misc }}%</span>
-            </div>
-          </div>
         </div>
-      </div>
 
-      <div class="insights-card">
-        <h3 class="insights-title">
-          <Icon
-            name="solar:lightbulb-bolt-bold"
-            size="22"
-            style="color: #ffd60a"
-          />
-          Insights
-        </h3>
-        <div class="insights-list">
-          <div
-            v-for="insight in insights"
-            :key="insight.text"
-            class="insight-item"
-          >
-            <Icon :name="insight.icon" size="24" class="insight-icon" />
-            <p class="insight-text">{{ insight.text }}</p>
-          </div>
-        </div>
+        <CheckinsStats :check-in-rate="checkInRate" />
+
+        <InsightsList :insights="insights" />
       </div>
-    </div>
     </div>
   </div>
 </template>
@@ -398,42 +277,6 @@ const insights = computed(() => {
   margin: 0;
 }
 
-.period-selector {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.period-btn {
-  padding: 0.625rem 1.25rem;
-  border: 2px solid var(--border);
-  background: var(--card-bg);
-  color: var(--text-secondary);
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: 0.9375rem;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: var(--shadow-sm);
-}
-
-.period-btn:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.period-btn.active {
-  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
-  border-color: transparent;
-  color: white;
-  box-shadow: var(--shadow-colored);
-  transform: translateY(-2px);
-}
-
 .empty-state {
   text-align: center;
   padding: 4rem 2rem;
@@ -480,7 +323,7 @@ const insights = computed(() => {
 }
 
 .btn-primary::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg, #e94a7c 0%, #ff8a52 100%);
@@ -503,186 +346,5 @@ const insights = computed(() => {
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1rem;
   margin-bottom: 2rem;
-}
-
-.checkins-card {
-  padding: 1.75rem;
-  background: var(--card-bg);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-lg);
-  margin-bottom: 2rem;
-  transition: all 0.3s ease;
-}
-
-.checkins-card:hover {
-  box-shadow: var(--shadow-xl);
-  border-color: var(--border-hover);
-}
-
-.checkins-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 1.5rem;
-}
-
-.checkins-grid {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.checkin-stat {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  padding: 1.25rem;
-  background: var(--note-bg);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-light);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.checkin-stat:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--border-hover);
-}
-
-.checkin-icon {
-  width: 52px;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-md);
-  flex-shrink: 0;
-  transition: transform 0.3s ease;
-  box-shadow: var(--shadow-sm);
-}
-
-.checkin-stat:hover .checkin-icon {
-  transform: scale(1.1) rotate(5deg);
-}
-
-.checkin-icon.healthy-food {
-  background: linear-gradient(135deg, #34c759 0%, #30d158 100%);
-  color: white;
-}
-
-.checkin-icon.caffeine {
-  background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
-  color: white;
-}
-
-.checkin-icon.gym {
-  background: linear-gradient(135deg, #ff453a 0%, #ff6b6b 100%);
-  color: white;
-}
-
-.checkin-icon.hard-work {
-  background: linear-gradient(135deg, #007aff 0%, #5ac8fa 100%);
-  color: white;
-}
-
-.checkin-icon.misc {
-  background: linear-gradient(135deg, #ffd60a 0%, #ffcc00 100%);
-  color: white;
-}
-
-.checkin-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.checkin-label {
-  display: block;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
-}
-
-.checkin-progress-container {
-  width: 100%;
-  height: 8px;
-  background: var(--border);
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 0.5rem;
-}
-
-.checkin-progress-bar {
-  height: 100%;
-  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
-  border-radius: 4px;
-  transition: width 0.6s ease;
-}
-
-.checkin-percentage {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.insights-card {
-  padding: 1.75rem;
-  background: var(--card-bg);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-lg);
-  transition: all 0.3s ease;
-}
-
-.insights-card:hover {
-  box-shadow: var(--shadow-xl);
-  border-color: var(--border-hover);
-}
-
-.insights-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 1rem;
-}
-
-.insights-list {
-  display: grid;
-  gap: 1rem;
-}
-
-.insight-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.125rem 1.25rem;
-  background: var(--note-bg);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-light);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.insight-item:hover {
-  transform: translateX(4px);
-  box-shadow: var(--shadow-sm);
-  border-color: var(--border-hover);
-}
-
-.insight-icon {
-  color: var(--primary);
-  flex-shrink: 0;
-}
-
-.insight-text {
-  margin: 0;
-  color: var(--text-secondary);
-  line-height: 1.6;
 }
 </style>

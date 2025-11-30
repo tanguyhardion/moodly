@@ -1,0 +1,248 @@
+<script setup lang="ts">
+import { VueDatePicker } from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
+
+const props = defineProps<{
+  modelValue: Date;
+  maxDate: Date;
+  darkMode: boolean;
+}>();
+
+defineEmits<{
+  (e: "update:modelValue", value: Date): void;
+}>();
+
+// Format date for display
+const formatDateDisplay = (date: Date) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  const entryDate = new Date(date);
+  entryDate.setHours(0, 0, 0, 0);
+
+  if (entryDate.getTime() === today.getTime()) {
+    return "Today";
+  } else if (entryDate.getTime() === yesterday.getTime()) {
+    return "Yesterday";
+  } else {
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
+};
+</script>
+
+<template>
+  <div class="date-selector">
+    <label class="date-label">
+      <Icon name="solar:calendar-bold" size="18" />
+      Select Date
+    </label>
+    <div class="date-picker-wrapper">
+      <ClientOnly>
+        <VueDatePicker
+          :model-value="modelValue"
+          @update:model-value="$emit('update:modelValue', $event)"
+          :max-date="maxDate"
+          :dark="darkMode"
+          :enable-time-picker="false"
+          auto-apply
+          :clearable="false"
+        >
+          <template #trigger>
+            <button class="date-button">
+              <Icon name="solar:calendar-bold" size="20" class="button-icon" />
+              <span class="button-text">{{
+                formatDateDisplay(modelValue)
+              }}</span>
+            </button>
+          </template>
+        </VueDatePicker>
+      </ClientOnly>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.date-selector {
+  margin-bottom: 2rem;
+  padding: 1.75rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+.date-selector:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-hover);
+}
+
+.date-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.date-picker-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
+}
+
+.date-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 1.125rem 1.5rem;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 157, 0.08) 0%,
+    rgba(255, 160, 107, 0.08) 100%
+  );
+  border: 2px solid rgba(255, 107, 157, 0.2);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 0 0 rgba(255, 107, 157, 0);
+}
+
+.button-icon {
+  flex-shrink: 0;
+}
+
+.button-text {
+  flex: 1;
+  text-align: center;
+  margin-right: 20px;
+}
+
+.date-button:hover {
+  border-color: rgba(255, 107, 157, 0.4);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 157, 0.12) 0%,
+    rgba(255, 160, 107, 0.12) 100%
+  );
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 157, 0.2);
+}
+
+.date-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(255, 107, 157, 0.15);
+}
+
+/* Custom vue-datepicker styling */
+:deep(.dp__theme_light),
+:deep(.dp__theme_dark) {
+  --dp-background-color: var(--card-bg);
+  --dp-text-color: var(--text-primary);
+  --dp-hover-color: var(--hover-bg);
+  --dp-hover-text-color: var(--text-primary);
+  --dp-hover-icon-color: var(--text-primary);
+  --dp-primary-color: #ff6b9d;
+  --dp-primary-text-color: #fff;
+  --dp-secondary-color: var(--text-secondary);
+  --dp-border-color: var(--border);
+  --dp-menu-border-color: var(--border);
+  --dp-border-color-hover: var(--primary);
+  --dp-disabled-color: var(--text-tertiary);
+  --dp-scroll-bar-background: var(--hover-bg);
+  --dp-scroll-bar-color: var(--text-secondary);
+  --dp-success-color: #4cd964;
+  --dp-success-color-disabled: #a5d4a7;
+  --dp-icon-color: var(--text-primary);
+  --dp-danger-color: #f44336;
+  --dp-highlight-color: rgba(255, 107, 157, 0.1);
+}
+
+:deep(.dp__menu) {
+  border: 2px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  font-family: inherit;
+}
+
+:deep(.dp__calendar_header_item) {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+:deep(.dp__calendar_item) {
+  border-radius: 0.5rem;
+}
+
+:deep(.dp__today) {
+  border: 2px solid var(--primary);
+  font-weight: 700;
+}
+
+:deep(.dp__cell_inner) {
+  border-radius: 0.5rem;
+}
+
+:deep(.dp__active_date) {
+  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+}
+
+:deep(.dp__month_year_select) {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+:deep(.dp__month_year_select:hover) {
+  background: var(--hover-bg);
+  color: var(--text-primary);
+}
+
+:deep(.dp__arrow_top),
+:deep(.dp__arrow_bottom) {
+  color: var(--text-primary);
+}
+
+:deep(.dp__overlay) {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+}
+
+:deep(.dp__overlay_cell) {
+  border-radius: 0.5rem;
+  color: var(--text-primary);
+}
+
+:deep(.dp__overlay_cell:hover) {
+  background: var(--hover-bg);
+}
+
+:deep(.dp__overlay_cell_active) {
+  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+  color: white;
+}
+
+:deep(.dp__button) {
+  background: transparent;
+  color: var(--text-primary);
+}
+
+:deep(.dp__button:hover) {
+  background: var(--hover-bg);
+}
+</style>

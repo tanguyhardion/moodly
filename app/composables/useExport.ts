@@ -2,7 +2,10 @@ import type { MoodEntry, MetricConfig } from "~/types";
 import * as XLSX from "xlsx";
 import { downloadFile, getCurrentDateString } from "~/utils/helpers";
 
-export function useExport(entries: Ref<MoodEntry[]>, metricConfigs: MetricConfig[]) {
+export function useExport(
+  entries: Ref<MoodEntry[]>,
+  metricConfigs: MetricConfig[],
+) {
   const exportToJSON = () => {
     const dataStr = JSON.stringify(entries.value, null, 2);
     const dataBlob = new Blob([dataStr], { type: "application/json" });

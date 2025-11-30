@@ -2,40 +2,40 @@
   <div class="page history-page">
     <LoadingState v-if="!isReady" message="Loading your history..." />
     <div v-else class="history-content">
-    <div class="page-header">
-      <ExportButton v-if="entries.length > 0" class="export-btn-wrapper" />
-      <h1 class="page-title">
-        <Icon name="solar:history-bold" size="28" />
-        Your Journey
-      </h1>
-      <p class="page-subtitle">
-        {{ entries.length }}
-        {{ entries.length === 1 ? "entry" : "entries" }} recorded
-      </p>
-    </div>
+      <div class="page-header">
+        <ExportButton v-if="entries.length > 0" class="export-btn-wrapper" />
+        <h1 class="page-title">
+          <Icon name="solar:history-bold" size="28" />
+          Your Journey
+        </h1>
+        <p class="page-subtitle">
+          {{ entries.length }}
+          {{ entries.length === 1 ? "entry" : "entries" }} recorded
+        </p>
+      </div>
 
-    <div v-if="entries.length === 0" class="empty-state">
-      <Icon name="solar:document-add-bold" size="64" class="empty-icon" />
-      <h3>No entries yet</h3>
-      <p>Start your journey by creating your first check-in</p>
-      <NuxtLink to="/" class="btn btn-primary">
-        <Icon name="solar:add-circle-bold" size="20" />
-        Create Entry
-      </NuxtLink>
-    </div>
+      <div v-if="entries.length === 0" class="empty-state">
+        <Icon name="solar:document-add-bold" size="64" class="empty-icon" />
+        <h3>No entries yet</h3>
+        <p>Start your journey by creating your first check-in</p>
+        <NuxtLink to="/" class="btn btn-primary">
+          <Icon name="solar:add-circle-bold" size="20" />
+          Create Entry
+        </NuxtLink>
+      </div>
 
-    <div v-else class="entries-list">
-      <TransitionGroup name="list">
-        <EntryCard
-          v-for="entry in sortedEntries"
-          :key="entry.id"
-          :entry="entry"
-          :metric-configs="metricConfigs"
-          :show-delete="true"
-          @delete="handleDelete(entry.id)"
-        />
-      </TransitionGroup>
-    </div>
+      <div v-else class="entries-list">
+        <TransitionGroup name="list">
+          <EntryCard
+            v-for="entry in sortedEntries"
+            :key="entry.id"
+            :entry="entry"
+            :metric-configs="metricConfigs"
+            :show-delete="true"
+            @delete="handleDelete(entry.id)"
+          />
+        </TransitionGroup>
+      </div>
     </div>
   </div>
 </template>
@@ -172,7 +172,7 @@ const handleDelete = async (id: string) => {
 }
 
 .btn-primary::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg, #e94a7c 0%, #ff8a52 100%);

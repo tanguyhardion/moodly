@@ -67,13 +67,18 @@ defineProps<Props>();
 }
 
 .mini-chart::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent 0%, currentColor 50%, transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    currentColor 50%,
+    transparent 100%
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -123,17 +128,29 @@ defineProps<Props>();
 }
 
 .chart-trend.up {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.15) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.2) 0%,
+    rgba(16, 185, 129, 0.15) 100%
+  );
   color: var(--success);
 }
 
 .chart-trend.down {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.15) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(239, 68, 68, 0.2) 0%,
+    rgba(239, 68, 68, 0.15) 100%
+  );
   color: var(--error);
 }
 
 .chart-trend.neutral {
-  background: linear-gradient(135deg, rgba(107, 114, 128, 0.2) 0%, rgba(107, 114, 128, 0.15) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(107, 114, 128, 0.2) 0%,
+    rgba(107, 114, 128, 0.15) 100%
+  );
   color: var(--text-tertiary);
 }
 
@@ -174,11 +191,15 @@ defineProps<Props>();
 }
 
 .bar::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: 6px 6px 0 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    transparent 100%
+  );
 }
 
 .bar:hover {

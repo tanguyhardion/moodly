@@ -21,7 +21,13 @@
 
         <div class="logo-section">
           <NuxtLink to="/" class="logo" @click="mobileMenuOpen = false">
-            <img src="/favicon.ico" alt="Moodly" class="logo-icon" width="28" height="28" />
+            <img
+              src="/favicon.ico"
+              alt="Moodly"
+              class="logo-icon"
+              width="28"
+              height="28"
+            />
             <span class="logo-text">Moodly</span>
           </NuxtLink>
         </div>
@@ -191,7 +197,7 @@ const handleAuthenticated = async () => {
 }
 
 .nav-link::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: var(--radius-md);
@@ -211,7 +217,11 @@ const handleAuthenticated = async () => {
 }
 
 .nav-link.router-link-active {
-  background: linear-gradient(135deg, rgba(255, 107, 157, 0.15) 0%, rgba(255, 160, 107, 0.15) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 157, 0.15) 0%,
+    rgba(255, 160, 107, 0.15) 100%
+  );
   color: var(--primary);
   box-shadow: 0 0 0 1px rgba(255, 107, 157, 0.2);
 }

@@ -18,9 +18,7 @@ export default defineNuxtConfig({
             "Track your daily mood, energy, sleep, and focus with beautiful visualizations",
         },
       ],
-      link: [
-        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
-      ],
+      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
     },
   },
 

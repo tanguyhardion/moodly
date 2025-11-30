@@ -13,18 +13,29 @@ export function useMoodly() {
   const entriesManager = useEntries();
   const metricsManager = useMetrics();
   const darkModeManager = useDarkMode();
-  const exportManager = useExport(entriesManager.entries, metricsManager.metricConfigs);
+  const exportManager = useExport(
+    entriesManager.entries,
+    metricsManager.metricConfigs,
+  );
 
   // Wrapper functions for metric calculations that need entries
   const getMetricAverage = (metric: MetricType, days: number = 7): number => {
-    return metricsManager.getMetricAverage(entriesManager.entries.value, metric, days);
+    return metricsManager.getMetricAverage(
+      entriesManager.entries.value,
+      metric,
+      days,
+    );
   };
 
   const getMetricTrend = (
     metric: MetricType,
     days: number = 7,
   ): "up" | "down" | "neutral" => {
-    return metricsManager.getMetricTrend(entriesManager.entries.value, metric, days);
+    return metricsManager.getMetricTrend(
+      entriesManager.entries.value,
+      metric,
+      days,
+    );
   };
 
   return {
