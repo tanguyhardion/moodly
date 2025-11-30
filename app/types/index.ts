@@ -18,10 +18,11 @@ export interface MoodEntry {
     healthyFood: boolean;
     caffeine: boolean;
     gym: boolean;
+    hardWork: boolean;
     misc: boolean;
   };
   note?: string;
-  createdAt: number; // timestamp
+  createdAt: string; // ISO 8601 timestamp with timezone
 }
 
 export interface MetricConfig {

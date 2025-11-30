@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { VueDatePicker } from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
+
 const { metricConfigs, saveEntry, getEntryByDate, hasEntryForDate, darkMode } =
   useMoodly();
 
@@ -13,6 +16,7 @@ const checkboxes = ref({
   healthyFood: false,
   caffeine: false,
   gym: false,
+  hardWork: false,
   misc: false,
 });
 
@@ -24,9 +28,6 @@ const selectedDate = ref<Date>(new Date());
 
 // Max date is today
 const maxDate = new Date();
-
-// Show/hide date picker popover
-const showDatePicker = ref(false);
 
 // Convert date to string format
 const dateToString = (date: Date): string => {
@@ -49,6 +50,7 @@ const loadEntry = () => {
           healthyFood: false,
           caffeine: false,
           gym: false,
+          hardWork: false,
           misc: false,
         };
     note.value = entry.note || "";
@@ -64,6 +66,7 @@ const loadEntry = () => {
       healthyFood: false,
       caffeine: false,
       gym: false,
+      hardWork: false,
       misc: false,
     };
     note.value = "";
@@ -80,17 +83,22 @@ onMounted(() => {
   loadEntry();
 });
 
-const handleSave = () => {
-  saveEntry(
-    metrics.value,
-    checkboxes.value,
-    note.value || undefined,
-    dateToString(selectedDate.value),
-  );
-  showToast.value = true;
-  setTimeout(() => {
-    showToast.value = false;
-  }, 3000);
+const handleSave = async () => {
+  try {
+    await saveEntry(
+      metrics.value,
+      checkboxes.value,
+      note.value || undefined,
+      dateToString(selectedDate.value),
+    );
+    showToast.value = true;
+    setTimeout(() => {
+      showToast.value = false;
+    }, 3000);
+  } catch (error) {
+    console.error("Failed to save entry:", error);
+    alert("Failed to save entry. Please try again.");
+  }
 };
 
 // Format date for display
@@ -141,24 +149,22 @@ const formatDateDisplay = (date: Date) => {
       </label>
       <div class="date-picker-wrapper">
         <ClientOnly>
-          <VDatePicker
+          <VueDatePicker
             v-model="selectedDate"
             :max-date="maxDate"
-            :masks="{ title: 'MMMM YYYY' }"
-            mode="date"
-            color="pink"
-            :is-dark="darkMode"
-            trim-weeks
-            is-inline
+            :dark="darkMode"
+            :enable-time-picker="false"
+            auto-apply
+            :clearable="false"
           >
-            <template #default="{ togglePopover }">
-              <button @click="togglePopover" class="date-button">
+            <template #trigger>
+              <button class="date-button">
                 <Icon name="solar:calendar-bold" size="20" />
                 <span>{{ formatDateDisplay(selectedDate) }}</span>
                 <Icon name="solar:alt-arrow-down-bold" size="16" />
               </button>
             </template>
-          </VDatePicker>
+          </VueDatePicker>
         </ClientOnly>
       </div>
     </div>
@@ -197,6 +203,13 @@ const formatDateDisplay = (date: Date) => {
           <span class="checkbox-label">
             <Icon name="solar:dumbbell-large-bold" size="18" />
             Gym
+          </span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" v-model="checkboxes.hardWork" />
+          <span class="checkbox-label">
+            <Icon name="solar:laptop-bold" size="18" />
+            Hard Work
           </span>
         </label>
         <label class="checkbox-item">
@@ -497,8 +510,7 @@ const formatDateDisplay = (date: Date) => {
 .toast {
   position: fixed;
   bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 2rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -519,192 +531,103 @@ const formatDateDisplay = (date: Date) => {
 .toast-enter-from,
 .toast-leave-to {
   opacity: 0;
-  transform: translateX(-50%) translateY(1rem);
+  transform: translateY(1rem);
 }
 
-/* Custom v-calendar styling */
-:deep(.vc-container) {
-  width: 100%;
-  max-width: 320px;
-  border: none !important;
-  background: var(--card-bg) !important;
+/* Custom vue-datepicker styling */
+:deep(.dp__theme_light),
+:deep(.dp__theme_dark) {
+  --dp-background-color: var(--card-bg);
+  --dp-text-color: var(--text-primary);
+  --dp-hover-color: var(--hover-bg);
+  --dp-hover-text-color: var(--text-primary);
+  --dp-hover-icon-color: var(--text-primary);
+  --dp-primary-color: #ff6b9d;
+  --dp-primary-text-color: #fff;
+  --dp-secondary-color: var(--text-secondary);
+  --dp-border-color: var(--border);
+  --dp-menu-border-color: var(--border);
+  --dp-border-color-hover: var(--primary);
+  --dp-disabled-color: var(--text-tertiary);
+  --dp-scroll-bar-background: var(--hover-bg);
+  --dp-scroll-bar-color: var(--text-secondary);
+  --dp-success-color: #4cd964;
+  --dp-success-color-disabled: #a5d4a7;
+  --dp-icon-color: var(--text-primary);
+  --dp-danger-color: #f44336;
+  --dp-highlight-color: rgba(255, 107, 157, 0.1);
+}
+
+:deep(.dp__menu) {
+  border: 2px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   font-family: inherit;
 }
 
-:deep(.vc-pane) {
-  background: var(--card-bg) !important;
-}
-
-/* Popover container */
-:deep(.vc-popover-content-wrapper) {
-  background: var(--card-bg) !important;
-  border: 2px solid var(--border) !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
-  border-radius: 0.75rem !important;
-}
-
-:deep(.vc-header) {
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 1rem;
-}
-
-:deep(.vc-title) {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-primary) !important;
-}
-
-:deep(.vc-title-wrapper) {
-  color: var(--text-primary) !important;
-  background: transparent !important;
-}
-
-:deep(.vc-title-wrapper button) {
-  color: var(--text-primary) !important;
-  background: transparent !important;
-}
-
-:deep(.vc-title-wrapper button:hover) {
-  background: var(--hover-bg) !important;
-}
-
-:deep(.vc-arrows-container) {
-  padding: 0.25rem;
-}
-
-:deep(.vc-arrow) {
-  background: transparent;
-  border-radius: 0.375rem;
-  color: var(--text-primary) !important;
-  transition: all 0.2s ease;
-}
-
-:deep(.vc-arrow:hover) {
-  background: var(--hover-bg) !important;
-}
-
-:deep(.vc-weeks) {
-  padding: 0;
-}
-
-:deep(.vc-weekday) {
-  color: var(--text-secondary) !important;
+:deep(.dp__calendar_header_item) {
+  color: var(--text-secondary);
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.5rem 0;
 }
 
-:deep(.vc-day) {
-  padding: 0.25rem;
-}
-
-:deep(.vc-day-content) {
-  width: 2.25rem;
-  height: 2.25rem;
-  font-size: 0.875rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-  color: var(--text-primary) !important;
-}
-
-:deep(.vc-day-content:hover) {
-  background: var(--hover-bg) !important;
-}
-
-:deep(.vc-day-content.is-disabled) {
-  color: var(--text-tertiary) !important;
-  opacity: 0.5;
-}
-
-:deep(.vc-highlight) {
-  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%) !important;
+:deep(.dp__calendar_item) {
   border-radius: 0.5rem;
 }
 
-:deep(.vc-highlight-base-start),
-:deep(.vc-highlight-base-end) {
-  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%) !important;
-}
-
-:deep(.vc-day.is-today .vc-day-content) {
+:deep(.dp__today) {
   border: 2px solid var(--primary);
   font-weight: 700;
 }
 
-:deep(.vc-day.is-today .vc-day-content:not(.vc-highlight-content-solid)) {
-  background: transparent;
-}
-
-/* Month/Year Picker Popover - Critical for theme consistency */
-
-:deep(.vc-popover-content) {
-  background: var(--card-bg) !important;
-  color: var(--text-primary) !important;
-}
-
-:deep(.vc-popover-caret) {
-  background: var(--card-bg) !important;
-  border-color: var(--border) !important;
-}
-
-/* Month/Year selection grid */
-:deep(.vc-nav-container) {
-  background: var(--card-bg) !important;
-}
-
-:deep(.vc-nav-header) {
-  background: var(--card-bg) !important;
-  border-bottom: 1px solid var(--border) !important;
-}
-
-:deep(.vc-nav-title) {
-  color: var(--text-primary) !important;
-  background: transparent !important;
-}
-
-/* Year selector button in the nav header */
-:deep(.vc-nav-title button) {
-  color: var(--text-primary) !important;
-  background: transparent !important;
-}
-
-:deep(.vc-nav-title button:hover) {
-  background: var(--hover-bg) !important;
-}
-
-:deep(.vc-nav-arrow) {
-  color: var(--text-primary) !important;
-  background: transparent !important;
-  border-radius: 0.375rem;
-}
-
-:deep(.vc-nav-arrow:hover) {
-  background: var(--hover-bg) !important;
-}
-
-:deep(.vc-nav-items) {
-  background: var(--card-bg) !important;
-}
-
-:deep(.vc-nav-item) {
-  color: var(--text-primary) !important;
-  background: transparent !important;
+:deep(.dp__cell_inner) {
   border-radius: 0.5rem;
-  transition: all 0.2s ease;
 }
 
-:deep(.vc-nav-item:hover) {
-  background: var(--hover-bg) !important;
+:deep(.dp__active_date) {
+  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
 }
 
-:deep(.vc-nav-item.is-active) {
-  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%) !important;
-  color: white !important;
+:deep(.dp__month_year_select) {
   font-weight: 600;
+  color: var(--text-primary);
 }
 
-:deep(.vc-nav-item.is-current) {
-  color: var(--primary) !important;
-  font-weight: 600;
+:deep(.dp__month_year_select:hover) {
+  background: var(--hover-bg);
+  color: var(--text-primary);
+}
+
+:deep(.dp__arrow_top),
+:deep(.dp__arrow_bottom) {
+  color: var(--text-primary);
+}
+
+:deep(.dp__overlay) {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+}
+
+:deep(.dp__overlay_cell) {
+  border-radius: 0.5rem;
+  color: var(--text-primary);
+}
+
+:deep(.dp__overlay_cell:hover) {
+  background: var(--hover-bg);
+}
+
+:deep(.dp__overlay_cell_active) {
+  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+  color: white;
+}
+
+:deep(.dp__button) {
+  background: transparent;
+  color: var(--text-primary);
+}
+
+:deep(.dp__button:hover) {
+  background: var(--hover-bg);
 }
 </style>

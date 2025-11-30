@@ -44,9 +44,14 @@ const sortedEntries = computed(() => {
   return [...entries.value].sort((a, b) => b.date.localeCompare(a.date));
 });
 
-const handleDelete = (id: string) => {
+const handleDelete = async (id: string) => {
   if (confirm("Are you sure you want to delete this entry?")) {
-    deleteEntry(id);
+    try {
+      await deleteEntry(id);
+    } catch (error) {
+      console.error("Failed to delete entry:", error);
+      alert("Failed to delete entry. Please try again.");
+    }
   }
 };
 </script>

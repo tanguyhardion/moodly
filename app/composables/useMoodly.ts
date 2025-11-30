@@ -1,9 +1,13 @@
 import type { MoodEntry, MetricType, MetricConfig } from "~/types";
+import { v4 as uuidv4 } from 'uuid';
 import * as XLSX from "xlsx";
+import { moodlyBackendService } from "~/utils/moodly-backend";
 
 export function useMoodly() {
-  const entries = useLocalStorage<MoodEntry[]>("moodly-entries", []);
+  const entries = ref<MoodEntry[]>([]);
   const darkMode = useLocalStorage<boolean>("moodly-dark-mode", false);
+  const isLoading = ref(false);
+  const isInitialized = ref(false);
 
   const metricConfigs: MetricConfig[] = [
     {
@@ -61,8 +65,23 @@ export function useMoodly() {
     return getEntryByDate(date) !== undefined;
   };
 
+  // Load entries from database
+  const loadEntries = async () => {
+    try {
+      isLoading.value = true;
+      const data = await moodlyBackendService.getEntries();
+      entries.value = data;
+      isInitialized.value = true;
+    } catch (error) {
+      console.error("Failed to load entries:", error);
+      isInitialized.value = true;
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   // Save or update entry
-  const saveEntry = (
+  const saveEntry = async (
     metrics: MoodEntry["metrics"],
     checkboxes?: MoodEntry["checkboxes"],
     note?: string,
@@ -81,28 +100,48 @@ export function useMoodly() {
       metrics,
       checkboxes,
       note,
-      createdAt: existingEntry ? existingEntry.createdAt : Date.now(),
+      createdAt: existingEntry ? existingEntry.createdAt : new Date().toISOString(),
     };
 
-    if (existingIndex >= 0) {
-      entries.value[existingIndex] = entry;
-    } else {
-      entries.value.push(entry);
-    }
+    try {
+      isLoading.value = true;
+      const savedEntry = await moodlyBackendService.saveEntry(entry);
+      
+      if (existingIndex >= 0) {
+        entries.value[existingIndex] = savedEntry;
+      } else {
+        entries.value.push(savedEntry);
+      }
 
-    // Sort by date descending
-    entries.value.sort((a: MoodEntry, b: MoodEntry) =>
-      b.date.localeCompare(a.date),
-    );
+      // Sort by date descending
+      entries.value.sort((a: MoodEntry, b: MoodEntry) =>
+        b.date.localeCompare(a.date),
+      );
+    } catch (error) {
+      console.error("Failed to save entry:", error);
+      throw error;
+    } finally {
+      isLoading.value = false;
+    }
   };
 
   // Delete entry
-  const deleteEntry = (id: string) => {
-    const index = entries.value.findIndex(
-      (entry: MoodEntry) => entry.id === id,
-    );
-    if (index >= 0) {
-      entries.value.splice(index, 1);
+  const deleteEntry = async (id: string) => {
+    try {
+      isLoading.value = true;
+      await moodlyBackendService.deleteEntry(id);
+      
+      const index = entries.value.findIndex(
+        (entry: MoodEntry) => entry.id === id,
+      );
+      if (index >= 0) {
+        entries.value.splice(index, 1);
+      }
+    } catch (error) {
+      console.error("Failed to delete entry:", error);
+      throw error;
+    } finally {
+      isLoading.value = false;
     }
   };
 
@@ -166,10 +205,16 @@ export function useMoodly() {
     }
   };
 
-  // Apply dark mode on mount
-  onMounted(() => {
+  // Apply dark mode and load entries on mount
+  onMounted(async () => {
     if (import.meta.client) {
       document.documentElement.classList.toggle("dark", darkMode.value);
+      
+      // Check if authenticated before loading
+      const masterPassword = sessionStorage.getItem("moodly-master-password");
+      if (masterPassword && !isInitialized.value) {
+        await loadEntries();
+      }
     }
   });
 
@@ -194,6 +239,7 @@ export function useMoodly() {
       "Focus",
       "Healthy Food",
       "Gym",
+      "Hard Work",
       "Misc",
       "Note",
       "Created At",
@@ -206,9 +252,10 @@ export function useMoodly() {
       entry.metrics.focus,
       entry.checkboxes?.healthyFood ? "Yes" : "No",
       entry.checkboxes?.gym ? "Yes" : "No",
+      entry.checkboxes?.hardWork ? "Yes" : "No",
       entry.checkboxes?.misc ? "Yes" : "No",
       entry.note ? `"${entry.note.replace(/"/g, '""')}"` : "",
-      new Date(entry.createdAt).toISOString(),
+      entry.createdAt,
     ]);
 
     const csv = [headers.join(","), ...rows.map((row) => row.join(","))].join(
@@ -233,6 +280,7 @@ export function useMoodly() {
       "Focus",
       "Healthy Food",
       "Gym",
+      "Hard Work",
       "Misc",
       "Note",
       "Created At",
@@ -246,9 +294,10 @@ export function useMoodly() {
       entry.metrics.focus,
       entry.checkboxes?.healthyFood ? "Yes" : "No",
       entry.checkboxes?.gym ? "Yes" : "No",
+      entry.checkboxes?.hardWork ? "Yes" : "No",
       entry.checkboxes?.misc ? "Yes" : "No",
       entry.note || "",
-      new Date(entry.createdAt).toISOString(),
+      entry.createdAt,
     ]);
 
     // Create workbook and worksheet
@@ -264,6 +313,7 @@ export function useMoodly() {
       { wch: 6 }, // Focus
       { wch: 14 }, // Healthy Food
       { wch: 6 }, // Gym
+      { wch: 12 }, // Hard Work
       { wch: 6 }, // Misc
       { wch: 30 }, // Note
       { wch: 22 }, // Created At
@@ -306,6 +356,7 @@ export function useMoodly() {
         markdown += "### Daily Check-ins\n\n";
         markdown += `- **Healthy Food**: ${entry.checkboxes.healthyFood ? "✅" : "❌"}\n`;
         markdown += `- **Gym**: ${entry.checkboxes.gym ? "✅" : "❌"}\n`;
+        markdown += `- **Hard Work**: ${entry.checkboxes.hardWork ? "✅" : "❌"}\n`;
         markdown += `- **Misc**: ${entry.checkboxes.misc ? "✅" : "❌"}\n\n`;
       }
 
@@ -326,6 +377,9 @@ export function useMoodly() {
     entries,
     darkMode,
     metricConfigs,
+    isLoading,
+    isInitialized,
+    loadEntries,
     getTodayEntry,
     getEntryByDate,
     hasTodayEntry,
@@ -343,9 +397,10 @@ export function useMoodly() {
   };
 }
 
-// Helper function to generate unique IDs
+// Helper function to generate unique IDs using UUID v4
+// We use UUIDs for robust uniqueness across devices and sessions (was previously a timestamp + random string)
 function generateId(): string {
-  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  return uuidv4();
 }
 
 // Helper function to get current date string for filenames

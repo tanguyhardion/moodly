@@ -1,5 +1,7 @@
 <template>
   <div class="app-container">
+    <PasswordGate @authenticated="handleAuthenticated" />
+    
     <nav class="navbar">
       <div class="nav-content">
         <div class="nav-section">
@@ -71,12 +73,17 @@
 </template>
 
 <script setup lang="ts">
-const { darkMode, toggleDarkMode } = useMoodly();
+const { darkMode, toggleDarkMode, loadEntries } = useMoodly();
 
 const mobileMenuOpen = ref(false);
 
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value;
+};
+
+const handleAuthenticated = async () => {
+  // Load entries after authentication
+  await loadEntries();
 };
 </script>
 

@@ -59,6 +59,13 @@
       </div>
       <div
         class="checkbox-display-item"
+        :class="{ checked: entry.checkboxes.hardWork }"
+      >
+        <Icon name="solar:laptop-bold" size="16" />
+        <span>Hard Work</span>
+      </div>
+      <div
+        class="checkbox-display-item"
         :class="{ checked: entry.checkboxes.misc }"
       >
         <Icon name="solar:star-bold" size="16" />

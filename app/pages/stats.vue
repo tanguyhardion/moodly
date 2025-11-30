@@ -106,6 +106,21 @@
             </div>
           </div>
           <div class="checkin-stat">
+            <div class="checkin-icon hard-work">
+              <Icon name="solar:laptop-bold" size="24" />
+            </div>
+            <div class="checkin-info">
+              <span class="checkin-label">Hard Work</span>
+              <div class="checkin-progress-container">
+                <div
+                  class="checkin-progress-bar"
+                  :style="{ width: checkInRate.hardWork + '%' }"
+                ></div>
+              </div>
+              <span class="checkin-percentage">{{ checkInRate.hardWork }}%</span>
+            </div>
+          </div>
+          <div class="checkin-stat">
             <div class="checkin-icon misc">
               <Icon name="solar:star-bold" size="24" />
             </div>
@@ -192,7 +207,7 @@ const getChartData = (metric: MetricType): ChartDataPoint[] => {
 
 const checkInRate = computed(() => {
   if (recentEntries.value.length === 0) {
-    return { healthyFood: 0, caffeine: 0, gym: 0, misc: 0 };
+    return { healthyFood: 0, caffeine: 0, gym: 0, hardWork: 0, misc: 0 };
   }
 
   const totalEntries = recentEntries.value.length;
@@ -205,6 +220,9 @@ const checkInRate = computed(() => {
   const gymCount = recentEntries.value.filter(
     (entry) => entry.checkboxes?.gym,
   ).length;
+  const hardWorkCount = recentEntries.value.filter(
+    (entry) => entry.checkboxes?.hardWork,
+  ).length;
   const miscCount = recentEntries.value.filter(
     (entry) => entry.checkboxes?.misc,
   ).length;
@@ -213,6 +231,7 @@ const checkInRate = computed(() => {
     healthyFood: Math.round((healthyFoodCount / totalEntries) * 100),
     caffeine: Math.round((caffeineCount / totalEntries) * 100),
     gym: Math.round((gymCount / totalEntries) * 100),
+    hardWork: Math.round((hardWorkCount / totalEntries) * 100),
     misc: Math.round((miscCount / totalEntries) * 100),
   };
 });
@@ -284,11 +303,19 @@ const insights = computed(() => {
     });
   }
 
+  if (checkInRate.value.hardWork >= 70) {
+    results.push({
+      icon: "solar:laptop-bold",
+      text: `You're putting in consistent hard work!`,
+    });
+  }
+
   const avgCheckInRate = Math.round(
     (checkInRate.value.healthyFood +
       checkInRate.value.gym +
+      checkInRate.value.hardWork +
       checkInRate.value.misc) /
-      3,
+      4,
   );
   if (avgCheckInRate >= 75) {
     results.push({
@@ -478,6 +505,11 @@ const insights = computed(() => {
 
 .checkin-icon.gym {
   background: linear-gradient(135deg, #ff453a 0%, #ff6b6b 100%);
+  color: white;
+}
+
+.checkin-icon.hard-work {
+  background: linear-gradient(135deg, #007aff 0%, #5ac8fa 100%);
   color: white;
 }
 
