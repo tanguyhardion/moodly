@@ -1,6 +1,9 @@
 <template>
   <div class="loading-state">
-    <Icon name="svg-spinners:ring-resize" size="48" />
+    <div class="loading-spinner">
+      <div class="spinner-ring"></div>
+      <Icon name="solar:star-bold" size="24" class="spinner-icon" />
+    </div>
     <p>{{ message }}</p>
   </div>
 </template>
@@ -17,15 +20,66 @@ defineProps<{
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  padding: 4rem 2rem;
+  gap: 1.5rem;
+  padding: 5rem 2rem;
   text-align: center;
   color: var(--text-secondary);
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.loading-spinner {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner-ring {
+  position: absolute;
+  inset: 0;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.spinner-icon {
+  color: var(--primary);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.85);
+    opacity: 0.6;
+  }
 }
 
 .loading-state p {
   margin: 0;
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--text-secondary);
 }
 </style>

@@ -201,39 +201,49 @@ const formatDateDisplay = (date: Date) => {
       </h3>
       <div class="checkbox-group">
         <label class="checkbox-item">
-          <input type="checkbox" v-model="checkboxes.healthyFood" />
-          <span class="checkbox-label">
-            <Icon name="solar:leaf-bold" size="18" />
-            Healthy Food
+          <span class="checkbox-control">
+            <input type="checkbox" v-model="checkboxes.healthyFood" />
+            <span class="checkbox-icon" aria-hidden="true">
+              <Icon name="solar:leaf-bold" size="18" />
+            </span>
           </span>
+          <span class="checkbox-label">Healthy Food</span>
         </label>
         <label class="checkbox-item">
-          <input type="checkbox" v-model="checkboxes.caffeine" />
-          <span class="checkbox-label">
-            <Icon name="solar:cup-hot-bold" size="18" />
-            Caffeine
+          <span class="checkbox-control">
+            <input type="checkbox" v-model="checkboxes.caffeine" />
+            <span class="checkbox-icon" aria-hidden="true">
+              <Icon name="solar:cup-hot-bold" size="18" />
+            </span>
           </span>
+          <span class="checkbox-label">Caffeine</span>
         </label>
         <label class="checkbox-item">
-          <input type="checkbox" v-model="checkboxes.gym" />
-          <span class="checkbox-label">
-            <Icon name="solar:dumbbell-large-bold" size="18" />
-            Gym
+          <span class="checkbox-control">
+            <input type="checkbox" v-model="checkboxes.gym" />
+            <span class="checkbox-icon" aria-hidden="true">
+              <Icon name="solar:dumbbell-large-bold" size="18" />
+            </span>
           </span>
+          <span class="checkbox-label">Gym</span>
         </label>
         <label class="checkbox-item">
-          <input type="checkbox" v-model="checkboxes.hardWork" />
-          <span class="checkbox-label">
-            <Icon name="solar:laptop-bold" size="18" />
-            Hard Work
+          <span class="checkbox-control">
+            <input type="checkbox" v-model="checkboxes.hardWork" />
+            <span class="checkbox-icon" aria-hidden="true">
+              <Icon name="solar:laptop-bold" size="18" />
+            </span>
           </span>
+          <span class="checkbox-label">Hard Work</span>
         </label>
         <label class="checkbox-item">
-          <input type="checkbox" v-model="checkboxes.misc" />
-          <span class="checkbox-label">
-            <Icon name="solar:star-bold" size="18" />
-            Misc
+          <span class="checkbox-control">
+            <input type="checkbox" v-model="checkboxes.misc" />
+            <span class="checkbox-icon" aria-hidden="true">
+              <Icon name="solar:star-bold" size="18" />
+            </span>
           </span>
+          <span class="checkbox-label">Misc</span>
         </label>
       </div>
     </div>
@@ -441,9 +451,9 @@ const formatDateDisplay = (date: Date) => {
 .checkbox-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   cursor: pointer;
-  padding: 0.75rem;
+  padding: 0.9rem 0.75rem;
   border-radius: 0.5rem;
   transition: background 0.2s ease;
 }
@@ -452,19 +462,53 @@ const formatDateDisplay = (date: Date) => {
   background: var(--hover-bg);
 }
 
-.checkbox-item input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
+.checkbox-control {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  position: relative;
+}
+
+.checkbox-control input[type="checkbox"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
   cursor: pointer;
-  accent-color: var(--primary);
+}
+
+.checkbox-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  transition: all 0.12s ease;
+}
+
+.checkbox-control input[type="checkbox"]:checked + .checkbox-icon {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.checkbox-control input[type="checkbox"]:focus-visible + .checkbox-icon {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 107, 157, 0.12);
+  border-color: var(--primary);
 }
 
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-  font-weight: 500;
+  gap: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
   color: var(--text-primary);
   user-select: none;
 }

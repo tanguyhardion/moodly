@@ -21,7 +21,7 @@
 
         <div class="logo-section">
           <NuxtLink to="/" class="logo" @click="mobileMenuOpen = false">
-            <Icon name="solar:star-shine-bold" size="28" class="logo-icon" />
+            <img src="/favicon.ico" alt="Moodly" class="logo-icon" width="28" height="28" />
             <span class="logo-text">Moodly</span>
           </NuxtLink>
         </div>
