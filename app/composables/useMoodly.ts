@@ -3,12 +3,14 @@ import { v4 as uuidv4 } from "uuid";
 import * as XLSX from "xlsx";
 import { moodlyBackendService } from "~/utils/moodly-backend";
 
+// Global state (singleton) - shared across all components
+const entries = ref<MoodEntry[]>([]);
+const isLoading = ref(false);
+const isInitialized = ref(false);
+const dataVersion = ref(0); // Tracks when data changes to trigger refetch
+
 export function useMoodly() {
-  const entries = ref<MoodEntry[]>([]);
   const darkMode = useLocalStorage<boolean>("moodly-dark-mode", false);
-  const isLoading = ref(false);
-  const isInitialized = ref(false);
-  const dataVersion = ref(0); // Tracks when data changes to trigger refetch
 
   const metricConfigs: MetricConfig[] = [
     {
@@ -225,16 +227,10 @@ export function useMoodly() {
     }
   };
 
-  // Apply dark mode and load entries on mount
-  onMounted(async () => {
+  // Apply dark mode on mount (but don't reload data)
+  onMounted(() => {
     if (import.meta.client) {
       document.documentElement.classList.toggle("dark", darkMode.value);
-
-      // Check if authenticated before loading
-      const masterPassword = sessionStorage.getItem("moodly-master-password");
-      if (masterPassword && !isInitialized.value) {
-        await loadEntries();
-      }
     }
   });
 
