@@ -1,5 +1,7 @@
 <template>
   <div class="page stats-page">
+    <LoadingState v-if="!isReady" message="Loading your statistics..." />
+    <div v-else class="stats-content-wrapper">
     <div class="page-header">
       <h1 class="page-title">
         <Icon name="solar:chart-bold" size="28" />
@@ -161,6 +163,7 @@
         </div>
       </div>
     </div>
+    </div>
   </div>
 </template>
 
@@ -173,7 +176,24 @@ const {
   getEntriesInRange,
   getMetricAverage,
   getMetricTrend,
+  isInitialized,
 } = useMoodly();
+
+const isReady = ref(false);
+
+// Watch for data initialization
+watch(isInitialized, (initialized) => {
+  if (initialized && !isReady.value) {
+    isReady.value = true;
+  }
+});
+
+// Initialize if data is already loaded
+onMounted(() => {
+  if (isInitialized.value) {
+    isReady.value = true;
+  }
+});
 
 const selectedDays = ref(7);
 const periods = [
@@ -339,6 +359,21 @@ const insights = computed(() => {
 .stats-page {
   max-width: 900px;
   margin: 0 auto;
+}
+
+.stats-content-wrapper {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .page-header {

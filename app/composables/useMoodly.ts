@@ -8,6 +8,7 @@ export function useMoodly() {
   const darkMode = useLocalStorage<boolean>("moodly-dark-mode", false);
   const isLoading = ref(false);
   const isInitialized = ref(false);
+  const dataVersion = ref(0); // Tracks when data changes to trigger refetch
 
   const metricConfigs: MetricConfig[] = [
     {
@@ -66,7 +67,12 @@ export function useMoodly() {
   };
 
   // Load entries from database
-  const loadEntries = async () => {
+  const loadEntries = async (force: boolean = false) => {
+    // Skip if already initialized and not forced
+    if (isInitialized.value && !force) {
+      return;
+    }
+
     try {
       isLoading.value = true;
       const data = await moodlyBackendService.getEntries();
@@ -78,6 +84,12 @@ export function useMoodly() {
     } finally {
       isLoading.value = false;
     }
+  };
+
+  // Reload entries from database (used after mutations)
+  const reloadEntries = async () => {
+    await loadEntries(true);
+    dataVersion.value++;
   };
 
   // Save or update entry
@@ -119,6 +131,9 @@ export function useMoodly() {
       entries.value.sort((a: MoodEntry, b: MoodEntry) =>
         b.date.localeCompare(a.date),
       );
+
+      // Increment data version to notify other components
+      dataVersion.value++;
     } catch (error) {
       console.error("Failed to save entry:", error);
       throw error;
@@ -139,6 +154,9 @@ export function useMoodly() {
       if (index >= 0) {
         entries.value.splice(index, 1);
       }
+
+      // Increment data version to notify other components
+      dataVersion.value++;
     } catch (error) {
       console.error("Failed to delete entry:", error);
       throw error;
@@ -381,7 +399,9 @@ export function useMoodly() {
     metricConfigs,
     isLoading,
     isInitialized,
+    dataVersion,
     loadEntries,
+    reloadEntries,
     getTodayEntry,
     getEntryByDate,
     hasTodayEntry,

@@ -2,7 +2,7 @@
 import { VueDatePicker } from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 
-const { metricConfigs, saveEntry, getEntryByDate, hasEntryForDate, darkMode } =
+const { metricConfigs, saveEntry, getEntryByDate, hasEntryForDate, darkMode, isInitialized } =
   useMoodly();
 
 const metrics = ref({
@@ -22,6 +22,7 @@ const checkboxes = ref({
 
 const note = ref("");
 const showToast = ref(false);
+const isReady = ref(false);
 
 // Selected date (defaults to today)
 const selectedDate = ref<Date>(new Date());
@@ -75,12 +76,25 @@ const loadEntry = () => {
 
 // Watch for date changes
 watch(selectedDate, () => {
-  loadEntry();
+  if (isReady.value) {
+    loadEntry();
+  }
 });
 
-// Load entry on mount
+// Watch for data initialization
+watch(isInitialized, (initialized) => {
+  if (initialized && !isReady.value) {
+    loadEntry();
+    isReady.value = true;
+  }
+});
+
+// Load entry on mount if data is already initialized
 onMounted(() => {
-  loadEntry();
+  if (isInitialized.value) {
+    loadEntry();
+    isReady.value = true;
+  }
 });
 
 const handleSave = async () => {
@@ -128,6 +142,8 @@ const formatDateDisplay = (date: Date) => {
 
 <template>
   <div class="page home-page">
+    <LoadingState v-if="!isReady" message="Loading your check-in..." />
+    <div v-else class="content">
     <div class="page-header">
       <h1 class="page-title">
         <Icon name="solar:hand-heart-bold" size="32" class="wave" />
@@ -249,6 +265,7 @@ const formatDateDisplay = (date: Date) => {
         Entry saved successfully!
       </div>
     </Transition>
+    </div>
   </div>
 </template>
 
@@ -256,6 +273,21 @@ const formatDateDisplay = (date: Date) => {
 .home-page {
   max-width: 600px;
   margin: 0 auto;
+}
+
+.content {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .page-header {

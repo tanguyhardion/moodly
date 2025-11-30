@@ -1,5 +1,7 @@
 <template>
   <div class="page history-page">
+    <LoadingState v-if="!isReady" message="Loading your history..." />
+    <div v-else class="history-content">
     <div class="page-header">
       <ExportButton v-if="entries.length > 0" class="export-btn-wrapper" />
       <h1 class="page-title">
@@ -34,11 +36,28 @@
         />
       </TransitionGroup>
     </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const { entries, metricConfigs, deleteEntry } = useMoodly();
+const { entries, metricConfigs, deleteEntry, isInitialized } = useMoodly();
+
+const isReady = ref(false);
+
+// Watch for data initialization
+watch(isInitialized, (initialized) => {
+  if (initialized && !isReady.value) {
+    isReady.value = true;
+  }
+});
+
+// Initialize if data is already loaded
+onMounted(() => {
+  if (isInitialized.value) {
+    isReady.value = true;
+  }
+});
 
 const sortedEntries = computed(() => {
   return [...entries.value].sort((a, b) => b.date.localeCompare(a.date));
@@ -60,6 +79,21 @@ const handleDelete = async (id: string) => {
 .history-page {
   max-width: 800px;
   margin: 0 auto;
+}
+
+.history-content {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .page-header {
