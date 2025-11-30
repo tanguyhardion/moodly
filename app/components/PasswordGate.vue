@@ -9,6 +9,7 @@
 
       <form @submit.prevent="handleSubmit" class="password-form">
         <input
+          ref="passwordInput"
           v-model="password"
           type="password"
           placeholder="Master Password"
@@ -17,9 +18,10 @@
           @input="showError = false"
           autofocus
         />
-        <button type="submit" class="submit-btn" :disabled="!password">
-          <Icon name="solar:login-3-bold" size="20" />
-          Unlock
+        <button type="submit" class="submit-btn" :disabled="!password || isValidating">
+          <Icon v-if="!isValidating" name="solar:login-3-bold" size="20" />
+          <Icon v-else name="svg-spinners:ring-resize" size="20" />
+          {{ isValidating ? 'Validating...' : 'Unlock' }}
         </button>
       </form>
 
@@ -37,6 +39,8 @@
 const password = ref("");
 const showError = ref(false);
 const isAuthenticated = ref(false);
+const isValidating = ref(false);
+const passwordInput = ref<HTMLInputElement | null>(null);
 
 onMounted(() => {
   // Check if already authenticated
@@ -47,6 +51,7 @@ onMounted(() => {
 });
 
 const handleSubmit = async () => {
+  isValidating.value = true;
   try {
     // Verify password by making a test call to the backend
     const response = await fetch(
@@ -73,11 +78,21 @@ const handleSubmit = async () => {
     } else {
       showError.value = true;
       password.value = "";
+      // Refocus the input field
+      nextTick(() => {
+        passwordInput.value?.focus();
+      });
     }
   } catch (error) {
     console.error("Authentication error:", error);
     showError.value = true;
     password.value = "";
+    // Refocus the input field
+    nextTick(() => {
+      passwordInput.value?.focus();
+    });
+  } finally {
+    isValidating.value = false;
   }
 };
 
