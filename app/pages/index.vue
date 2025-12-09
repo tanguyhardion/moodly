@@ -6,6 +6,7 @@ const {
   hasEntryForDate,
   darkMode,
   isInitialized,
+  isLoading,
 } = useMoodly();
 
 const metrics = ref({
@@ -156,9 +157,16 @@ const handleSave = async () => {
       <NoteInput v-model="note" />
 
       <div class="actions">
-        <button @click="handleSave" class="btn btn-primary">
-          <Icon name="solar:check-circle-bold" size="20" />
-          {{ hasEntry ? "Update Entry" : "Save Entry" }}
+        <button
+          @click="handleSave"
+          class="btn btn-primary save-btn"
+          :disabled="isLoading"
+        >
+          <Icon v-if="!isLoading" name="solar:check-circle-bold" size="20" />
+          <Icon v-else name="svg-spinners:ring-resize" size="20" />
+          {{
+            isLoading ? "Saving..." : hasEntry ? "Update Entry" : "Save Entry"
+          }}
         </button>
       </div>
 
@@ -293,6 +301,11 @@ const handleSave = async () => {
 .btn-primary:active {
   transform: translateY(-1px);
   box-shadow: 0 6px 20px -5px rgba(255, 107, 157, 0.4);
+}
+
+.save-btn {
+  width: 220px;
+  justify-content: center;
 }
 
 .toast {
