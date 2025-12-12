@@ -8,7 +8,7 @@ const props = defineProps<{
   darkMode: boolean;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
   (e: "update:modelValue", value: Date): void;
 }>();
 
@@ -35,6 +35,32 @@ const formatDateDisplay = (date: Date) => {
     });
   }
 };
+
+// Check if selected date is today
+const isToday = computed(() => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const selected = new Date(props.modelValue);
+  selected.setHours(0, 0, 0, 0);
+  return selected.getTime() === today.getTime();
+});
+
+// Navigate to previous day
+const goToPreviousDay = () => {
+  const newDate = new Date(props.modelValue);
+  newDate.setDate(newDate.getDate() - 1);
+  emit("update:modelValue", newDate);
+};
+
+// Navigate to next day
+const goToNextDay = () => {
+  const newDate = new Date(props.modelValue);
+  newDate.setDate(newDate.getDate() + 1);
+  // Don't go beyond maxDate
+  if (newDate <= props.maxDate) {
+    emit("update:modelValue", newDate);
+  }
+};
 </script>
 
 <template>
@@ -44,6 +70,13 @@ const formatDateDisplay = (date: Date) => {
       Select Date
     </label>
     <div class="date-picker-wrapper">
+      <button 
+        class="nav-arrow left-arrow" 
+        @click="goToPreviousDay"
+        title="Previous day"
+      >
+        <Icon name="solar:alt-arrow-left-bold" size="20" />
+      </button>
       <ClientOnly>
         <VueDatePicker
           :model-value="modelValue"
@@ -64,6 +97,15 @@ const formatDateDisplay = (date: Date) => {
           </template>
         </VueDatePicker>
       </ClientOnly>
+      <button 
+        v-if="!isToday"
+        class="nav-arrow right-arrow" 
+        @click="goToNextDay"
+        title="Next day"
+      >
+        <Icon name="solar:alt-arrow-right-bold" size="20" />
+      </button>
+      <div v-else class="arrow-placeholder"></div>
     </div>
   </div>
 </template>
@@ -96,16 +138,58 @@ const formatDateDisplay = (date: Date) => {
 
 .date-picker-wrapper {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 1rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 157, 0.08) 0%,
+    rgba(255, 160, 107, 0.08) 100%
+  );
+  border: 2px solid rgba(255, 107, 157, 0.2);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 0 0 rgba(255, 107, 157, 0);
+}
+
+.nav-arrow:hover {
+  border-color: rgba(255, 107, 157, 0.4);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 157, 0.12) 0%,
+    rgba(255, 160, 107, 0.12) 100%
+  );
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 157, 0.2);
+}
+
+.nav-arrow:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(255, 107, 157, 0.15);
+}
+
+.arrow-placeholder {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
 }
 
 .date-button {
   position: relative;
   display: flex;
   align-items: center;
-  width: 100%;
+  flex: 1;
   padding: 1.125rem 1.5rem;
   background: linear-gradient(
     135deg,
