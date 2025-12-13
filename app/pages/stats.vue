@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MetricType, ChartDataPoint } from "~/types";
+import type { MetricType, ChartDataPoint, CategorizedInsights, Insight } from "~/types";
 
 const {
   entries,
@@ -57,6 +57,8 @@ const {
   getMetricTrend,
   isInitialized,
 } = useMoodly();
+
+const { generateAdvancedInsights } = useAdvancedInsights();
 
 const isReady = ref(false);
 
@@ -137,100 +139,37 @@ const checkInRate = computed(() => {
   };
 });
 
-const insights = computed(() => {
-  if (recentEntries.value.length === 0) return [];
+const insights = computed((): CategorizedInsights => {
+  if (recentEntries.value.length < 3) {
+    return {
+      patterns: [],
+      correlations: [],
+      predictions: [],
+      achievements: [],
+      recommendations: [],
+    };
+  }
 
-  const results = [];
-
-  // Find best and worst metrics
-  const averages = metricConfigs.map((config) => ({
-    name: config.name,
-    average: getMetricAverage(config.key, selectedDays.value),
-  }));
-
-  const best = averages.reduce((prev, curr) =>
-    prev.average > curr.average ? prev : curr,
+  const allInsights = generateAdvancedInsights(
+    recentEntries.value,
+    metricConfigs,
+    selectedDays.value
   );
-  const worst = averages.reduce((prev, curr) =>
-    prev.average < curr.average ? prev : curr,
-  );
 
-  if (best.average >= 4) {
-    results.push({
-      icon: "solar:star-bold",
-      text: `Your ${best.name.toLowerCase()} has been excellent! Keep it up!`,
-    });
-  }
+  // Categorize insights
+  const categorized: CategorizedInsights = {
+    patterns: [],
+    correlations: [],
+    predictions: [],
+    achievements: [],
+    recommendations: [],
+  };
 
-  if (worst.average < 3) {
-    results.push({
-      icon: "solar:chat-round-line-bold",
-      text: `Consider focusing on improving your ${worst.name.toLowerCase()}.`,
-    });
-  }
-
-  // Check consistency
-  const hasAllMetrics = recentEntries.value.length >= selectedDays.value * 0.7;
-  if (hasAllMetrics) {
-    results.push({
-      icon: "solar:fire-bold",
-      text: `Great consistency! You've checked in regularly.`,
-    });
-  }
-
-  // Check trends
-  metricConfigs.forEach((config) => {
-    const trend = getMetricTrend(config.key, selectedDays.value);
-    if (trend === "up") {
-      results.push({
-        icon: "solar:graph-up-bold",
-        text: `Your ${config.name.toLowerCase()} is trending upward!`,
-      });
-    }
+  allInsights.forEach((insight: Insight) => {
+    categorized[insight.category].push(insight);
   });
 
-  // Check-in insights
-  if (checkInRate.value.healthyFood >= 80) {
-    results.push({
-      icon: "solar:leaf-bold",
-      text: `Excellent job maintaining a healthy diet!`,
-    });
-  }
-
-  if (checkInRate.value.gym >= 70) {
-    results.push({
-      icon: "solar:dumbbell-large-bold",
-      text: `You're crushing your gym goals!`,
-    });
-  }
-
-  if (checkInRate.value.hardWork >= 70) {
-    results.push({
-      icon: "solar:laptop-bold",
-      text: `You're putting in consistent hard work!`,
-    });
-  }
-
-  const avgCheckInRate = Math.round(
-    (checkInRate.value.healthyFood +
-      checkInRate.value.gym +
-      checkInRate.value.hardWork +
-      checkInRate.value.misc) /
-      4,
-  );
-  if (avgCheckInRate >= 75) {
-    results.push({
-      icon: "solar:star-shine-bold",
-      text: `Amazing consistency with your daily check-ins!`,
-    });
-  } else if (avgCheckInRate < 30) {
-    results.push({
-      icon: "solar:target-bold",
-      text: `Try to stay more consistent with your daily check-ins.`,
-    });
-  }
-
-  return results.slice(0, 5);
+  return categorized;
 });
 </script>
 

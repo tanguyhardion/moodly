@@ -143,6 +143,22 @@ const handleSave = async () => {
         :max-date="maxDate"
         :dark-mode="darkMode"
       />
+
+      <!-- Empty State Banner -->
+      <Transition name="empty-state">
+        <div v-if="!hasEntry" class="empty-state-banner">
+          <div class="empty-icon">
+            <Icon name="solar:calendar-mark-broken" size="32" />
+          </div>
+          <div class="empty-content">
+            <h3 class="empty-title">No check-in yet</h3>
+            <p class="empty-description">
+              Fill in your metrics below to track how you're feeling today
+            </p>
+          </div>
+        </div>
+      </Transition>
+
       <div class="metrics-container">
         <MetricSlider
           v-for="config in metricConfigs"
@@ -335,5 +351,79 @@ const handleSave = async () => {
 .toast-leave-to {
   opacity: 0;
   transform: translateY(1rem);
+}
+
+.empty-state-banner {
+  margin-bottom: 2rem;
+  padding: 1.75rem 2rem;
+  background: linear-gradient(
+    135deg,
+    var(--primary-light),
+    var(--secondary-light)
+  );
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-md);
+  border: 2px dashed rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+:root.dark .empty-state-banner {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 141, 181, 0.15),
+    rgba(110, 221, 213, 0.15)
+  );
+  border-color: rgba(255, 141, 181, 0.3);
+}
+
+.empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-md);
+  color: var(--primary);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+:root.dark .empty-icon {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--primary-light);
+}
+
+.empty-content {
+  flex: 1;
+}
+
+.empty-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.375rem;
+  letter-spacing: -0.01em;
+}
+
+.empty-description {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.empty-state-enter-active,
+.empty-state-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.empty-state-enter-from,
+.empty-state-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 </style>

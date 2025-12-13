@@ -39,3 +39,18 @@ export interface ChartDataPoint {
   value: number;
   label: string;
 }
+
+export interface Insight {
+  icon: string;
+  text: string;
+  category: "patterns" | "correlations" | "predictions" | "achievements" | "recommendations";
+  confidence: number;
+}
+
+export interface CategorizedInsights {
+  patterns: Insight[];
+  correlations: Insight[];
+  predictions: Insight[];
+  achievements: Insight[];
+  recommendations: Insight[];
+}
