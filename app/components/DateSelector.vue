@@ -86,6 +86,7 @@ const goToNextDay = () => {
           :enable-time-picker="false"
           auto-apply
           :clearable="false"
+          class="date-picker"
         >
           <template #trigger>
             <button class="date-button">
@@ -143,6 +144,10 @@ const goToNextDay = () => {
   gap: 0.75rem;
 }
 
+.date-picker {
+  flex: 1;
+}
+
 .nav-arrow {
   display: flex;
   align-items: center;
@@ -190,6 +195,7 @@ const goToNextDay = () => {
   display: flex;
   align-items: center;
   flex: 1;
+  width: 100%;
   padding: 1.125rem 1.5rem;
   background: linear-gradient(
     135deg,
