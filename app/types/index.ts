@@ -19,6 +19,7 @@ export interface MoodEntry {
     caffeine: boolean;
     gym: boolean;
     hardWork: boolean;
+    dayOff: boolean;
     misc: boolean;
   };
   note?: string;

@@ -66,6 +66,14 @@
       </div>
       <div
         class="checkbox-display-item"
+        :class="{ checked: entry.checkboxes.dayOff }"
+        v-if="entry.checkboxes.dayOff !== undefined"
+      >
+        <Icon name="solar:sofa-bold" size="16" />
+        <span>Day Off</span>
+      </div>
+      <div
+        class="checkbox-display-item"
         :class="{ checked: entry.checkboxes.misc }"
       >
         <Icon name="solar:star-bold" size="16" />

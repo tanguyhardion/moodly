@@ -21,6 +21,7 @@ const checkboxes = ref({
   caffeine: false,
   gym: false,
   hardWork: false,
+  dayOff: false,
   misc: false,
 });
 
@@ -41,12 +42,15 @@ const dateToString = (date: Date): string => {
 
 // Computed property to check if entry exists for selected date
 const hasEntry = computed(() =>
-  hasEntryForDate(dateToString(selectedDate.value)),
+  hasEntryForDate(dateToString(selectedDate.value))
 );
 
 // Function to load entry for the selected date
 const loadEntry = () => {
   const entry = getEntryByDate(dateToString(selectedDate.value));
+  const isWeekend =
+    selectedDate.value.getDay() === 0 || selectedDate.value.getDay() === 6;
+
   if (entry) {
     metrics.value = { ...entry.metrics };
     checkboxes.value = entry.checkboxes
@@ -56,6 +60,7 @@ const loadEntry = () => {
           caffeine: false,
           gym: false,
           hardWork: false,
+          dayOff: isWeekend,
           misc: false,
         };
     note.value = entry.note || "";
@@ -72,6 +77,7 @@ const loadEntry = () => {
       caffeine: false,
       gym: false,
       hardWork: false,
+      dayOff: false,
       misc: false,
     };
     note.value = "";
@@ -107,7 +113,7 @@ const handleSave = async () => {
       metrics.value,
       checkboxes.value,
       note.value || undefined,
-      dateToString(selectedDate.value),
+      dateToString(selectedDate.value)
     );
     showToast.value = true;
     setTimeout(() => {
