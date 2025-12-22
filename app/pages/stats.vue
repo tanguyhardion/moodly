@@ -39,15 +39,13 @@
         </div>
 
         <CheckinsStats :check-in-rate="checkInRate" />
-
-        <InsightsList :insights="insights" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { MetricType, ChartDataPoint, CategorizedInsights, Insight } from "~/types";
+import type { MetricType, ChartDataPoint } from "~/types";
 
 const {
   entries,
@@ -57,8 +55,6 @@ const {
   getMetricTrend,
   isInitialized,
 } = useMoodly();
-
-const { generateAdvancedInsights } = useAdvancedInsights();
 
 const isReady = ref(false);
 
@@ -137,39 +133,6 @@ const checkInRate = computed(() => {
     hardWork: Math.round((hardWorkCount / totalEntries) * 100),
     misc: Math.round((miscCount / totalEntries) * 100),
   };
-});
-
-const insights = computed((): CategorizedInsights => {
-  if (recentEntries.value.length < 3) {
-    return {
-      patterns: [],
-      correlations: [],
-      predictions: [],
-      achievements: [],
-      recommendations: [],
-    };
-  }
-
-  const allInsights = generateAdvancedInsights(
-    recentEntries.value,
-    metricConfigs,
-    selectedDays.value
-  );
-
-  // Categorize insights
-  const categorized: CategorizedInsights = {
-    patterns: [],
-    correlations: [],
-    predictions: [],
-    achievements: [],
-    recommendations: [],
-  };
-
-  allInsights.forEach((insight: Insight) => {
-    categorized[insight.category].push(insight);
-  });
-
-  return categorized;
 });
 </script>
 
