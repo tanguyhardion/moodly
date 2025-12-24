@@ -106,7 +106,7 @@ const getChartData = (metric: MetricType): ChartDataPoint[] => {
 
 const checkInRate = computed(() => {
   if (recentEntries.value.length === 0) {
-    return { healthyFood: 0, caffeine: 0, gym: 0, hardWork: 0, misc: 0 };
+    return { healthyFood: 0, caffeine: 0, gym: 0, hardWork: 0, alcohol: 0, misc: 0 };
   }
 
   const totalEntries = recentEntries.value.length;
@@ -122,6 +122,9 @@ const checkInRate = computed(() => {
   const hardWorkCount = recentEntries.value.filter(
     (entry) => entry.checkboxes?.hardWork,
   ).length;
+  const alcoholCount = recentEntries.value.filter(
+    (entry) => entry.checkboxes?.alcohol,
+  ).length;
   const miscCount = recentEntries.value.filter(
     (entry) => entry.checkboxes?.misc,
   ).length;
@@ -131,6 +134,7 @@ const checkInRate = computed(() => {
     caffeine: Math.round((caffeineCount / totalEntries) * 100),
     gym: Math.round((gymCount / totalEntries) * 100),
     hardWork: Math.round((hardWorkCount / totalEntries) * 100),
+    alcohol: Math.round((alcoholCount / totalEntries) * 100),
     misc: Math.round((miscCount / totalEntries) * 100),
   };
 });

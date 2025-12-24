@@ -74,6 +74,14 @@
       </div>
       <div
         class="checkbox-display-item"
+        :class="{ checked: entry.checkboxes.alcohol }"
+        v-if="entry.checkboxes.alcohol !== undefined"
+      >
+        <Icon name="solar:cup-star-bold" size="16" />
+        <span>Alcohol</span>
+      </div>
+      <div
+        class="checkbox-display-item"
         :class="{ checked: entry.checkboxes.misc }"
       >
         <Icon name="solar:star-bold" size="16" />

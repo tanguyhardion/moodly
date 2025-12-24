@@ -20,6 +20,7 @@ export interface MoodEntry {
     gym: boolean;
     hardWork: boolean;
     dayOff: boolean;
+    alcohol: boolean;
     misc: boolean;
   };
   note?: string;

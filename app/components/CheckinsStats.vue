@@ -5,6 +5,7 @@ defineProps<{
     caffeine: number;
     gym: number;
     hardWork: number;
+    alcohol: number;
     misc: number;
   };
 }>();
@@ -79,6 +80,21 @@ defineProps<{
             ></div>
           </div>
           <span class="checkin-percentage">{{ checkInRate.hardWork }}%</span>
+        </div>
+      </div>
+      <div class="checkin-stat">
+        <div class="checkin-icon alcohol">
+          <Icon name="solar:cup-star-bold" size="24" />
+        </div>
+        <div class="checkin-info">
+          <span class="checkin-label">Alcohol</span>
+          <div class="checkin-progress-container">
+            <div
+              class="checkin-progress-bar"
+              :style="{ width: checkInRate.alcohol + '%' }"
+            ></div>
+          </div>
+          <span class="checkin-percentage">{{ checkInRate.alcohol }}%</span>
         </div>
       </div>
       <div class="checkin-stat">
@@ -181,6 +197,11 @@ defineProps<{
 
 .checkin-icon.hard-work {
   background: linear-gradient(135deg, #007aff 0%, #5ac8fa 100%);
+  color: white;
+}
+
+.checkin-icon.alcohol {
+  background: linear-gradient(135deg, #bf5af2 0%, #da8fff 100%);
   color: white;
 }
 

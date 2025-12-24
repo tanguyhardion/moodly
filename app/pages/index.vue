@@ -22,6 +22,7 @@ const checkboxes = ref({
   gym: false,
   hardWork: false,
   dayOff: false,
+  alcohol: false,
   misc: false,
 });
 
@@ -61,6 +62,7 @@ const loadEntry = () => {
           gym: false,
           hardWork: false,
           dayOff: isWeekend,
+          alcohol: false,
           misc: false,
         };
     note.value = entry.note || "";
@@ -78,6 +80,7 @@ const loadEntry = () => {
       gym: false,
       hardWork: false,
       dayOff: false,
+      alcohol: false,
       misc: false,
     };
     note.value = "";

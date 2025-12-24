@@ -6,6 +6,7 @@ const props = defineProps<{
     gym: boolean;
     hardWork: boolean;
     dayOff: boolean;
+    alcohol: boolean;
     misc: boolean;
   };
 }>();
@@ -112,6 +113,24 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
           </span>
         </span>
         <span class="checkbox-label">Day Off</span>
+      </label>
+      <label class="checkbox-item">
+        <span class="checkbox-control">
+          <input
+            type="checkbox"
+            :checked="modelValue.alcohol"
+            @change="
+              updateCheckbox(
+                'alcohol',
+                ($event.target as HTMLInputElement).checked,
+              )
+            "
+          />
+          <span class="checkbox-icon" aria-hidden="true">
+            <Icon name="solar:cup-star-bold" size="18" />
+          </span>
+        </span>
+        <span class="checkbox-label">Alcohol</span>
       </label>
       <label class="checkbox-item">
         <span class="checkbox-control">
