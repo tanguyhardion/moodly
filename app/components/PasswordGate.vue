@@ -128,6 +128,13 @@ watch(isAuthenticated, (value) => {
   z-index: 9999;
 }
 
+@media (max-width: 768px) {
+  .password-gate {
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+}
+
 .password-card {
   background: var(--card-bg);
   padding: 3rem;
