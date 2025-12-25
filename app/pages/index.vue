@@ -116,10 +116,11 @@ onMounted(() => {
     (entries) => {
       const entry = entries[0];
       if (entry) {
-        showStickyHeader.value = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+        showStickyHeader.value =
+          !entry.isIntersecting && entry.boundingClientRect.top < 0;
       }
     },
-    { threshold: 0, rootMargin: "-80px 0px 0px 0px" } // Adjust rootMargin based on navbar height
+    { threshold: 0, rootMargin: "-80px 0px 0px 0px" }, // Adjust rootMargin based on navbar height
   );
 
   if (dateSelectorRef.value) {
@@ -428,8 +429,9 @@ const handleSave = async () => {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-radius: var(--radius-lg);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 
-              0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08);
   margin-top: 0.5rem;
   width: 540px;
   max-width: 92vw;
@@ -441,8 +443,9 @@ const handleSave = async () => {
     rgba(30, 30, 40, 0.95),
     rgba(25, 25, 35, 0.9)
   );
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 
-              0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .slide-down-enter-active,

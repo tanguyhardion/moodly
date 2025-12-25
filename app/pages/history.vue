@@ -60,8 +60,6 @@ onMounted(() => {
 const sortedEntries = computed(() => {
   return [...entries.value].sort((a, b) => b.date.localeCompare(a.date));
 });
-
-
 </script>
 
 <style scoped>

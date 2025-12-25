@@ -106,8 +106,6 @@ export function useEntries() {
     }
   };
 
-
-
   // Get entries for date range
   const getEntriesInRange = (days: number): MoodEntry[] => {
     if (days === 0) {

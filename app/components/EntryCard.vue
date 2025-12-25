@@ -5,7 +5,6 @@
         <Icon name="solar:calendar-bold" size="18" />
         <span>{{ formattedDate }}</span>
       </div>
-
     </div>
 
     <div class="metrics-grid">

@@ -2,7 +2,7 @@
   <div class="metrics-line-chart">
     <div class="chart-header">
       <h3 class="chart-title">
-        <Icon name="solar:graph-bold" size="22" />
+        <Icon name="solar:graph-bold" size="22" style="color: #ff6b9d" />
         Metrics Over Time
       </h3>
       <div class="chart-legend">
@@ -65,7 +65,7 @@ const toggleMetric = (metric: MetricType) => {
 // Sort entries by date (oldest first for the chart)
 const sortedEntries = computed(() => {
   return [...props.entries].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   );
 });
 

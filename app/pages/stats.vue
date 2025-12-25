@@ -29,11 +29,6 @@
       </div>
 
       <div v-else class="stats-content">
-        <MetricsLineChart
-          :entries="recentEntries"
-          :metric-configs="metricConfigs"
-        />
-
         <div class="charts-grid">
           <MiniChart
             v-for="config in metricConfigs"
@@ -47,7 +42,14 @@
           />
         </div>
 
+        <MetricsLineChart
+          :entries="recentEntries"
+          :metric-configs="metricConfigs"
+        />
+
         <CheckinsStats :check-in-rate="checkInRate" />
+
+        <CheckinsTimeline :entries="recentEntries" />
 
         <AdvancedAnalytics />
       </div>
