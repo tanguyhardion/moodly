@@ -3,7 +3,7 @@
     <div class="header">
       <h3 class="insights-title">
         <Icon name="solar:chart-square-bold" size="22" style="color: #ff6b9d" />
-        Advanced Insights
+        Advanced Insights (all entries)
       </h3>
       <button @click="refresh" class="refresh-btn" :disabled="isLoading">
         <Icon name="heroicons:arrow-path" :class="{ spin: isLoading }" />
