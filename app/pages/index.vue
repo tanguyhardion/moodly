@@ -113,8 +113,11 @@ onMounted(() => {
   }
 
   const observer = new IntersectionObserver(
-    ([entry]) => {
-      showStickyHeader.value = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+    (entries) => {
+      const entry = entries[0];
+      if (entry) {
+        showStickyHeader.value = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+      }
     },
     { threshold: 0, rootMargin: "-80px 0px 0px 0px" } // Adjust rootMargin based on navbar height
   );
