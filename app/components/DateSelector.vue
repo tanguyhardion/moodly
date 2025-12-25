@@ -6,6 +6,7 @@ const props = defineProps<{
   modelValue: Date;
   maxDate: Date;
   darkMode: boolean;
+  simple?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -64,8 +65,8 @@ const goToNextDay = () => {
 </script>
 
 <template>
-  <div class="date-selector">
-    <label class="date-label">
+  <div class="date-selector" :class="{ 'is-simple': simple }">
+    <label v-if="!simple" class="date-label">
       <Icon name="solar:calendar-bold" size="18" />
       Select Date
     </label>
@@ -125,6 +126,23 @@ const goToNextDay = () => {
 .date-selector:hover {
   box-shadow: var(--shadow-lg);
   border-color: var(--border-hover);
+}
+
+.date-selector.is-simple {
+  margin-bottom: 0;
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.date-selector.is-simple .date-button {
+  padding: 0.75rem 1rem;
+}
+
+.date-selector.is-simple .nav-arrow {
+  width: 40px;
+  height: 40px;
 }
 
 .date-label {

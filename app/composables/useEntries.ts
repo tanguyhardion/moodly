@@ -106,28 +106,7 @@ export function useEntries() {
     }
   };
 
-  // Delete entry
-  const deleteEntry = async (id: string) => {
-    try {
-      isLoading.value = true;
-      await moodlyBackendService.deleteEntry(id);
 
-      const index = entries.value.findIndex(
-        (entry: MoodEntry) => entry.id === id,
-      );
-      if (index >= 0) {
-        entries.value.splice(index, 1);
-      }
-
-      // Increment data version to notify other components
-      dataVersion.value++;
-    } catch (error) {
-      console.error("Failed to delete entry:", error);
-      throw error;
-    } finally {
-      isLoading.value = false;
-    }
-  };
 
   // Get entries for date range
   const getEntriesInRange = (days: number): MoodEntry[] => {
@@ -152,7 +131,6 @@ export function useEntries() {
     hasTodayEntry,
     hasEntryForDate,
     saveEntry,
-    deleteEntry,
     getEntriesInRange,
   };
 }

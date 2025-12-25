@@ -51,7 +51,6 @@ export function useMoodly() {
     hasTodayEntry: entriesManager.hasTodayEntry,
     hasEntryForDate: entriesManager.hasEntryForDate,
     saveEntry: entriesManager.saveEntry,
-    deleteEntry: entriesManager.deleteEntry,
     getEntriesInRange: entriesManager.getEntriesInRange,
 
     // Metrics

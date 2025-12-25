@@ -80,17 +80,6 @@ export class MoodlyBackendService {
     });
   }
 
-  async deleteEntry(id: string): Promise<{ id: string }> {
-    const masterPassword = getMasterPassword();
-    return this.makeRequest<{ id: string }>("delete-entry", {
-      method: "POST",
-      body: JSON.stringify({
-        masterPassword,
-        id,
-      }),
-    });
-  }
-
   async getAnalytics(): Promise<{ insights: AnalyticsInsight[] }> {
     const masterPassword = getMasterPassword();
     return this.makeRequest<{ insights: AnalyticsInsight[] }>(

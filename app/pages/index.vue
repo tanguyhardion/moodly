@@ -102,12 +102,31 @@ watch(isInitialized, (initialized) => {
   }
 });
 
-// Load entry on mount if data is already initialized
+const dateSelectorRef = ref<HTMLElement | null>(null);
+const showStickyHeader = ref(false);
+
+// Intersection Observer for sticky header
 onMounted(() => {
   if (isInitialized.value) {
     loadEntry();
     isReady.value = true;
   }
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      showStickyHeader.value = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+    },
+    { threshold: 0, rootMargin: "-80px 0px 0px 0px" } // Adjust rootMargin based on navbar height
+  );
+
+  if (dateSelectorRef.value) {
+    observer.observe(dateSelectorRef.value);
+  }
+
+  // Watch for ref changes (e.g. after loading)
+  watch(dateSelectorRef, (el) => {
+    if (el) observer.observe(el);
+  });
 });
 
 const handleSave = async () => {
@@ -147,11 +166,27 @@ const handleSave = async () => {
         </p>
       </div>
 
-      <DateSelector
-        v-model="selectedDate"
-        :max-date="maxDate"
-        :dark-mode="darkMode"
-      />
+      <div ref="dateSelectorRef">
+        <DateSelector
+          v-model="selectedDate"
+          :max-date="maxDate"
+          :dark-mode="darkMode"
+        />
+      </div>
+
+      <!-- Sticky Date Selector -->
+      <Transition name="slide-down">
+        <div v-if="showStickyHeader" class="sticky-header">
+          <div class="sticky-content">
+            <DateSelector
+              v-model="selectedDate"
+              :max-date="maxDate"
+              :dark-mode="darkMode"
+              :simple="true"
+            />
+          </div>
+        </div>
+      </Transition>
 
       <!-- Empty State Banner -->
       <Transition name="empty-state">
@@ -271,6 +306,13 @@ const handleSave = async () => {
   font-weight: 500;
 }
 
+.sticky-date-selector {
+  position: sticky;
+  top: 4.5rem;
+  z-index: 10;
+  margin-bottom: 2rem;
+}
+
 .metrics-container {
   display: grid;
   gap: 1rem;
@@ -360,6 +402,55 @@ const handleSave = async () => {
 .toast-leave-to {
   opacity: 0;
   transform: translateY(1rem);
+}
+
+.sticky-header {
+  position: fixed;
+  top: 4.5rem; /* Adjust based on navbar height */
+  left: 0;
+  right: 0;
+  z-index: 90;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.sticky-content {
+  pointer-events: auto;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.9)
+  );
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 
+              0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-top: 0.5rem;
+  width: 540px;
+  max-width: 92vw;
+}
+
+:root.dark .sticky-content {
+  background: linear-gradient(
+    135deg,
+    rgba(30, 30, 40, 0.95),
+    rgba(25, 25, 35, 0.9)
+  );
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 
+              0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
 }
 
 .empty-state-banner {

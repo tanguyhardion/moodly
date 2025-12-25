@@ -5,13 +5,7 @@
         <Icon name="solar:calendar-bold" size="18" />
         <span>{{ formattedDate }}</span>
       </div>
-      <button
-        v-if="showDelete"
-        @click.stop="$emit('delete')"
-        class="delete-btn"
-      >
-        <Icon name="solar:trash-bin-trash-bold" size="18" />
-      </button>
+
     </div>
 
     <div class="metrics-grid">
