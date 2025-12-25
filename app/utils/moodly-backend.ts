@@ -83,7 +83,7 @@ export class MoodlyBackendService {
   async getAnalytics(): Promise<{ insights: AnalyticsInsight[] }> {
     const masterPassword = getMasterPassword();
     return this.makeRequest<{ insights: AnalyticsInsight[] }>(
-      `get-analytics?masterPassword=${masterPassword}`,
+      `get-analytics?masterPassword=${encodeURIComponent(masterPassword!)}`,
     );
   }
 }
