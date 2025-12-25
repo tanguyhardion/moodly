@@ -110,6 +110,9 @@ export function useEntries() {
 
   // Get entries for date range
   const getEntriesInRange = (days: number): MoodEntry[] => {
+    if (days === 0) {
+      return entries.value;
+    }
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
     const startDateStr = startDate.toISOString().split("T")[0] || "";

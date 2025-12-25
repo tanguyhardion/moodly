@@ -87,6 +87,9 @@ export function useMetrics() {
     entries: MoodEntry[],
     days: number,
   ): MoodEntry[] => {
+    if (days === 0) {
+      return entries;
+    }
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
     const startDateStr = startDate.toISOString().split("T")[0] || "";

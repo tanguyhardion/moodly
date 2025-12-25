@@ -8,7 +8,11 @@
           Statistics
         </h1>
         <p class="page-subtitle">
-          Your progress over the last {{ selectedDays }} days
+          {{
+            selectedDays === 0
+              ? "Your all-time progress"
+              : `Your progress over the last ${selectedDays} days`
+          }}
         </p>
       </div>
 
@@ -85,6 +89,7 @@ const periods = [
   { label: "14 Days", days: 14 },
   { label: "30 Days", days: 30 },
   { label: "90 Days", days: 90 },
+  { label: "All", days: 0 },
 ];
 
 const recentEntries = computed(() => {
