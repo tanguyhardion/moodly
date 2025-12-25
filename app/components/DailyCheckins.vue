@@ -23,7 +23,11 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
 <template>
   <div class="checkboxes-section">
     <h3 class="checkboxes-title">
-      <Icon name="solar:clipboard-check-bold" size="18" />
+      <Icon
+        name="solar:clipboard-check-bold"
+        size="22"
+        style="color: #ff6b9d"
+      />
       Daily Check-ins
     </h3>
     <div class="checkbox-group">
@@ -173,10 +177,10 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 1rem 0;
+  margin: 0 0 1.5rem 0;
 }
 
 .checkbox-group {

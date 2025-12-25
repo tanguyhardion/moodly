@@ -122,13 +122,13 @@ defineProps<{
   background: var(--card-bg);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
   margin-bottom: 2rem;
   transition: all 0.3s ease;
 }
 
 .checkins-card:hover {
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--shadow-lg);
   border-color: var(--border-hover);
 }
 

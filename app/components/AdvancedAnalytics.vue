@@ -1,7 +1,10 @@
 <template>
   <div class="advanced-analytics">
     <div class="header">
-      <h2>Advanced Insights</h2>
+      <h3 class="insights-title">
+        <Icon name="solar:chart-square-bold" size="22" style="color: #ff6b9d" />
+        Advanced Insights
+      </h3>
       <button @click="refresh" class="refresh-btn" :disabled="isLoading">
         <Icon name="heroicons:arrow-path" :class="{ spin: isLoading }" />
       </button>
@@ -77,12 +80,18 @@ const refresh = () => {
 
 <style scoped>
 .advanced-analytics {
-  margin-top: 2rem;
-  padding: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1.75rem;
   background: var(--card-bg);
-  border-radius: 1rem;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+.advanced-analytics:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-hover);
 }
 
 .header {
@@ -92,9 +101,12 @@ const refresh = () => {
   margin-bottom: 1.5rem;
 }
 
-h2 {
+.insights-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-primary);
   margin: 0;
 }
