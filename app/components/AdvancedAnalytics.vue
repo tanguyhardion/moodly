@@ -22,26 +22,42 @@
       <p class="sub-text">Keep tracking your mood to unlock patterns!</p>
     </div>
 
-    <div v-else class="insights-grid">
-      <div
-        v-for="(insight, index) in insights"
-        :key="index"
-        class="insight-card"
-        :class="insight.type"
-      >
-        <div class="insight-header">
-          <span class="category-badge">{{ insight.category }}</span>
-          <div class="score-indicator" v-if="insight.score">
-            <div
-              class="score-bar"
-              :style="{ width: Math.min(insight.score * 100, 100) + '%' }"
-            ></div>
-          </div>
-        </div>
-        <p class="insight-text">{{ insight.text }}</p>
-        <p v-if="insight.details" class="insight-details">
-          {{ insight.details }}
+    <div v-else>
+      <div class="insights-info">
+        <Icon name="heroicons:information-circle" class="info-icon" />
+        <p>
+          Insights are ranked by <strong>Strength</strong>, which indicates how
+          consistent or significant a pattern is in your data.
         </p>
+      </div>
+
+      <div class="insights-grid">
+        <div
+          v-for="(insight, index) in insights"
+          :key="index"
+          class="insight-card"
+          :class="insight.type"
+        >
+          <div class="insight-header">
+            <span class="category-badge">{{ insight.category }}</span>
+            <div class="score-container" v-if="insight.score">
+              <span class="score-label">Strength</span>
+              <div class="score-indicator">
+                <div
+                  class="score-bar"
+                  :style="{ width: Math.min(insight.score * 100, 100) + '%' }"
+                ></div>
+              </div>
+              <span class="score-value"
+                >{{ Math.round(Math.min(insight.score * 100, 100)) }}%</span
+              >
+            </div>
+          </div>
+          <p class="insight-text">{{ insight.text }}</p>
+          <p v-if="insight.details" class="insight-details">
+            {{ insight.details }}
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -111,6 +127,30 @@ h2 {
   }
 }
 
+.insights-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
+}
+
+.info-icon {
+  color: var(--primary);
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.insights-info p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
 .insights-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -145,6 +185,9 @@ h2 {
 .insight-card.trigger {
   border-left: 4px solid #f59e0b;
 }
+.insight-card.rest_day {
+  border-left: 4px solid #ef4444;
+}
 
 .insight-header {
   display: flex;
@@ -161,6 +204,19 @@ h2 {
   color: var(--text-secondary);
 }
 
+.score-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.score-label {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
 .score-indicator {
   width: 40px;
   height: 4px;
@@ -173,6 +229,14 @@ h2 {
   height: 100%;
   background: var(--primary);
   border-radius: 2px;
+}
+
+.score-value {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 2rem;
+  text-align: right;
 }
 
 .insight-text {
