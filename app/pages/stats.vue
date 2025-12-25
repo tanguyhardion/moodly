@@ -25,6 +25,11 @@
       </div>
 
       <div v-else class="stats-content">
+        <MetricsLineChart
+          :entries="recentEntries"
+          :metric-configs="metricConfigs"
+        />
+
         <div class="charts-grid">
           <MiniChart
             v-for="config in metricConfigs"

@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  modules: ["@nuxt/fonts", "@nuxt/icon", "@nuxt/image"],
+  modules: ["@nuxt/fonts", "@nuxt/icon", "@nuxt/image", "nuxt-charts"],
   ssr: false,
 
   app: {
