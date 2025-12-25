@@ -29,11 +29,11 @@
         :height="320"
         :x-formatter="xFormatter"
         x-label=""
-        y-label=""
+        y-label="Score"
         :show-x-axis="true"
         :show-y-axis="true"
         :show-tooltip="true"
-        :show-legend="false"
+        :hideLegend="true"
       />
     </div>
   </div>

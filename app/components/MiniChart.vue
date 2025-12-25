@@ -12,7 +12,7 @@
               ? 'solar:arrow-up-bold'
               : trend === 'down'
                 ? 'solar:arrow-down-bold'
-                : 'solar:minus-bold'
+                : 'mdi:minus'
           "
           size="16"
         />

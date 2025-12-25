@@ -16,7 +16,18 @@
         </p>
       </div>
 
-      <PeriodSelector v-model="selectedDays" :periods="periods" />
+      <div ref="periodSelectorRef">
+        <PeriodSelector v-model="selectedDays" :periods="periods" />
+      </div>
+
+      <!-- Sticky Period Selector -->
+      <Transition name="slide-down">
+        <div v-if="showStickyHeader" class="sticky-header">
+          <div class="sticky-content">
+            <PeriodSelector v-model="selectedDays" :periods="periods" />
+          </div>
+        </div>
+      </Transition>
 
       <div v-if="recentEntries.length === 0" class="empty-state">
         <Icon name="solar:graph-new-bold" size="64" class="empty-icon" />
@@ -79,10 +90,33 @@ watch(isInitialized, (initialized) => {
 });
 
 // Initialize if data is already loaded
+const periodSelectorRef = ref<HTMLElement | null>(null);
+const showStickyHeader = ref(false);
+
 onMounted(() => {
   if (isInitialized.value) {
     isReady.value = true;
   }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0];
+      if (entry) {
+        // Check if element is above the viewport (allowing for some margin)
+        showStickyHeader.value =
+          !entry.isIntersecting && entry.boundingClientRect.top < 60;
+      }
+    },
+    { threshold: 0, rootMargin: "-80px 0px 0px 0px" },
+  );
+
+  if (periodSelectorRef.value) {
+    observer.observe(periodSelectorRef.value);
+  }
+
+  watch(periodSelectorRef, (el) => {
+    if (el) observer.observe(el);
+  });
 });
 
 const selectedDays = ref(7);
@@ -273,5 +307,62 @@ const checkInRate = computed(() => {
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1rem;
   margin-bottom: 2rem;
+}
+
+.sticky-header {
+  position: fixed;
+  top: 4.5rem; /* Adjust based on navbar height */
+  left: 0;
+  right: 0;
+  z-index: 90;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.sticky-content {
+  pointer-events: auto;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.9)
+  );
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  width: auto;
+  max-width: 92vw;
+}
+
+:root.dark .sticky-content {
+  background: linear-gradient(
+    135deg,
+    rgba(30, 30, 40, 0.95),
+    rgba(25, 25, 35, 0.9)
+  );
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Override PeriodSelector margin in sticky mode */
+.sticky-content :deep(.period-selector) {
+  margin-bottom: 0;
+}
+
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
 }
 </style>
