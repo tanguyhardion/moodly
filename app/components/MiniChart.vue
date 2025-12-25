@@ -130,8 +130,8 @@ defineProps<Props>();
 .chart-trend.up {
   background: linear-gradient(
     135deg,
-    rgba(16, 185, 129, 0.2) 0%,
-    rgba(16, 185, 129, 0.15) 100%
+    rgba(var(--color-shadow-success), 0.2) 0%,
+    rgba(var(--color-shadow-success), 0.15) 100%
   );
   color: var(--success);
 }
@@ -139,8 +139,8 @@ defineProps<Props>();
 .chart-trend.down {
   background: linear-gradient(
     135deg,
-    rgba(239, 68, 68, 0.2) 0%,
-    rgba(239, 68, 68, 0.15) 100%
+    rgba(var(--color-error), 0.2) 0%,
+    rgba(var(--color-error), 0.15) 100%
   );
   color: var(--error);
 }
@@ -148,8 +148,8 @@ defineProps<Props>();
 .chart-trend.neutral {
   background: linear-gradient(
     135deg,
-    rgba(107, 114, 128, 0.2) 0%,
-    rgba(107, 114, 128, 0.15) 100%
+    rgba(var(--color-text-secondary), 0.2) 0%,
+    rgba(var(--color-text-secondary), 0.15) 100%
   );
   color: var(--text-tertiary);
 }

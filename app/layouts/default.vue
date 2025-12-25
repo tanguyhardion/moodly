@@ -219,11 +219,11 @@ const handleAuthenticated = async () => {
 .nav-link.router-link-active {
   background: linear-gradient(
     135deg,
-    rgba(255, 107, 157, 0.15) 0%,
-    rgba(255, 160, 107, 0.15) 100%
+    rgba(var(--color-shadow-primary), 0.15) 0%,
+    rgba(var(--color-primary-gradient-end), 0.15) 100%
   );
   color: var(--primary);
-  box-shadow: 0 0 0 1px rgba(255, 107, 157, 0.2);
+  box-shadow: 0 0 0 1px var(--focus-ring);
 }
 
 .nav-link.router-link-active::before {
@@ -307,7 +307,7 @@ const handleAuthenticated = async () => {
 .theme-toggle:hover {
   background: var(--active-bg);
   transform: rotate(20deg) scale(1.05);
-  box-shadow: 0 4px 12px rgba(255, 107, 157, 0.2);
+  box-shadow: 0 4px 12px rgba(var(--color-shadow-primary), 0.2);
 }
 
 .theme-toggle:active {
@@ -350,7 +350,7 @@ const handleAuthenticated = async () => {
 .shape-1 {
   width: 450px;
   height: 450px;
-  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+  background: var(--gradient-primary);
   top: -225px;
   left: -225px;
   animation-delay: 0s;
@@ -359,7 +359,7 @@ const handleAuthenticated = async () => {
 .shape-2 {
   width: 550px;
   height: 550px;
-  background: linear-gradient(135deg, #a78bfa 0%, #4ecdc4 100%);
+  background: var(--gradient-secondary);
   bottom: -275px;
   right: -275px;
   animation-delay: -12s;
@@ -368,7 +368,7 @@ const handleAuthenticated = async () => {
 .shape-3 {
   width: 350px;
   height: 350px;
-  background: linear-gradient(135deg, #ffc93c 0%, #ff6b9d 100%);
+  background: var(--gradient-accent);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);

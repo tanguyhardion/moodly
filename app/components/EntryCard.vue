@@ -151,7 +151,7 @@ const formattedDate = computed(() => {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #ff6b9d 0%, #ffa06b 100%);
+  background: var(--gradient-primary);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -196,8 +196,8 @@ const formattedDate = computed(() => {
 }
 
 .delete-btn:hover {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
+  color: var(--error);
+  background: rgba(var(--color-error), 0.1);
   transform: scale(1.1);
 }
 

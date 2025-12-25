@@ -166,7 +166,7 @@ const handleDelete = async (id: string) => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+  background: var(--gradient-primary);
   color: white;
   box-shadow: var(--shadow-colored);
 }
@@ -175,7 +175,7 @@ const handleDelete = async (id: string) => {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #e94a7c 0%, #ff8a52 100%);
+  background: var(--gradient-primary-dark);
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: -1;
@@ -183,7 +183,7 @@ const handleDelete = async (id: string) => {
 
 .btn-primary:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 35px -5px rgba(255, 107, 157, 0.4);
+  box-shadow: 0 12px 35px -5px rgba(var(--color-shadow-primary), 0.4);
 }
 
 .btn-primary:hover::before {

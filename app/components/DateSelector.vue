@@ -247,7 +247,7 @@ const goToNextDay = () => {
   --dp-hover-color: var(--hover-bg);
   --dp-hover-text-color: var(--text-primary);
   --dp-hover-icon-color: var(--text-primary);
-  --dp-primary-color: #ff6b9d;
+  --dp-primary-color: var(--primary);
   --dp-primary-text-color: #fff;
   --dp-secondary-color: var(--text-secondary);
   --dp-border-color: var(--border);
@@ -256,11 +256,11 @@ const goToNextDay = () => {
   --dp-disabled-color: var(--text-tertiary);
   --dp-scroll-bar-background: var(--hover-bg);
   --dp-scroll-bar-color: var(--text-secondary);
-  --dp-success-color: #4cd964;
+  --dp-success-color: var(--success);
   --dp-success-color-disabled: #a5d4a7;
   --dp-icon-color: var(--text-primary);
-  --dp-danger-color: #f44336;
-  --dp-highlight-color: rgba(255, 107, 157, 0.1);
+  --dp-danger-color: var(--error);
+  --dp-highlight-color: rgba(var(--color-shadow-primary), 0.1);
 }
 
 :deep(.dp__menu) {
@@ -290,7 +290,7 @@ const goToNextDay = () => {
 }
 
 :deep(.dp__active_date) {
-  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+  background: var(--gradient-primary);
 }
 
 :deep(.dp__month_year_select) {
@@ -323,7 +323,7 @@ const goToNextDay = () => {
 }
 
 :deep(.dp__overlay_cell_active) {
-  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+  background: var(--gradient-primary);
   color: white;
 }
 

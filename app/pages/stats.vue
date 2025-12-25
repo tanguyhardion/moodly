@@ -225,7 +225,7 @@ const checkInRate = computed(() => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+  background: var(--gradient-primary);
   color: white;
   box-shadow: var(--shadow-colored);
 }
@@ -234,7 +234,7 @@ const checkInRate = computed(() => {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #e94a7c 0%, #ff8a52 100%);
+  background: var(--gradient-primary-dark);
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: -1;
@@ -242,7 +242,7 @@ const checkInRate = computed(() => {
 
 .btn-primary:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 35px -5px rgba(255, 107, 157, 0.4);
+  box-shadow: var(--shadow-primary);
 }
 
 .btn-primary:hover::before {

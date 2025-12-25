@@ -53,7 +53,7 @@ defineEmits<{
 }
 
 .period-btn.active {
-  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+  background: var(--gradient-primary);
   border-color: transparent;
   color: white;
   box-shadow: var(--shadow-colored);

@@ -19,6 +19,33 @@
   --warning: #f59e0b;
   --error: #ef4444;
 
+  /* Shadow Colors (RGB) */
+  --color-shadow-primary: 255, 107, 157;
+  --color-shadow-secondary: 78, 205, 196;
+  --color-shadow-success: 16, 185, 129;
+  --color-error: 239, 68, 68;
+  --color-text-secondary: 107, 114, 128;
+  --color-primary-gradient-end: 255, 160, 107;
+
+  /* Gradient Colors */
+  --primary-gradient-start: #ff6b9d;
+  --primary-gradient-end: #ffa06b;
+  --primary-dark-gradient-start: #e94a7c;
+  --primary-dark-gradient-end: #ff8a52;
+  --success-gradient-start: #10b981;
+  --success-gradient-end: #059669;
+  --secondary-gradient-start: #a78bfa;
+  --secondary-gradient-end: #4ecdc4;
+  --accent-gradient-start: #ffc93c;
+  --accent-gradient-end: #ff6b9d;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
+  --gradient-primary-dark: linear-gradient(135deg, var(--primary-dark-gradient-start) 0%, var(--primary-dark-gradient-end) 100%);
+  --gradient-success: linear-gradient(135deg, var(--success-gradient-start) 0%, var(--success-gradient-end) 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--secondary-gradient-start) 0%, var(--secondary-gradient-end) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--accent-gradient-start) 0%, var(--accent-gradient-end) 100%);
+
   /* Background - Enhanced with gradients */
   --bg-primary: linear-gradient(135deg, #fff5f7 0%, #fef8fa 100%);
   --bg-secondary: #ffffff;
@@ -26,6 +53,8 @@
   --card-bg-hover: #fefefe;
   --nav-bg: rgba(255, 255, 255, 0.85);
   --note-bg: linear-gradient(135deg, #fff9f5 0%, #fffbf8 100%);
+  --bg-glass: rgba(255, 255, 255, 0.9);
+  --bg-glass-light: rgba(255, 255, 255, 0.1);
 
   /* Text */
   --text-primary: #1f2937;
@@ -37,6 +66,7 @@
   --border: #e5e7eb;
   --border-light: #f3f4f6;
   --border-hover: #d1d5db;
+  --border-dashed: rgba(255, 255, 255, 0.8);
   --hover-bg: #f9fafb;
   --active-bg: #fff0f5;
   --focus-ring: rgba(255, 107, 157, 0.2);
@@ -54,6 +84,8 @@
   --shadow-xl:
     0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   --shadow-colored: 0 10px 30px -5px rgba(255, 107, 157, 0.3);
+  --shadow-primary: 0 12px 35px -5px rgba(255, 107, 157, 0.4);
+  --shadow-success: 0 10px 25px rgba(16, 185, 129, 0.4);
 
   /* Spacing System */
   --spacing-xs: 0.25rem;
@@ -90,6 +122,33 @@
   --warning: #fbbf24;
   --error: #f87171;
 
+  /* Shadow Colors (RGB) */
+  --color-shadow-primary: 255, 141, 181;
+  --color-shadow-secondary: 110, 221, 213;
+  --color-shadow-success: 52, 211, 153;
+  --color-error: 248, 113, 113;
+  --color-text-secondary: 203, 213, 224;
+  --color-primary-gradient-end: 255, 176, 136;
+
+  /* Gradient Colors */
+  --primary-gradient-start: #ff8db5;
+  --primary-gradient-end: #ffb088;
+  --primary-dark-gradient-start: #ff6b9d;
+  --primary-dark-gradient-end: #ff9e75;
+  --success-gradient-start: #34d399;
+  --success-gradient-end: #10b981;
+  --secondary-gradient-start: #c4b5fd;
+  --secondary-gradient-end: #6eddd5;
+  --accent-gradient-start: #ffd66b;
+  --accent-gradient-end: #ff8db5;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
+  --gradient-primary-dark: linear-gradient(135deg, var(--primary-dark-gradient-start) 0%, var(--primary-dark-gradient-end) 100%);
+  --gradient-success: linear-gradient(135deg, var(--success-gradient-start) 0%, var(--success-gradient-end) 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--secondary-gradient-start) 0%, var(--secondary-gradient-end) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--accent-gradient-start) 0%, var(--accent-gradient-end) 100%);
+
   /* Background - Enhanced gradients */
   --bg-primary: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   --bg-secondary: #1e293b;
@@ -97,6 +156,8 @@
   --card-bg-hover: #273548;
   --nav-bg: rgba(30, 41, 59, 0.85);
   --note-bg: linear-gradient(135deg, #334155 0%, #3d4a5c 100%);
+  --bg-glass: rgba(30, 41, 59, 0.9);
+  --bg-glass-light: rgba(255, 255, 255, 0.05);
 
   /* Text */
   --text-primary: #f1f5f9;
@@ -108,6 +169,7 @@
   --border: #334155;
   --border-light: #475569;
   --border-hover: #475569;
+  --border-dashed: rgba(255, 255, 255, 0.2);
   --hover-bg: #334155;
   --active-bg: #3d2937;
   --focus-ring: rgba(255, 141, 181, 0.3);
@@ -125,6 +187,8 @@
   --shadow-xl:
     0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
   --shadow-colored: 0 10px 30px -5px rgba(255, 141, 181, 0.4);
+  --shadow-primary: 0 12px 35px -5px rgba(255, 141, 181, 0.4);
+  --shadow-success: 0 10px 25px rgba(52, 211, 153, 0.4);
 
   /* Date picker icon filter */
   --calendar-icon-filter: invert(1);

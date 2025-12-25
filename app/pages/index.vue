@@ -247,7 +247,7 @@ const handleSave = async () => {
   display: inline-flex;
   color: var(--primary);
   animation: wave 2.5s ease-in-out infinite;
-  filter: drop-shadow(0 2px 4px rgba(255, 107, 157, 0.3));
+  filter: drop-shadow(0 2px 4px rgba(var(--color-shadow-primary), 0.3));
 }
 
 @keyframes wave {
@@ -299,7 +299,7 @@ const handleSave = async () => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+  background: var(--gradient-primary);
   color: white;
   box-shadow: var(--shadow-colored);
 }
@@ -308,7 +308,7 @@ const handleSave = async () => {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #e94a7c 0%, #ff8a52 100%);
+  background: var(--gradient-primary-dark);
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: -1;
@@ -316,7 +316,7 @@ const handleSave = async () => {
 
 .btn-primary:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 35px -5px rgba(255, 107, 157, 0.4);
+  box-shadow: 0 12px 35px -5px rgba(var(--color-shadow-primary), 0.4);
 }
 
 .btn-primary:hover::before {
@@ -325,7 +325,7 @@ const handleSave = async () => {
 
 .btn-primary:active {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px -5px rgba(255, 107, 157, 0.4);
+  box-shadow: 0 6px 20px -5px rgba(var(--color-shadow-primary), 0.4);
 }
 
 .save-btn {
@@ -341,12 +341,12 @@ const handleSave = async () => {
   align-items: center;
   gap: 0.625rem;
   padding: 1.125rem 1.75rem;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: var(--gradient-success);
   color: white;
   border-radius: var(--radius-md);
   font-weight: 600;
   font-size: 0.9375rem;
-  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 10px 25px rgba(var(--color-shadow-success), 0.4);
   z-index: 1000;
   backdrop-filter: blur(10px);
 }
@@ -375,17 +375,17 @@ const handleSave = async () => {
   align-items: center;
   gap: 1.25rem;
   box-shadow: var(--shadow-md);
-  border: 2px dashed rgba(255, 255, 255, 0.8);
+  border: 2px dashed var(--border-dashed);
   backdrop-filter: blur(10px);
 }
 
 :root.dark .empty-state-banner {
   background: linear-gradient(
     135deg,
-    rgba(255, 141, 181, 0.15),
-    rgba(110, 221, 213, 0.15)
+    rgba(var(--color-shadow-primary), 0.15),
+    rgba(var(--color-shadow-secondary), 0.15)
   );
-  border-color: rgba(255, 141, 181, 0.3);
+  border-color: rgba(var(--color-shadow-primary), 0.3);
 }
 
 .empty-icon {
@@ -394,7 +394,7 @@ const handleSave = async () => {
   justify-content: center;
   width: 60px;
   height: 60px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-glass);
   border-radius: var(--radius-md);
   color: var(--primary);
   flex-shrink: 0;
@@ -402,7 +402,7 @@ const handleSave = async () => {
 }
 
 :root.dark .empty-icon {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-glass-light);
   color: var(--primary-light);
 }
 

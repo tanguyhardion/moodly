@@ -121,8 +121,8 @@ watch(isAuthenticated, (value) => {
   justify-content: center;
   background: linear-gradient(
     135deg,
-    rgba(255, 107, 157, 0.1) 0%,
-    rgba(255, 160, 107, 0.1) 100%
+    rgba(var(--color-shadow-primary), 0.1) 0%,
+    rgba(var(--color-primary-gradient-end), 0.1) 100%
   );
   backdrop-filter: blur(10px);
   z-index: 9999;
@@ -144,7 +144,7 @@ watch(isAuthenticated, (value) => {
   justify-content: center;
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+  background: var(--gradient-primary);
   border-radius: 1.5rem;
   color: white;
   margin-bottom: 1.5rem;
@@ -182,11 +182,11 @@ watch(isAuthenticated, (value) => {
 .password-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(255, 107, 157, 0.1);
+  box-shadow: 0 0 0 3px rgba(var(--color-shadow-primary), 0.1);
 }
 
 .password-input.error {
-  border-color: #ff6b6b;
+  border-color: var(--error);
   animation: shake 0.3s ease;
 }
 
@@ -201,15 +201,15 @@ watch(isAuthenticated, (value) => {
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+  background: var(--gradient-primary);
   color: white;
-  box-shadow: 0 4px 12px rgba(255, 107, 157, 0.3);
+  box-shadow: 0 4px 12px rgba(var(--color-shadow-primary), 0.3);
   transition: all 0.3s ease;
 }
 
 .submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(255, 107, 157, 0.4);
+  box-shadow: 0 6px 16px rgba(var(--color-shadow-primary), 0.4);
 }
 
 .submit-btn:active:not(:disabled) {
@@ -227,7 +227,7 @@ watch(isAuthenticated, (value) => {
   justify-content: center;
   gap: 0.5rem;
   margin-top: 1rem;
-  color: #ff6b6b;
+  color: var(--error);
   font-size: 0.875rem;
   font-weight: 500;
 }
