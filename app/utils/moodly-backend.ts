@@ -1,4 +1,4 @@
-import type { MoodEntry } from "~/types";
+import type { MoodEntry, AnalyticsInsight } from "~/types";
 
 const getBackendUrl = (): string => {
   return process.env.NODE_ENV === "development"
@@ -89,6 +89,11 @@ export class MoodlyBackendService {
         id,
       }),
     });
+  }
+
+  async getAnalytics(): Promise<{ insights: AnalyticsInsight[] }> {
+    const masterPassword = getMasterPassword();
+    return this.makeRequest<{ insights: AnalyticsInsight[] }>(`get-analytics?masterPassword=${masterPassword}`);
   }
 }
 

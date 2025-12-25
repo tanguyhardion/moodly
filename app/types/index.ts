@@ -49,6 +49,14 @@ export interface Insight {
   confidence: number;
 }
 
+export interface AnalyticsInsight {
+  type: "correlation" | "comparative" | "pattern" | "trigger";
+  category: string;
+  text: string;
+  score: number;
+  details?: string;
+}
+
 export interface CategorizedInsights {
   patterns: Insight[];
   correlations: Insight[];

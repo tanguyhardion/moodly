@@ -39,6 +39,8 @@
         </div>
 
         <CheckinsStats :check-in-rate="checkInRate" />
+
+        <AdvancedAnalytics />
       </div>
     </div>
   </div>
