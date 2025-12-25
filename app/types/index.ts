@@ -45,7 +45,12 @@ export interface ChartDataPoint {
 export interface Insight {
   icon: string;
   text: string;
-  category: "patterns" | "correlations" | "predictions" | "achievements" | "recommendations";
+  category:
+    | "patterns"
+    | "correlations"
+    | "predictions"
+    | "achievements"
+    | "recommendations";
   confidence: number;
 }
 

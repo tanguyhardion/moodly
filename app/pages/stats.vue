@@ -108,7 +108,14 @@ const getChartData = (metric: MetricType): ChartDataPoint[] => {
 
 const checkInRate = computed(() => {
   if (recentEntries.value.length === 0) {
-    return { healthyFood: 0, caffeine: 0, gym: 0, hardWork: 0, alcohol: 0, misc: 0 };
+    return {
+      healthyFood: 0,
+      caffeine: 0,
+      gym: 0,
+      hardWork: 0,
+      alcohol: 0,
+      misc: 0,
+    };
   }
 
   const totalEntries = recentEntries.value.length;

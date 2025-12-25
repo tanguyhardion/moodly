@@ -43,7 +43,7 @@ const dateToString = (date: Date): string => {
 
 // Computed property to check if entry exists for selected date
 const hasEntry = computed(() =>
-  hasEntryForDate(dateToString(selectedDate.value))
+  hasEntryForDate(dateToString(selectedDate.value)),
 );
 
 // Function to load entry for the selected date
@@ -116,7 +116,7 @@ const handleSave = async () => {
       metrics.value,
       checkboxes.value,
       note.value || undefined,
-      dateToString(selectedDate.value)
+      dateToString(selectedDate.value),
     );
     showToast.value = true;
     setTimeout(() => {

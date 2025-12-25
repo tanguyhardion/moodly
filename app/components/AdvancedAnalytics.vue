@@ -3,7 +3,7 @@
     <div class="header">
       <h2>Advanced Insights</h2>
       <button @click="refresh" class="refresh-btn" :disabled="isLoading">
-        <Icon name="heroicons:arrow-path" :class="{ 'spin': isLoading }" />
+        <Icon name="heroicons:arrow-path" :class="{ spin: isLoading }" />
       </button>
     </div>
 
@@ -32,11 +32,16 @@
         <div class="insight-header">
           <span class="category-badge">{{ insight.category }}</span>
           <div class="score-indicator" v-if="insight.score">
-            <div class="score-bar" :style="{ width: Math.min(insight.score * 100, 100) + '%' }"></div>
+            <div
+              class="score-bar"
+              :style="{ width: Math.min(insight.score * 100, 100) + '%' }"
+            ></div>
           </div>
         </div>
         <p class="insight-text">{{ insight.text }}</p>
-        <p v-if="insight.details" class="insight-details">{{ insight.details }}</p>
+        <p v-if="insight.details" class="insight-details">
+          {{ insight.details }}
+        </p>
       </div>
     </div>
   </div>
@@ -98,8 +103,12 @@ h2 {
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .insights-grid {
@@ -113,7 +122,9 @@ h2 {
   border-radius: 0.75rem;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   box-shadow: var(--shadow-sm);
 }
 
@@ -122,10 +133,18 @@ h2 {
   box-shadow: var(--shadow-md);
 }
 
-.insight-card.correlation { border-left: 4px solid #3b82f6; }
-.insight-card.pattern { border-left: 4px solid #8b5cf6; }
-.insight-card.comparative { border-left: 4px solid #10b981; }
-.insight-card.trigger { border-left: 4px solid #f59e0b; }
+.insight-card.correlation {
+  border-left: 4px solid #3b82f6;
+}
+.insight-card.pattern {
+  border-left: 4px solid #8b5cf6;
+}
+.insight-card.comparative {
+  border-left: 4px solid #10b981;
+}
+.insight-card.trigger {
+  border-left: 4px solid #f59e0b;
+}
 
 .insight-header {
   display: flex;

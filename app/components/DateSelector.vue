@@ -70,8 +70,8 @@ const goToNextDay = () => {
       Select Date
     </label>
     <div class="date-picker-wrapper">
-      <button 
-        class="nav-arrow left-arrow" 
+      <button
+        class="nav-arrow left-arrow"
         @click="goToPreviousDay"
         title="Previous day"
       >
@@ -98,9 +98,9 @@ const goToNextDay = () => {
           </template>
         </VueDatePicker>
       </ClientOnly>
-      <button 
+      <button
         v-if="!isToday"
-        class="nav-arrow right-arrow" 
+        class="nav-arrow right-arrow"
         @click="goToNextDay"
         title="Next day"
       >

@@ -40,11 +40,31 @@
   --accent-gradient-end: #ff6b9d;
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
-  --gradient-primary-dark: linear-gradient(135deg, var(--primary-dark-gradient-start) 0%, var(--primary-dark-gradient-end) 100%);
-  --gradient-success: linear-gradient(135deg, var(--success-gradient-start) 0%, var(--success-gradient-end) 100%);
-  --gradient-secondary: linear-gradient(135deg, var(--secondary-gradient-start) 0%, var(--secondary-gradient-end) 100%);
-  --gradient-accent: linear-gradient(135deg, var(--accent-gradient-start) 0%, var(--accent-gradient-end) 100%);
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--primary-gradient-start) 0%,
+    var(--primary-gradient-end) 100%
+  );
+  --gradient-primary-dark: linear-gradient(
+    135deg,
+    var(--primary-dark-gradient-start) 0%,
+    var(--primary-dark-gradient-end) 100%
+  );
+  --gradient-success: linear-gradient(
+    135deg,
+    var(--success-gradient-start) 0%,
+    var(--success-gradient-end) 100%
+  );
+  --gradient-secondary: linear-gradient(
+    135deg,
+    var(--secondary-gradient-start) 0%,
+    var(--secondary-gradient-end) 100%
+  );
+  --gradient-accent: linear-gradient(
+    135deg,
+    var(--accent-gradient-start) 0%,
+    var(--accent-gradient-end) 100%
+  );
 
   /* Background - Enhanced with gradients */
   --bg-primary: linear-gradient(135deg, #fff5f7 0%, #fef8fa 100%);
@@ -143,11 +163,31 @@
   --accent-gradient-end: #ff8db5;
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
-  --gradient-primary-dark: linear-gradient(135deg, var(--primary-dark-gradient-start) 0%, var(--primary-dark-gradient-end) 100%);
-  --gradient-success: linear-gradient(135deg, var(--success-gradient-start) 0%, var(--success-gradient-end) 100%);
-  --gradient-secondary: linear-gradient(135deg, var(--secondary-gradient-start) 0%, var(--secondary-gradient-end) 100%);
-  --gradient-accent: linear-gradient(135deg, var(--accent-gradient-start) 0%, var(--accent-gradient-end) 100%);
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--primary-gradient-start) 0%,
+    var(--primary-gradient-end) 100%
+  );
+  --gradient-primary-dark: linear-gradient(
+    135deg,
+    var(--primary-dark-gradient-start) 0%,
+    var(--primary-dark-gradient-end) 100%
+  );
+  --gradient-success: linear-gradient(
+    135deg,
+    var(--success-gradient-start) 0%,
+    var(--success-gradient-end) 100%
+  );
+  --gradient-secondary: linear-gradient(
+    135deg,
+    var(--secondary-gradient-start) 0%,
+    var(--secondary-gradient-end) 100%
+  );
+  --gradient-accent: linear-gradient(
+    135deg,
+    var(--accent-gradient-start) 0%,
+    var(--accent-gradient-end) 100%
+  );
 
   /* Background - Enhanced gradients */
   --bg-primary: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
