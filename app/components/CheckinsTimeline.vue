@@ -50,23 +50,10 @@ const checkinConfigs = [
 type CheckinKey = (typeof checkinConfigs)[number]["key"];
 
 // Sort entries by date (oldest first)
-const sortedEntries = computed(() => {
+const displayedEntries = computed(() => {
   return [...props.entries].sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   );
-});
-
-// Limit displayed entries to avoid overcrowding
-const displayedEntries = computed(() => {
-  const maxEntries = 14;
-  if (sortedEntries.value.length <= maxEntries) {
-    return sortedEntries.value;
-  }
-  // Sample entries evenly if there are too many
-  const step = Math.ceil(sortedEntries.value.length / maxEntries);
-  return sortedEntries.value
-    .filter((_, index) => index % step === 0)
-    .slice(0, maxEntries);
 });
 
 // Format date for display
@@ -86,6 +73,16 @@ const isChecked = (entry: MoodEntry, habit: CheckinKey): boolean => {
 // Get color for a habit
 const getColor = (habit: CheckinKey): string => {
   return checkinConfigs.find((c) => c.key === habit)?.color ?? "#666";
+};
+
+// Determine which dates to show on x-axis based on number of entries
+const shouldShowLabel = (index: number): boolean => {
+  const total = displayedEntries.value.length;
+  if (total <= 14) return true; // Show all if 14 or fewer
+  if (total <= 30) return index % 2 === 0; // Show every 2nd
+  if (total <= 60) return index % 3 === 0; // Show every 3rd
+  if (total <= 90) return index % 5 === 0; // Show every 5th
+  return index % 7 === 0; // Show every 7th for very large datasets
 };
 </script>
 
@@ -108,19 +105,6 @@ const getColor = (habit: CheckinKey): string => {
     </div>
 
     <div v-else class="timeline-container">
-      <!-- Legend -->
-      <div class="timeline-legend">
-        <div
-          v-for="config in checkinConfigs"
-          :key="config.key"
-          class="legend-item"
-        >
-          <span class="legend-dot" :style="{ background: config.color }"></span>
-          <Icon :name="config.icon" size="14" />
-          <span class="legend-label">{{ config.name }}</span>
-        </div>
-      </div>
-
       <!-- Timeline Grid -->
       <div class="timeline-grid">
         <!-- Y-axis labels (habits) -->
@@ -167,11 +151,13 @@ const getColor = (habit: CheckinKey): string => {
           <!-- X-axis labels (dates) -->
           <div class="x-axis">
             <div
-              v-for="entry in displayedEntries"
+              v-for="(entry, index) in displayedEntries"
               :key="entry.id"
               class="x-label"
             >
-              {{ formatDate(entry.date) }}
+              <span v-if="shouldShowLabel(index)">
+                {{ formatDate(entry.date) }}
+              </span>
             </div>
           </div>
         </div>
@@ -222,48 +208,15 @@ const getColor = (habit: CheckinKey): string => {
   color: var(--text-tertiary);
 }
 
-.timeline-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-}
-
-.legend-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.legend-label {
-  display: none;
-}
-
-@media (min-width: 640px) {
-  .legend-label {
-    display: inline;
-  }
-}
-
 .timeline-container {
-  overflow-x: auto;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 .timeline-grid {
   display: flex;
   gap: 1rem;
-  min-width: fit-content;
+  width: 100%;
 }
 
 .y-axis {
@@ -318,14 +271,14 @@ const getColor = (habit: CheckinKey): string => {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 40px;
+  min-width: 20px;
   flex: 1;
   cursor: default;
 }
 
 .dot {
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   transition:
     transform 0.2s ease,
@@ -333,13 +286,13 @@ const getColor = (habit: CheckinKey): string => {
 }
 
 .cell:hover .dot {
-  transform: scale(1.3);
-  box-shadow: 0 0 8px currentColor;
+  transform: scale(1.4);
+  box-shadow: 0 0 6px currentColor;
 }
 
 .empty-dot {
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   border: 1px dashed var(--border);
   opacity: 0.3;
@@ -356,20 +309,20 @@ const getColor = (habit: CheckinKey): string => {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 40px;
+  min-width: 20px;
   flex: 1;
-  font-size: 0.625rem;
+  font-size: 0.5rem;
   font-weight: 500;
   color: var(--text-tertiary);
   transform: rotate(-45deg);
   transform-origin: center;
   white-space: nowrap;
+  height: 2rem;
 }
 
 @media (min-width: 640px) {
   .x-label {
-    font-size: 0.6875rem;
-    transform: none;
+    font-size: 0.5625rem;
   }
 }
 </style>

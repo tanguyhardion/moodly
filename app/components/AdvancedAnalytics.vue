@@ -197,7 +197,7 @@ const refresh = () => {
 .insight-card.trigger {
   border-left: 4px solid #f59e0b;
 }
-.insight-card.rest_day {
+.insight-card.day_off {
   border-left: 4px solid #ef4444;
 }
 

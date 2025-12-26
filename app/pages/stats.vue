@@ -40,19 +40,6 @@
       </div>
 
       <div v-else class="stats-content">
-        <div class="charts-grid">
-          <MiniChart
-            v-for="config in metricConfigs"
-            :key="config.key"
-            :title="config.name"
-            :icon="config.icon"
-            :color="config.color"
-            :average="getMetricAverage(config.key, selectedDays)"
-            :trend="getMetricTrend(config.key, selectedDays)"
-            :chart-data="getChartData(config.key)"
-          />
-        </div>
-
         <MetricsLineChart
           :entries="recentEntries"
           :metric-configs="metricConfigs"
