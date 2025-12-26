@@ -158,7 +158,7 @@ const handleSave = async () => {
     <div v-else class="content">
       <div class="page-header">
         <h1 class="page-title">
-          <Icon name="solar:hand-heart-bold" size="32" class="wave" />
+          <HeartFaceIcon class="wave" />
           How are you feeling?
         </h1>
         <p class="page-subtitle">

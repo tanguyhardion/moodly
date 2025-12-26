@@ -2,7 +2,13 @@
   <div class="loading-state">
     <div class="loading-spinner">
       <div class="spinner-ring"></div>
-      <Icon name="solar:star-bold" size="24" class="spinner-icon" />
+      <img
+        src="/logo-pulse.svg"
+        alt="Loading..."
+        class="spinner-icon"
+        width="40"
+        height="40"
+      />
     </div>
     <p>{{ message }}</p>
   </div>

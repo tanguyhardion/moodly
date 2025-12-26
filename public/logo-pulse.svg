@@ -1,0 +1,24 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="moodlyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff6b9d" />
+      <stop offset="100%" stop-color="#ffa06b" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Stylized M / Pulse Graph -->
+  <path d="M128 288 
+           C 128 160, 210 160, 210 240 
+           C 210 280, 230 300, 256 300 
+           C 282 300, 302 280, 302 240 
+           C 302 160, 384 160, 384 288" 
+        stroke="url(#moodlyGradient)" 
+        stroke-width="42" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        fill="none"/>
+        
+  <!-- Data points -->
+  <circle cx="128" cy="288" r="21" fill="url(#moodlyGradient)" />
+  <circle cx="384" cy="288" r="21" fill="url(#moodlyGradient)" />
+</svg>

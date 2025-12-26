@@ -22,11 +22,11 @@
         <div class="logo-section">
           <NuxtLink to="/" class="logo" @click="mobileMenuOpen = false">
             <img
-              src="/favicon.ico"
+              src="/logo.svg"
               alt="Moodly"
               class="logo-icon"
-              width="28"
-              height="28"
+              width="32"
+              height="32"
             />
             <span class="logo-text">Moodly</span>
           </NuxtLink>
