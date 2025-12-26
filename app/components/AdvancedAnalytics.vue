@@ -42,7 +42,7 @@
           :class="insight.type"
         >
           <div class="insight-header">
-            <span class="category-badge">{{ insight.category }}</span>
+            <span class="category-badge">{{ insight.label }}</span>
             <div class="score-container" v-if="insight.score">
               <span class="score-label">Strength</span>
               <div class="score-indicator">
@@ -190,9 +190,6 @@ const refresh = () => {
   box-shadow: var(--shadow-md);
 }
 
-.insight-card.correlation {
-  border-left: 4px solid #3b82f6;
-}
 .insight-card.habit-impact {
   border-left: 4px solid #3b82f6;
 }
@@ -202,14 +199,20 @@ const refresh = () => {
 .insight-card.habit-pattern {
   border-left: 4px solid #06b6d4;
 }
-.insight-card.pattern {
+.insight-card.weekly-trend {
   border-left: 4px solid #8b5cf6;
 }
-.insight-card.comparative {
+.insight-card.habit-comparison {
   border-left: 4px solid #10b981;
 }
 .insight-card.trigger {
   border-left: 4px solid #f59e0b;
+}
+.insight-card.long-term-trend {
+  border-left: 4px solid #6366f1;
+}
+.insight-card.synergy {
+  border-left: 4px solid #f43f5e;
 }
 
 .insight-header {

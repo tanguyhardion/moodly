@@ -1,11 +1,6 @@
 export type MetricType = "mood" | "energy" | "sleep" | "focus";
 
-export interface MetricValue {
-  value: number; // 1-5 scale
-  emoji: string;
-}
-
-export interface MoodEntry {
+export interface DailyEntry {
   id: string;
   date: string; // ISO date string
   metrics: {
@@ -36,43 +31,18 @@ export interface MetricConfig {
   labels: string[];
 }
 
-export interface ChartDataPoint {
-  date: string;
-  value: number;
-  label: string;
-}
-
-export interface Insight {
-  icon: string;
-  text: string;
-  category:
-    | "patterns"
-    | "correlations"
-    | "predictions"
-    | "achievements"
-    | "recommendations";
-  confidence: number;
-}
-
 export interface AnalyticsInsight {
   type:
-    | "correlation"
-    | "comparative"
-    | "pattern"
-    | "trigger"
     | "habit-impact"
     | "metric-connection"
-    | "habit-pattern";
-  category: string;
+    | "habit-pattern"
+    | "habit-comparison"
+    | "weekly-trend"
+    | "trigger"
+    | "long-term-trend"
+    | "synergy";
+  label: string;
   text: string;
   score: number;
   details?: string;
-}
-
-export interface CategorizedInsights {
-  patterns: Insight[];
-  correlations: Insight[];
-  predictions: Insight[];
-  achievements: Insight[];
-  recommendations: Insight[];
 }

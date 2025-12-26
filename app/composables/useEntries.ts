@@ -1,23 +1,23 @@
-import type { MoodEntry } from "~/types";
+import type { DailyEntry } from "~/types";
 import { moodlyBackendService } from "~/utils/moodly-backend";
 import { generateId } from "~/utils/helpers";
 
 // Global state (singleton) - shared across all components
-const entries = ref<MoodEntry[]>([]);
+const entries = ref<DailyEntry[]>([]);
 const isLoading = ref(false);
 const isInitialized = ref(false);
 const dataVersion = ref(0); // Tracks when data changes to trigger refetch
 
 export function useEntries() {
   // Get today's entry
-  const getTodayEntry = (): MoodEntry | undefined => {
-    const today = new Date().toISOString().split("T")[0];
-    return entries.value.find((entry: MoodEntry) => entry.date === today);
+  const getTodayEntry = (): DailyEntry | undefined => {
+    const today = new Date().toISOString().split("T")[0]!;
+    return entries.value.find((entry: DailyEntry) => entry.date === today);
   };
 
   // Get entry for a specific date
-  const getEntryByDate = (date: string): MoodEntry | undefined => {
-    return entries.value.find((entry: MoodEntry) => entry.date === date);
+  const getEntryByDate = (date: string): DailyEntry | undefined => {
+    return entries.value.find((entry: DailyEntry) => entry.date === date);
   };
 
   // Check if entry exists for today
@@ -58,19 +58,19 @@ export function useEntries() {
 
   // Save or update entry
   const saveEntry = async (
-    metrics: MoodEntry["metrics"],
-    checkboxes?: MoodEntry["checkboxes"],
+    metrics: DailyEntry["metrics"],
+    checkboxes?: DailyEntry["checkboxes"],
     note?: string,
     date?: string,
   ) => {
     const targetDate = date || new Date().toISOString().split("T")[0]!;
     const existingIndex = entries.value.findIndex(
-      (entry: MoodEntry) => entry.date === targetDate,
+      (entry: DailyEntry) => entry.date === targetDate,
     );
     const existingEntry =
       existingIndex >= 0 ? entries.value[existingIndex] : null;
 
-    const entry: MoodEntry = {
+    const entry: DailyEntry = {
       id: existingEntry ? existingEntry.id : generateId(),
       date: targetDate,
       metrics,
@@ -92,7 +92,7 @@ export function useEntries() {
       }
 
       // Sort by date descending
-      entries.value.sort((a: MoodEntry, b: MoodEntry) =>
+      entries.value.sort((a: DailyEntry, b: DailyEntry) =>
         b.date.localeCompare(a.date),
       );
 
@@ -107,7 +107,7 @@ export function useEntries() {
   };
 
   // Get entries for date range
-  const getEntriesInRange = (days: number): MoodEntry[] => {
+  const getEntriesInRange = (days: number): DailyEntry[] => {
     if (days === 0) {
       return entries.value;
     }
@@ -116,7 +116,7 @@ export function useEntries() {
     const startDateStr = startDate.toISOString().split("T")[0] || "";
 
     return entries.value.filter(
-      (entry: MoodEntry) => entry.date >= startDateStr,
+      (entry: DailyEntry) => entry.date >= startDateStr,
     );
   };
 

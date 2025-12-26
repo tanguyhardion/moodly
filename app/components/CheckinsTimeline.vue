@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MoodEntry } from "~/types";
+import type { DailyEntry } from "~/types";
 
 interface Props {
   entries: MoodEntry[];

@@ -1,9 +1,9 @@
-import type { MoodEntry, MetricConfig } from "~/types";
+import type { DailyEntry, MetricConfig } from "~/types";
 import * as XLSX from "xlsx";
 import { downloadFile, getCurrentDateString } from "~/utils/helpers";
 
 export function useExport(
-  entries: Ref<MoodEntry[]>,
+  entries: Ref<DailyEntry[]>,
   metricConfigs: MetricConfig[],
 ) {
   const exportToJSON = () => {

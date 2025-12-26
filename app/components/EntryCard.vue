@@ -87,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MoodEntry, MetricConfig } from "~/types";
+import type { DailyEntry, MetricConfig } from "~/types";
 
 interface Props {
   entry: MoodEntry;

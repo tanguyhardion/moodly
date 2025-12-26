@@ -1,4 +1,4 @@
-import type { MoodEntry, AnalyticsInsight } from "~/types";
+import type { DailyEntry, AnalyticsInsight } from "~/types";
 
 const getBackendUrl = (): string => {
   return process.env.NODE_ENV === "development"
@@ -62,16 +62,16 @@ export class MoodlyBackendService {
     }
   }
 
-  async getEntries(): Promise<MoodEntry[]> {
+  async getEntries(): Promise<DailyEntry[]> {
     const masterPassword = getMasterPassword();
-    return this.makeRequest<MoodEntry[]>(
+    return this.makeRequest<DailyEntry[]>(
       `get-entries?masterPassword=${encodeURIComponent(masterPassword!)}`,
     );
   }
 
-  async saveEntry(entry: MoodEntry): Promise<MoodEntry> {
+  async saveEntry(entry: DailyEntry): Promise<DailyEntry> {
     const masterPassword = getMasterPassword();
-    return this.makeRequest<MoodEntry>("save-entry", {
+    return this.makeRequest<DailyEntry>("save-entry", {
       method: "POST",
       body: JSON.stringify({
         masterPassword,

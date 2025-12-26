@@ -56,7 +56,6 @@
 </template>
 
 <script setup lang="ts">
-
 const { entries, metricConfigs, getEntriesInRange, isInitialized } =
   useMoodly();
 

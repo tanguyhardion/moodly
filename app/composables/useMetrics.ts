@@ -1,4 +1,4 @@
-import type { MetricType, MetricConfig, MoodEntry } from "~/types";
+import type { MetricType, MetricConfig, DailyEntry } from "~/types";
 
 export function useMetrics() {
   const metricConfigs: MetricConfig[] = [
@@ -38,7 +38,7 @@ export function useMetrics() {
 
   // Calculate average for a metric
   const getMetricAverage = (
-    entries: MoodEntry[],
+    entries: DailyEntry[],
     metric: MetricType,
     days: number = 7,
   ): number => {
@@ -54,7 +54,7 @@ export function useMetrics() {
 
   // Get metric trend (positive, negative, or neutral)
   const getMetricTrend = (
-    entries: MoodEntry[],
+    entries: DailyEntry[],
     metric: MetricType,
     days: number = 7,
   ): "up" | "down" | "neutral" => {
@@ -84,9 +84,9 @@ export function useMetrics() {
 
   // Helper: Get entries for date range
   const getEntriesInRange = (
-    entries: MoodEntry[],
+    entries: DailyEntry[],
     days: number,
-  ): MoodEntry[] => {
+  ): DailyEntry[] => {
     if (days === 0) {
       return entries;
     }
@@ -94,7 +94,7 @@ export function useMetrics() {
     startDate.setDate(startDate.getDate() - days);
     const startDateStr = startDate.toISOString().split("T")[0] || "";
 
-    return entries.filter((entry: MoodEntry) => entry.date >= startDateStr);
+    return entries.filter((entry: DailyEntry) => entry.date >= startDateStr);
   };
 
   return {
