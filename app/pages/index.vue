@@ -310,22 +310,15 @@ const handleSave = async () => {
   font-weight: 500;
 }
 
-.sticky-date-selector {
-  position: sticky;
-  top: 4.5rem;
-  z-index: 10;
-  margin-bottom: 2rem;
+.actions {
+  display: flex;
+  justify-content: center;
 }
 
 .metrics-container {
   display: grid;
   gap: 1rem;
   margin-bottom: 2rem;
-}
-
-.actions {
-  display: flex;
-  justify-content: center;
 }
 
 .btn {

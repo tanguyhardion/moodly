@@ -144,7 +144,6 @@ const sortedEntries = computed(() => {
   border-radius: var(--radius-md);
   font-weight: 700;
   font-size: 1.0625rem;
-  cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   letter-spacing: -0.01em;

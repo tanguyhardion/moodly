@@ -38,7 +38,6 @@
       <div
         class="checkbox-display-item"
         :class="{ checked: entry.checkboxes.caffeine }"
-        v-if="entry.checkboxes.caffeine !== undefined"
       >
         <Icon name="solar:cup-hot-bold" size="16" />
         <span>Caffeine</span>
@@ -60,7 +59,6 @@
       <div
         class="checkbox-display-item"
         :class="{ checked: entry.checkboxes.dayOff }"
-        v-if="entry.checkboxes.dayOff !== undefined"
       >
         <Icon name="solar:sofa-bold" size="16" />
         <span>Day Off</span>
@@ -68,7 +66,6 @@
       <div
         class="checkbox-display-item"
         :class="{ checked: entry.checkboxes.alcohol }"
-        v-if="entry.checkboxes.alcohol !== undefined"
       >
         <Icon name="solar:cup-star-bold" size="16" />
         <span>Alcohol</span>
@@ -95,13 +92,11 @@ import type { MoodEntry, MetricConfig } from "~/types";
 interface Props {
   entry: MoodEntry;
   metricConfigs: MetricConfig[];
-  showDelete?: boolean;
 }
 
 const props = defineProps<Props>();
 defineEmits<{
   click: [];
-  delete: [];
 }>();
 
 const formattedDate = computed(() => {
@@ -132,7 +127,6 @@ const formattedDate = computed(() => {
   border: 1px solid var(--border);
   box-shadow: var(--shadow-md);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
   position: relative;
   overflow: hidden;
 }
@@ -177,30 +171,14 @@ const formattedDate = computed(() => {
 
 .delete-btn {
   background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: 0.375rem;
-  border-radius: var(--radius-sm);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.delete-btn:hover {
-  color: var(--error);
-  background: rgba(var(--color-error), 0.1);
-  transform: scale(1.1);
-}
-
-.delete-btn:active {
-  transform: scale(0.95);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .metrics-grid {
-  display: grid;
-  gap: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   margin-bottom: 1rem;
 }
 
@@ -259,6 +237,7 @@ const formattedDate = computed(() => {
   color: var(--text-secondary);
   opacity: 0.5;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
 }
 
 .checkbox-display-item.checked {
@@ -283,7 +262,6 @@ const formattedDate = computed(() => {
   padding: 1rem 1.125rem;
   background: var(--note-bg);
   border-radius: var(--radius-sm);
-  border-left: 4px solid var(--primary);
   border: 1px solid var(--border-light);
   border-left: 4px solid var(--primary);
   transition: all 0.3s ease;

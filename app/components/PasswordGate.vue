@@ -182,7 +182,7 @@ watch(isAuthenticated, (value) => {
   border-radius: 0.75rem;
   font-size: 1rem;
   color: var(--text-primary);
-  background: var(--input-bg);
+  background: var(--card-bg);
   transition: all 0.3s ease;
 }
 

@@ -55,7 +55,14 @@ export interface Insight {
 }
 
 export interface AnalyticsInsight {
-  type: "correlation" | "comparative" | "pattern" | "trigger";
+  type:
+    | "correlation"
+    | "comparative"
+    | "pattern"
+    | "trigger"
+    | "habit-impact"
+    | "metric-connection"
+    | "habit-pattern";
   category: string;
   text: string;
   score: number;

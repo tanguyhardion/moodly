@@ -121,9 +121,14 @@ const refresh = () => {
   transition: all 0.2s;
 }
 
-.refresh-btn:hover {
+.refresh-btn:hover:not(:disabled) {
   background: var(--bg-secondary);
   color: var(--primary);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .spin {
@@ -188,6 +193,15 @@ const refresh = () => {
 .insight-card.correlation {
   border-left: 4px solid #3b82f6;
 }
+.insight-card.habit-impact {
+  border-left: 4px solid #3b82f6;
+}
+.insight-card.metric-connection {
+  border-left: 4px solid #ec4899;
+}
+.insight-card.habit-pattern {
+  border-left: 4px solid #06b6d4;
+}
 .insight-card.pattern {
   border-left: 4px solid #8b5cf6;
 }
@@ -196,9 +210,6 @@ const refresh = () => {
 }
 .insight-card.trigger {
   border-left: 4px solid #f59e0b;
-}
-.insight-card.day_off {
-  border-left: 4px solid #ef4444;
 }
 
 .insight-header {

@@ -56,16 +56,9 @@
 </template>
 
 <script setup lang="ts">
-import type { MetricType, ChartDataPoint } from "~/types";
 
-const {
-  entries,
-  metricConfigs,
-  getEntriesInRange,
-  getMetricAverage,
-  getMetricTrend,
-  isInitialized,
-} = useMoodly();
+const { entries, metricConfigs, getEntriesInRange, isInitialized } =
+  useMoodly();
 
 const isReady = ref(false);
 
@@ -118,26 +111,6 @@ const periods = [
 const recentEntries = computed(() => {
   return getEntriesInRange(selectedDays.value);
 });
-
-const getChartData = (metric: MetricType): ChartDataPoint[] => {
-  const entries = recentEntries.value;
-  const maxPoints = 10;
-
-  // Sample entries if there are too many
-  const step = Math.ceil(entries.length / maxPoints);
-  const sampledEntries = entries
-    .filter((_, index) => index % step === 0)
-    .slice(0, maxPoints);
-
-  return sampledEntries.reverse().map((entry) => ({
-    date: entry.date,
-    value: entry.metrics[metric],
-    label: new Date(entry.date).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-    }),
-  }));
-};
 
 const checkInRate = computed(() => {
   if (recentEntries.value.length === 0) {
@@ -287,13 +260,6 @@ const checkInRate = computed(() => {
 
 .btn-primary:hover::before {
   opacity: 1;
-}
-
-.charts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
 }
 
 .sticky-header {
