@@ -283,7 +283,8 @@ const handleSave = async () => {
 }
 
 .wave {
-  display: inline-flex;
+  display: flex;
+  align-items: center;
   color: var(--primary);
   animation: wave 2.5s ease-in-out infinite;
   filter: drop-shadow(0 2px 4px rgba(var(--color-shadow-primary), 0.3));

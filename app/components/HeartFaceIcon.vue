@@ -18,10 +18,20 @@
     />
 
     <!-- Left eye -->
-    <circle cx="9" cy="10" r="1.2" fill="currentColor" />
+    <circle
+      cx="9"
+      cy="10"
+      r="1.2"
+      fill="currentColor"
+    />
 
     <!-- Right eye -->
-    <circle cx="15" cy="10" r="1.2" fill="currentColor" />
+    <circle
+      cx="15"
+      cy="10"
+      r="1.2"
+      fill="currentColor"
+    />
 
     <!-- Smile curve -->
     <path
@@ -31,13 +41,6 @@
       stroke-linecap="round"
       stroke-linejoin="round"
       fill="none"
-    />
-
-    <!-- Heart accent inside -->
-    <path
-      d="M 12 17 L 12.5 18 L 13 17 Q 12.5 17.5 12 17"
-      fill="currentColor"
-      opacity="0.6"
     />
   </svg>
 </template>
