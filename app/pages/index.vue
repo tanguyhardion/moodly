@@ -7,7 +7,10 @@ const {
   darkMode,
   isInitialized,
   isLoading,
+  entries,
 } = useMoodly();
+
+const { updateStreakFromEntries } = useStreak();
 
 const metrics = ref({
   mood: 3,
@@ -38,7 +41,10 @@ const maxDate = new Date();
 
 // Convert date to string format
 const dateToString = (date: Date): string => {
-  return date.toISOString().split("T")[0]!;
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 };
 
 // Computed property to check if entry exists for selected date
@@ -101,6 +107,17 @@ watch(isInitialized, (initialized) => {
     isReady.value = true;
   }
 });
+
+// Update streak data when entries change
+watch(
+  entries,
+  (newEntries) => {
+    if (newEntries.length > 0) {
+      updateStreakFromEntries(newEntries);
+    }
+  },
+  { immediate: true }
+);
 
 const dateSelectorRef = ref<HTMLElement | null>(null);
 const showStickyHeader = ref(false);
@@ -169,6 +186,9 @@ const handleSave = async () => {
           }}
         </p>
       </div>
+
+      <!-- Streak Display -->
+      <StreakDisplay />
 
       <div ref="dateSelectorRef">
         <DateSelector

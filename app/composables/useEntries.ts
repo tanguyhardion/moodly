@@ -8,10 +8,18 @@ const isLoading = ref(false);
 const isInitialized = ref(false);
 const dataVersion = ref(0); // Tracks when data changes to trigger refetch
 
+// Helper to get local date string YYYY-MM-DD
+const toLocalDateString = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 export function useEntries() {
   // Get today's entry
   const getTodayEntry = (): DailyEntry | undefined => {
-    const today = new Date().toISOString().split("T")[0]!;
+    const today = toLocalDateString(new Date());
     return entries.value.find((entry: DailyEntry) => entry.date === today);
   };
 
@@ -63,7 +71,7 @@ export function useEntries() {
     note?: string,
     date?: string,
   ) => {
-    const targetDate = date || new Date().toISOString().split("T")[0]!;
+    const targetDate = date || toLocalDateString(new Date());
     const existingIndex = entries.value.findIndex(
       (entry: DailyEntry) => entry.date === targetDate,
     );
@@ -113,7 +121,7 @@ export function useEntries() {
     }
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
-    const startDateStr = startDate.toISOString().split("T")[0] || "";
+    const startDateStr = toLocalDateString(startDate);
 
     return entries.value.filter(
       (entry: DailyEntry) => entry.date >= startDateStr,

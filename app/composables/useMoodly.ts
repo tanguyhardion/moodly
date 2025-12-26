@@ -7,12 +7,14 @@ import type { MetricType } from "~/types";
  * - useMetrics: Handles metric configurations and calculations
  * - useExport: Provides data export functionality
  * - useDarkMode: Manages dark mode state
+ * - useStreak: Manages streak tracking and calculations
  */
 export function useMoodly() {
   // Delegate to specialized composables
   const entriesManager = useEntries();
   const metricsManager = useMetrics();
   const darkModeManager = useDarkMode();
+  const streakManager = useStreak();
   const exportManager = useExport(
     entriesManager.entries,
     metricsManager.metricConfigs,
@@ -61,6 +63,13 @@ export function useMoodly() {
     // Dark mode
     darkMode: darkModeManager.darkMode,
     toggleDarkMode: darkModeManager.toggleDarkMode,
+
+    // Streak tracking
+    streakData: streakManager.streakData,
+    updateStreakFromEntries: streakManager.updateStreakFromEntries,
+    needsCheckinToday: streakManager.needsCheckinToday,
+    isStreakAtRisk: streakManager.isStreakAtRisk,
+    streakMessage: streakManager.streakMessage,
 
     // Export
     exportToJSON: exportManager.exportToJSON,
