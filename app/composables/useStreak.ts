@@ -19,7 +19,10 @@ const toLocalDateString = (date: Date): string => {
 
 // Helper to parse YYYY-MM-DD to local Date (at 00:00:00)
 const parseLocalDateString = (dateStr: string): Date => {
-  const [year, month, day] = dateStr.split("-").map(Number);
+  const parts = dateStr.split("-").map(Number);
+  const year = parts[0]!;
+  const month = parts[1]!;
+  const day = parts[2]!;
   return new Date(year, month - 1, day);
 };
 
