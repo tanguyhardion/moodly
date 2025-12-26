@@ -116,7 +116,7 @@ watch(
       updateStreakFromEntries(newEntries);
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const dateSelectorRef = ref<HTMLElement | null>(null);

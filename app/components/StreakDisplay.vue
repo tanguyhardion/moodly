@@ -16,22 +16,34 @@ const { streakData, streakMessage, isStreakAtRisk, needsCheckinToday } =
     >
       <div class="streak-stats">
         <div class="stat-item current">
-          <span class="icon">{{ isStreakAtRisk ? '⚠️' : '🔥' }}</span>
+          <span v-if="isStreakAtRisk" class="icon-wrapper warning-icon">
+            <Icon name="heroicons:exclamation-triangle-solid" class="icon" />
+          </span>
+          <span v-else class="icon-wrapper fire-icon">
+            <Icon name="heroicons:fire-solid" class="icon" />
+          </span>
           <span class="value">{{ streakData.currentStreak }}</span>
           <span class="label">streak</span>
         </div>
-        
+
         <div class="divider"></div>
-        
+
         <div class="stat-item best">
-          <span class="icon">🏆</span>
+          <span class="icon-wrapper trophy-icon">
+            <Icon name="heroicons:trophy-solid" class="icon" />
+          </span>
           <span class="value">{{ streakData.longestStreak }}</span>
           <span class="label">best</span>
         </div>
       </div>
     </div>
-    
-    <div v-if="(streakData.currentStreak > 0 || needsCheckinToday) && streakMessage" class="streak-toast">
+
+    <div
+      v-if="
+        (streakData.currentStreak > 0 || needsCheckinToday) && streakMessage
+      "
+      class="streak-toast"
+    >
       {{ streakMessage }}
     </div>
   </div>
@@ -104,6 +116,39 @@ const { streakData, streakMessage, isStreakAtRisk, needsCheckinToday } =
 .icon {
   font-size: 1.1rem;
   line-height: 1;
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+  display: block;
+}
+
+.icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.fire-icon {
+  color: #ff6b6b;
+  filter: drop-shadow(0 0 4px rgba(255, 107, 107, 0.4)) hue-rotate(-10deg)
+    saturate(1.2);
+}
+
+.fire-icon .icon {
+  filter: hue-rotate(10deg);
+}
+
+.warning-icon {
+  color: #ff9f43;
+  filter: drop-shadow(0 0 3px rgba(255, 159, 67, 0.3));
+}
+
+.trophy-icon {
+  color: #ffd700;
+  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.4)) brightness(1.1)
+    saturate(1.3);
 }
 
 .label {
