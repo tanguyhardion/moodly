@@ -90,7 +90,7 @@
 import type { DailyEntry, MetricConfig } from "~/types";
 
 interface Props {
-  entry: MoodEntry;
+  entry: DailyEntry;
   metricConfigs: MetricConfig[];
 }
 

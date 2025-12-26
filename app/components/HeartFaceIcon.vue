@@ -18,20 +18,10 @@
     />
 
     <!-- Left eye -->
-    <circle
-      cx="9"
-      cy="10"
-      r="1.2"
-      fill="currentColor"
-    />
+    <circle cx="9" cy="10" r="1.2" fill="currentColor" />
 
     <!-- Right eye -->
-    <circle
-      cx="15"
-      cy="10"
-      r="1.2"
-      fill="currentColor"
-    />
+    <circle cx="15" cy="10" r="1.2" fill="currentColor" />
 
     <!-- Smile curve -->
     <path

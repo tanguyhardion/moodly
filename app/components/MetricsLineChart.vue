@@ -28,8 +28,9 @@
         :categories="chartCategories"
         :height="320"
         :x-formatter="xFormatter"
-        x-label=""
-        y-label="Score"
+        xLabel=""
+        yLabel="Score"
+        :yDomain="[1, 5]"
         :show-x-axis="true"
         :show-y-axis="true"
         :show-tooltip="true"
@@ -43,7 +44,7 @@
 import type { DailyEntry, MetricConfig, MetricType } from "~/types";
 
 interface Props {
-  entries: MoodEntry[];
+  entries: DailyEntry[];
   metricConfigs: MetricConfig[];
 }
 

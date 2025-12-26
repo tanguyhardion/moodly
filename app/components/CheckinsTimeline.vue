@@ -2,7 +2,7 @@
 import type { DailyEntry } from "~/types";
 
 interface Props {
-  entries: MoodEntry[];
+  entries: DailyEntry[];
 }
 
 const props = defineProps<Props>();
@@ -66,7 +66,7 @@ const formatDate = (dateString: string): string => {
 };
 
 // Check if a habit was checked for a given entry
-const isChecked = (entry: MoodEntry, habit: CheckinKey): boolean => {
+const isChecked = (entry: DailyEntry, habit: CheckinKey): boolean => {
   return entry.checkboxes?.[habit] ?? false;
 };
 
