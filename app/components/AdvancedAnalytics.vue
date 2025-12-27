@@ -74,7 +74,7 @@ onMounted(() => {
 });
 
 const refresh = () => {
-  fetchAnalytics();
+  fetchAnalytics(true);
 };
 </script>
 
