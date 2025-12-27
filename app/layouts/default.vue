@@ -53,6 +53,14 @@
             <Icon name="solar:chart-bold" size="20" />
             <span>Stats</span>
           </NuxtLink>
+          <NuxtLink
+            to="/insights"
+            class="nav-link"
+            @click="mobileMenuOpen = false"
+          >
+            <Icon name="mdi:sparkles" size="20" />
+            <span>Insights</span>
+          </NuxtLink>
         </div>
 
         <button

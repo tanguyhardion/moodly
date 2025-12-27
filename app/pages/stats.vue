@@ -48,8 +48,6 @@
         <CheckinsStats :check-in-rate="checkInRate" />
 
         <CheckinsTimeline :entries="recentEntries" />
-
-        <AdvancedAnalytics />
       </div>
     </div>
   </div>
