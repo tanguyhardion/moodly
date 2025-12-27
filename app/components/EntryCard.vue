@@ -2,7 +2,9 @@
   <div class="entry-card" @click="$emit('click')">
     <div class="entry-header">
       <div class="entry-date">
-        <Icon name="solar:calendar-bold" size="18" />
+        <div class="icon-container">
+          <Icon name="solar:calendar-bold" size="24" class="calendar-icon" />
+        </div>
         <span>{{ formattedDate }}</span>
       </div>
     </div>
@@ -123,50 +125,50 @@ const formattedDate = computed(() => {
 .entry-card {
   padding: 1.75rem;
   background: var(--card-bg);
-  border-radius: var(--radius-lg);
+  border-radius: 1.5rem;
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
 
-.entry-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--gradient-primary);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
 .entry-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
-  border-color: var(--border-hover);
-}
-
-.entry-card:hover::before {
-  opacity: 1;
+  border-color: var(--primary-light);
 }
 
 .entry-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .entry-date {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
   font-weight: 600;
   color: var(--text-primary);
-  font-size: 0.875rem;
+  font-size: 1.1rem;
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
+  transition: transform 0.3s ease;
+}
+
+.entry-card:hover .icon-container {
+  transform: scale(1.1) rotate(-5deg);
 }
 
 .delete-btn {
@@ -277,5 +279,9 @@ const formattedDate = computed(() => {
   color: var(--text-secondary);
   line-height: 1.6;
   flex: 1;
+}
+
+.calendar-icon {
+  color: var(--primary);
 }
 </style>

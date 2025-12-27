@@ -13,14 +13,16 @@ defineProps<{
 
 <template>
   <div class="checkins-card">
-    <h3 class="checkins-title">
-      <Icon
-        name="solar:clipboard-check-bold"
-        size="22"
-        style="color: #ff6b9d"
-      />
-      Daily Check-ins
-    </h3>
+    <div class="checkins-header">
+      <div class="icon-container">
+        <Icon
+          name="solar:clipboard-check-bold"
+          size="24"
+          style="color: #ff6b9d"
+        />
+      </div>
+      <h3 class="checkins-title">Daily Check-ins</h3>
+    </div>
     <div class="checkins-grid">
       <div class="checkin-stat">
         <div class="checkin-icon healthy-food">
@@ -120,26 +122,47 @@ defineProps<{
 .checkins-card {
   padding: 1.75rem;
   background: var(--card-bg);
-  border-radius: var(--radius-lg);
+  border-radius: 1.5rem;
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 2rem;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .checkins-card:hover {
+  transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
-  border-color: var(--border-hover);
+  border-color: var(--primary-light);
+}
+
+.checkins-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.checkins-card:hover .icon-container {
+  transform: scale(1.1) rotate(-5deg);
 }
 
 .checkins-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 1.5rem;
+  margin: 0;
 }
 
 .checkins-grid {

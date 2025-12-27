@@ -67,9 +67,9 @@ const handleInput = (event: Event) => {
 .metric-slider {
   padding: 1.75rem;
   background: var(--card-bg);
-  border-radius: var(--radius-lg);
+  border-radius: 1.5rem;
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -93,9 +93,9 @@ const handleInput = (event: Event) => {
 }
 
 .metric-slider:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
-  border-color: var(--border-hover);
+  border-color: var(--primary-light);
 }
 
 .metric-slider:hover::before {
@@ -113,11 +113,17 @@ const handleInput = (event: Event) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 0.625rem;
+  width: 52px;
+  height: 52px;
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   position: relative;
   transition: transform 0.3s ease;
+}
+
+.metric-slider:hover .metric-icon {
+  transform: scale(1.1) rotate(-5deg);
 }
 
 .metric-slider:hover .metric-icon {

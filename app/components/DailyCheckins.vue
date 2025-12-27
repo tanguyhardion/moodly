@@ -22,14 +22,16 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
 
 <template>
   <div class="checkboxes-section">
-    <h3 class="checkboxes-title">
-      <Icon
-        name="solar:clipboard-check-bold"
-        size="22"
-        style="color: #ff6b9d"
-      />
-      Daily Check-ins
-    </h3>
+    <div class="checkboxes-header">
+      <div class="icon-container">
+        <Icon
+          name="solar:clipboard-check-bold"
+          size="24"
+          style="color: #ff6b9d"
+        />
+      </div>
+      <h3 class="checkboxes-title">Daily Check-ins</h3>
+    </div>
     <div class="checkbox-group">
       <label class="checkbox-item">
         <span class="checkbox-control">
@@ -164,23 +166,45 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
   padding: 1.75rem;
   background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  transition: all 0.3s ease;
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .checkboxes-section:hover {
+  transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
+  border-color: var(--primary-light);
+}
+
+.checkboxes-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.checkboxes-section:hover .icon-container {
+  transform: scale(1.1) rotate(-5deg);
 }
 
 .checkboxes-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 1.5rem 0;
+  margin: 0;
 }
 
 .checkbox-group {

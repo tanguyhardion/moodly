@@ -89,15 +89,19 @@ const shouldShowLabel = (index: number): boolean => {
 <template>
   <div class="checkins-timeline">
     <div class="chart-header">
-      <h3 class="chart-title">
-        <Icon
-          name="solar:calendar-mark-bold"
-          size="22"
-          style="color: #ff6b9d"
-        />
-        Check-ins Timeline
-      </h3>
-      <p class="chart-subtitle">Daily habits at a glance</p>
+      <div class="header-title-group">
+        <div class="icon-container">
+          <Icon
+            name="solar:calendar-mark-bold"
+            size="24"
+            style="color: #ff6b9d"
+          />
+        </div>
+        <div class="title-text">
+          <h3 class="chart-title">Check-ins Timeline</h3>
+          <p class="chart-subtitle">Daily habits at a glance</p>
+        </div>
+      </div>
     </div>
 
     <div v-if="displayedEntries.length === 0" class="empty-state">
@@ -170,26 +174,46 @@ const shouldShowLabel = (index: number): boolean => {
 .checkins-timeline {
   padding: 1.75rem;
   background: var(--card-bg);
-  border-radius: var(--radius-lg);
+  border-radius: 1.5rem;
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 2rem;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .checkins-timeline:hover {
+  transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
-  border-color: var(--border-hover);
+  border-color: var(--primary-light);
 }
 
 .chart-header {
   margin-bottom: 1.5rem;
 }
 
-.chart-title {
+.header-title-group {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.checkins-timeline:hover .icon-container {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+.chart-title {
   font-size: 1.125rem;
   font-weight: 700;
   color: var(--text-primary);

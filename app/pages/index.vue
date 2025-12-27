@@ -287,14 +287,15 @@ const handleSave = async () => {
 
 .page-header {
   text-align: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
+  padding-top: 0.5rem;
 }
 
 .page-title {
-  font-size: 2.25rem;
-  font-weight: 800;
+  font-size: 2rem;
+  font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;

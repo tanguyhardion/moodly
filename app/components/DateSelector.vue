@@ -66,10 +66,12 @@ const goToNextDay = () => {
 
 <template>
   <div class="date-selector" :class="{ 'is-simple': simple }">
-    <label v-if="!simple" class="date-label">
-      <Icon name="solar:calendar-bold" size="18" />
-      Select Date
-    </label>
+    <div v-if="!simple" class="selector-header">
+      <div class="icon-container">
+        <Icon name="solar:calendar-bold" size="24" class="calendar-icon" />
+      </div>
+      <label class="date-label">Select Date</label>
+    </div>
     <div class="date-picker-wrapper">
       <button
         class="nav-arrow left-arrow"
@@ -118,14 +120,15 @@ const goToNextDay = () => {
   padding: 1.75rem;
   background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  transition: all 0.3s ease;
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .date-selector:hover {
+  transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
-  border-color: var(--border-hover);
+  border-color: var(--primary-light);
 }
 
 .date-selector.is-simple {
@@ -134,6 +137,10 @@ const goToNextDay = () => {
   background: transparent;
   border: none;
   box-shadow: none;
+}
+
+.date-selector.is-simple:hover {
+  transform: none;
 }
 
 .date-selector.is-simple .date-button {
@@ -145,14 +152,35 @@ const goToNextDay = () => {
   height: 40px;
 }
 
-.date-label {
+.selector-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
+  transition: transform 0.3s ease;
+  color: var(--text-secondary);
+}
+
+.date-selector:hover .icon-container {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+.date-label {
+  font-size: 1.25rem;
+  font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 1rem;
-  font-size: 1rem;
+  margin: 0;
 }
 
 .date-picker-wrapper {
@@ -352,5 +380,9 @@ const goToNextDay = () => {
 
 :deep(.dp__button:hover) {
   background: var(--hover-bg);
+}
+
+.calendar-icon {
+  color: var(--primary);
 }
 </style>

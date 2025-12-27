@@ -4,7 +4,7 @@
     <div v-else class="insights-content-wrapper">
       <div class="page-header">
         <h1 class="page-title">
-          <Icon name="solar:chart-square-bold" size="28" />
+          <Icon name="mdi:sparkles" size="28" />
           Advanced Insights
         </h1>
         <p class="page-subtitle">
@@ -57,12 +57,24 @@ onMounted(() => {
 .insights-content-wrapper {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .page-header {
   margin-bottom: 2rem;
   text-align: center;
+  padding-top: 0.5rem;
 }
 
 .page-title {

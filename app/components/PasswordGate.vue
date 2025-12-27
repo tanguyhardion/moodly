@@ -139,6 +139,7 @@ watch(isAuthenticated, (value) => {
   background: var(--card-bg);
   padding: 3rem;
   border-radius: 1.5rem;
+  border: 1px solid var(--border);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   max-width: 400px;
   width: 90%;

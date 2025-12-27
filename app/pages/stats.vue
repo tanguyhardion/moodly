@@ -176,6 +176,7 @@ const checkInRate = computed(() => {
 .page-header {
   text-align: center;
   margin-bottom: 2rem;
+  padding-top: 0.5rem;
 }
 
 .page-title {
@@ -186,7 +187,7 @@ const checkInRate = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .page-subtitle {

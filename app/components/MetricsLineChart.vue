@@ -1,10 +1,12 @@
 <template>
   <div class="metrics-line-chart">
     <div class="chart-header">
-      <h3 class="chart-title">
-        <Icon name="solar:graph-bold" size="22" style="color: #ff6b9d" />
-        Metrics Over Time
-      </h3>
+      <div class="header-title-group">
+        <div class="icon-container">
+          <Icon name="solar:graph-bold" size="24" style="color: #ff6b9d" />
+        </div>
+        <h3 class="chart-title">Metrics Over Time</h3>
+      </div>
       <div class="chart-legend">
         <button
           v-for="config in metricConfigs"
@@ -119,10 +121,17 @@ const xFormatter = (index: number) => {
 .metrics-line-chart {
   padding: 1.75rem;
   background: var(--card-bg);
-  border-radius: var(--radius-lg);
+  border-radius: 1.5rem;
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 2rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.metrics-line-chart:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-light);
 }
 
 .chart-header {
@@ -140,10 +149,29 @@ const xFormatter = (index: number) => {
   }
 }
 
-.chart-title {
+.header-title-group {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
+  transition: transform 0.3s ease;
+}
+
+.metrics-line-chart:hover .icon-container {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+.chart-title {
   font-size: 1.125rem;
   font-weight: 700;
   color: var(--text-primary);

@@ -98,7 +98,7 @@ const sortedEntries = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .export-btn-wrapper {
