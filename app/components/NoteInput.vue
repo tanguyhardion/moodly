@@ -12,7 +12,7 @@ defineEmits<{
   <div class="note-section">
     <div class="note-header">
       <div class="icon-container">
-        <Icon name="solar:notes-bold" size="24" />
+        <Icon name="mdi:note-edit" size="24" />
       </div>
       <label for="note" class="note-label">Add a note (optional)</label>
     </div>
@@ -63,6 +63,7 @@ defineEmits<{
   background: white;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
   transition: transform 0.3s ease;
+  color: var(--primary);
 }
 
 .note-section:hover .icon-container {

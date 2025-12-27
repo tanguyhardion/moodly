@@ -117,7 +117,7 @@ const handleInput = (event: Event) => {
   height: 52px;
   border-radius: 1rem;
   background: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
   position: relative;
   transition: transform 0.3s ease;
 }
@@ -128,20 +128,6 @@ const handleInput = (event: Event) => {
 
 .metric-slider:hover .metric-icon {
   transform: scale(1.1) rotate(5deg);
-}
-
-.metric-icon::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: currentColor;
-  opacity: 0.12;
-  border-radius: 0.625rem;
-  transition: opacity 0.3s ease;
-}
-
-.metric-slider:hover .metric-icon::before {
-  opacity: 0.18;
 }
 
 .metric-name {
