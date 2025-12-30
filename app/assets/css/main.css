@@ -21,7 +21,6 @@
 
   /* Decorative Colors (for icons, badges, highlights) */
   --pink: #ff6b9d;
-  --pink-light: #ff8db5;
   --orange: #ff9f43;
   --gold: #ffd700;
   --fire: #f5576c;
@@ -98,8 +97,8 @@
   --note-bg: linear-gradient(135deg, #fefefe 0%, #f8fafc 100%);
   --bg-glass: rgba(248, 250, 252, 0.9);
   --bg-glass-light: rgba(255, 255, 255, 0.1);
-  --bg-glass-heavy: rgba(255, 255, 255, 0.95);
-  --icon-bg: #ffffff;
+  --bg-glass-heavy: rgba(255, 255, 255, 0.7);
+  --icon-bg: #f2f2f2;
 
   /* Text */
   --text-primary: #1f2937;
@@ -179,7 +178,6 @@
 
   /* Decorative Colors (for icons, badges, highlights) */
   --pink: #ff8db5;
-  --pink-light: #ffabc7;
   --orange: #ffb76b;
   --gold: #ffe066;
   --fire: #ff7a8a;
@@ -256,7 +254,7 @@
   --note-bg: linear-gradient(135deg, #1e293b 0%, #334155 100%);
   --bg-glass: rgba(15, 23, 42, 0.9);
   --bg-glass-light: rgba(255, 255, 255, 0.05);
-  --bg-glass-heavy: rgba(30, 30, 40, 0.95);
+  --bg-glass-heavy: rgba(30, 30, 40, 0.7);
   --icon-bg: #1e293b;
 
   /* Text */
@@ -512,7 +510,6 @@ button:focus-visible {
   height: 3.5rem;
   border-radius: var(--radius-lg);
   background: var(--icon-bg);
-  box-shadow: var(--shadow-icon);
   flex-shrink: 0;
 }
 

@@ -155,22 +155,6 @@ const xFormatter = (index: number) => {
   gap: 1rem;
 }
 
-.icon-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radius-lg);
-  background: var(--icon-bg);
-  box-shadow: var(--shadow-icon);
-  transition: transform 0.3s ease;
-}
-
-.metrics-line-chart:hover .icon-container {
-  transform: scale(1.1) rotate(-5deg);
-}
-
 .chart-title {
   font-size: 1.125rem;
   font-weight: 700;

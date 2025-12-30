@@ -184,22 +184,6 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
   margin-bottom: 1.5rem;
 }
 
-.icon-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radius-lg);
-  background: var(--icon-bg);
-  box-shadow: var(--shadow-card);
-  transition: transform 0.3s ease;
-}
-
-.checkboxes-section:hover .icon-container {
-  transform: scale(1.1) rotate(-5deg);
-}
-
 .checkboxes-title {
   font-size: 1.25rem;
   font-weight: 700;
@@ -261,10 +245,10 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
 }
 
 .checkbox-control input[type="checkbox"]:checked + .checkbox-icon {
-  background: var(--gradient-pink);
   color: white;
-  border-color: var(--primary);
   transform: scale(1.05);
+  background: var(--primary);
+  border-color: var(--primary);
 }
 
 .checkbox-control input[type="checkbox"]:focus-visible + .checkbox-icon {

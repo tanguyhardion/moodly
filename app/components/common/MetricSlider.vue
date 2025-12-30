@@ -1,7 +1,7 @@
 <template>
   <div class="metric-slider">
     <div class="metric-header">
-      <div class="metric-icon" :style="{ color: config.color }">
+      <div class="icon-container" :style="{ color: config.color }">
         <Icon :name="config.icon" size="24" />
       </div>
       <h3 class="metric-name">{{ config.name }}</h3>
@@ -107,27 +107,6 @@ const handleInput = (event: Event) => {
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 1rem;
-}
-
-.metric-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radius-lg);
-  background: var(--icon-bg);
-  box-shadow: var(--shadow-icon);
-  position: relative;
-  transition: transform 0.3s ease;
-}
-
-.metric-slider:hover .metric-icon {
-  transform: scale(1.1) rotate(-5deg);
-}
-
-.metric-slider:hover .metric-icon {
-  transform: scale(1.1) rotate(5deg);
 }
 
 .metric-name {

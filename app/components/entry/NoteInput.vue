@@ -12,7 +12,7 @@ defineEmits<{
   <div class="note-section">
     <div class="note-header">
       <div class="icon-container">
-        <Icon name="mdi:note-edit" size="24" />
+        <Icon name="mdi:note-edit" size="24" class="icon-primary" />
       </div>
       <label for="note" class="note-label">Add a note (optional)</label>
     </div>
@@ -51,23 +51,6 @@ defineEmits<{
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
-}
-
-.icon-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radius-lg);
-  background: var(--icon-bg);
-  box-shadow: var(--shadow-icon);
-  transition: transform 0.3s ease;
-  color: var(--primary);
-}
-
-.note-section:hover .icon-container {
-  transform: scale(1.1) rotate(-5deg);
 }
 
 .note-label {

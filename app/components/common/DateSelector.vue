@@ -159,23 +159,6 @@ const goToNextDay = () => {
   margin-bottom: 1.5rem;
 }
 
-.icon-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radius-lg);
-  background: var(--icon-bg);
-  box-shadow: var(--shadow-icon);
-  transition: transform 0.3s ease;
-  color: var(--text-secondary);
-}
-
-.date-selector:hover .icon-container {
-  transform: scale(1.1) rotate(-5deg);
-}
-
 .date-label {
   font-size: 1.25rem;
   font-weight: 700;

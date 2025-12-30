@@ -81,23 +81,6 @@ defineProps<{
   border-bottom: 1px solid var(--border);
 }
 
-.icon-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radius-lg);
-  background: var(--icon-bg);
-  box-shadow: var(--shadow-icon);
-  flex-shrink: 0;
-  transition: transform 0.3s ease;
-}
-
-.insight-category-card:hover .icon-container {
-  transform: scale(1.1) rotate(-5deg);
-}
-
 /* Type-specific colors */
 .insight-category-card.habit-impact .icon-container {
   color: #1d4ed8;

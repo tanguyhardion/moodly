@@ -142,22 +142,6 @@ defineProps<{
   margin-bottom: 1.5rem;
 }
 
-.icon-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radius-lg);
-  background: var(--icon-bg);
-  box-shadow: var(--shadow-card);
-  transition: transform 0.3s ease;
-}
-
-.checkins-card:hover .icon-container {
-  transform: scale(1.1) rotate(-5deg);
-}
-
 .checkins-title {
   font-size: 1.25rem;
   font-weight: 700;
