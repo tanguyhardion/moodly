@@ -22,8 +22,12 @@
       <div class="empty-content">
         <Icon name="solar:graph-new-bold" size="64" class="empty-icon" />
         <h3>No Insights Yet</h3>
-        <p>Keep tracking your mood to unlock personalized patterns and trends.</p>
-        <p class="sub-text">We need a bit more data to generate meaningful insights.</p>
+        <p>
+          Keep tracking your mood to unlock personalized patterns and trends.
+        </p>
+        <p class="sub-text">
+          We need a bit more data to generate meaningful insights.
+        </p>
       </div>
     </div>
 
@@ -31,7 +35,8 @@
       <div class="insights-info">
         <Icon name="heroicons:information-circle" class="info-icon" />
         <p>
-          Insights are ranked by <strong>Strength</strong>, indicating the statistical significance of each pattern.
+          Insights are ranked by <strong>Strength</strong>, indicating the
+          statistical significance of each pattern.
         </p>
       </div>
 
@@ -55,62 +60,65 @@ import type { AnalyticsInsight } from "~/types";
 
 const { insights, isLoading, error, fetchAnalytics } = useAnalytics();
 
-const insightConfig: Record<string, { title: string; icon: string; description: string }> = {
+const insightConfig: Record<
+  string,
+  { title: string; icon: string; description: string }
+> = {
   "weekly-trend": {
     title: "Weekly Trends",
     icon: "solar:calendar-mark-bold",
-    description: "Patterns detected across days of the week"
+    description: "Patterns detected across days of the week",
   },
   "habit-impact": {
     title: "Habit Impact",
     icon: "solar:rocket-bold",
-    description: "How specific habits influence your metrics"
+    description: "How specific habits influence your metrics",
   },
   "metric-connection": {
     title: "Metric Connections",
     icon: "solar:link-circle-bold",
-    description: "Correlations between different metrics"
+    description: "Correlations between different metrics",
   },
   "habit-pattern": {
     title: "Habit Patterns",
     icon: "solar:checklist-minimalistic-bold",
-    description: "Recurring combinations of habits"
+    description: "Recurring combinations of habits",
   },
   "habit-comparison": {
     title: "Habit Comparisons",
     icon: "solar:scale-bold",
-    description: "Comparing the effects of different habits"
+    description: "Comparing the effects of different habits",
   },
-  "trigger": {
+  trigger: {
     title: "Triggers",
     icon: "solar:bell-bing-bold",
-    description: "Potential triggers for mood changes"
+    description: "Potential triggers for mood changes",
   },
   "long-term-trend": {
     title: "Long-term Trends",
     icon: "solar:graph-up-bold",
-    description: "Trends observed over longer periods"
+    description: "Trends observed over longer periods",
   },
-  "synergy": {
+  synergy: {
     title: "Synergies",
     icon: "solar:stars-minimalistic-bold",
-    description: "Combined effects of multiple factors"
-  }
+    description: "Combined effects of multiple factors",
+  },
 };
 
 const groupedInsights = computed(() => {
   const groups: Record<string, AnalyticsInsight[]> = {};
-  
+
   // Sort insights by score first
   const sortedInsights = [...insights.value].sort((a, b) => b.score - a.score);
-  
-  sortedInsights.forEach(insight => {
+
+  sortedInsights.forEach((insight) => {
     if (!groups[insight.type]) {
       groups[insight.type] = [];
     }
     groups[insight.type].push(insight);
   });
-  
+
   return groups;
 });
 
@@ -187,8 +195,12 @@ const refresh = () => {
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .insights-info {
@@ -292,12 +304,12 @@ const refresh = () => {
   .category-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .header-section {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .refresh-btn {
     justify-content: center;
   }

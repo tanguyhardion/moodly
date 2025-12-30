@@ -23,16 +23,18 @@
               {{ insight.details }}
             </p>
           </div>
-          
+
           <div v-if="insight.score" class="strength-indicator">
             <div class="strength-label">Strength</div>
             <div class="strength-track">
-              <div 
-                class="strength-fill" 
+              <div
+                class="strength-fill"
                 :style="{ width: Math.min(insight.score * 100, 100) + '%' }"
               ></div>
             </div>
-            <div class="strength-value">{{ Math.round(insight.score * 100) }}%</div>
+            <div class="strength-value">
+              {{ Math.round(insight.score * 100) }}%
+            </div>
           </div>
         </div>
       </div>
@@ -97,13 +99,27 @@ defineProps<{
 }
 
 /* Type-specific colors */
-.insight-category-card.habit-impact .icon-container { color: #3b82f6; }
-.insight-category-card.metric-connection .icon-container { color: #ec4899; }
-.insight-category-card.habit-pattern .icon-container { color: #06b6d4; }
-.insight-category-card.weekly-trend .icon-container { color: #8b5cf6; }
-.insight-category-card.long-term-trend .icon-container { color: #10b981; }
-.insight-category-card.trigger .icon-container { color: #f59e0b; }
-.insight-category-card.synergy .icon-container { color: #f97316; }
+.insight-category-card.habit-impact .icon-container {
+  color: #3b82f6;
+}
+.insight-category-card.metric-connection .icon-container {
+  color: #ec4899;
+}
+.insight-category-card.habit-pattern .icon-container {
+  color: #06b6d4;
+}
+.insight-category-card.weekly-trend .icon-container {
+  color: #8b5cf6;
+}
+.insight-category-card.long-term-trend .icon-container {
+  color: #10b981;
+}
+.insight-category-card.trigger .icon-container {
+  color: #f59e0b;
+}
+.insight-category-card.synergy .icon-container {
+  color: #f97316;
+}
 
 .header-content h3 {
   margin: 0;

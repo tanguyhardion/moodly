@@ -90,7 +90,7 @@ export class MoodlyBackendService {
   async getSettings(): Promise<AppSettings> {
     const masterPassword = getMasterPassword();
     return this.makeRequest<AppSettings>(
-      `settings?masterPassword=${encodeURIComponent(masterPassword!)}`
+      `settings?masterPassword=${encodeURIComponent(masterPassword!)}`,
     );
   }
 
