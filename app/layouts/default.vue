@@ -330,7 +330,7 @@ const handleAuthenticated = async () => {
 }
 
 .theme-toggle:hover {
-  background: var(--active-bg);
+  background: var(--border-hover);
   transform: rotate(20deg) scale(1.05);
   box-shadow: 0 4px 12px rgba(var(--color-shadow-primary), 0.2);
 }

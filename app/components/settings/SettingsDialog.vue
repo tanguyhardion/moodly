@@ -29,11 +29,17 @@
             <div class="toggles">
               <label class="toggle-row">
                 <span>Weekly Summary</span>
-                <input type="checkbox" v-model="settings.weeklyUpdates" />
+                <div class="switch">
+                  <input type="checkbox" v-model="settings.weeklyUpdates" />
+                  <span class="slider"></span>
+                </div>
               </label>
               <label class="toggle-row">
                 <span>Monthly Summary</span>
-                <input type="checkbox" v-model="settings.monthlyUpdates" />
+                <div class="switch">
+                  <input type="checkbox" v-model="settings.monthlyUpdates" />
+                  <span class="slider"></span>
+                </div>
               </label>
             </div>
           </div>
@@ -45,6 +51,13 @@
           </button>
         </div>
       </div>
+
+      <Transition name="toast">
+        <div v-if="showToast" class="toast">
+          <Icon name="solar:check-circle-bold" size="20" />
+          <span>Settings saved successfully!</span>
+        </div>
+      </Transition>
     </div>
   </Transition>
 </template>
@@ -73,6 +86,7 @@ const settings = ref<AppSettings>({
 
 const loading = ref(false);
 const saving = ref(false);
+const showToast = ref(false);
 
 const close = () => {
   isOpen.value = false;
@@ -94,7 +108,11 @@ const save = async () => {
   saving.value = true;
   try {
     await moodlyBackendService.saveSettings(settings.value);
-    close();
+    showToast.value = true;
+    setTimeout(() => {
+      showToast.value = false;
+      close();
+    }, 2000);
   } catch (error) {
     console.error("Failed to save settings", error);
     alert("Failed to save settings");
@@ -126,13 +144,13 @@ watch(isOpen, (val) => {
 }
 
 .settings-card {
-  background: var(--bg-card);
+  background: var(--card-bg);
   border-radius: 24px;
   padding: 24px;
   width: 90%;
   max-width: 500px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
 }
 
 .header {
@@ -163,7 +181,7 @@ watch(isOpen, (val) => {
 }
 
 .close-btn:hover {
-  background: var(--bg-hover);
+  background: var(--hover-bg);
   color: var(--text-primary);
 }
 
@@ -200,8 +218,8 @@ watch(isOpen, (val) => {
   width: 100%;
   padding: 12px;
   border-radius: 12px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-input);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
   color: var(--text-primary);
   font-size: 16px;
   transition: all 0.2s;
@@ -209,8 +227,8 @@ watch(isOpen, (val) => {
 
 .input:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px var(--primary-color-alpha);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .toggles {
@@ -223,15 +241,68 @@ watch(isOpen, (val) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px;
-  background: var(--bg-hover);
-  border-radius: 12px;
+  padding: 12px 16px;
+  background: var(--hover-bg);
+  border-radius: 16px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.toggle-row:hover {
+  background: var(--border-light);
+  border-color: var(--border-hover);
 }
 
 .toggle-row span {
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-primary);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--border);
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+input:checked + .slider {
+  background-color: var(--primary);
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
 }
 
 .actions {
@@ -241,7 +312,7 @@ watch(isOpen, (val) => {
 }
 
 .save-btn {
-  background: var(--primary-color);
+  background: var(--primary);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -258,7 +329,7 @@ watch(isOpen, (val) => {
 
 .save-btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--primary-color-alpha);
+  box-shadow: 0 4px 12px rgba(var(--color-shadow-primary), 0.3);
 }
 
 /* Transitions */
@@ -270,5 +341,36 @@ watch(isOpen, (val) => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 1rem 1.5rem;
+  background: var(--gradient-success);
+  color: white;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  box-shadow: 0 10px 25px rgba(var(--color-shadow-success), 0.4);
+  z-index: 1100;
+  backdrop-filter: blur(10px);
+  white-space: nowrap;
+}
+
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translate(-50%, 1rem);
 }
 </style>
