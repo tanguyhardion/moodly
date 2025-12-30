@@ -86,6 +86,24 @@ export class MoodlyBackendService {
       `get-analytics?masterPassword=${encodeURIComponent(masterPassword!)}`,
     );
   }
+
+  async getSettings(): Promise<AppSettings> {
+    const masterPassword = getMasterPassword();
+    return this.makeRequest<AppSettings>(
+      `settings?masterPassword=${encodeURIComponent(masterPassword!)}`
+    );
+  }
+
+  async saveSettings(settings: AppSettings): Promise<void> {
+    const masterPassword = getMasterPassword();
+    return this.makeRequest<void>("settings", {
+      method: "POST",
+      body: JSON.stringify({
+        masterPassword,
+        ...settings,
+      }),
+    });
+  }
 }
 
 export const moodlyBackendService = new MoodlyBackendService();

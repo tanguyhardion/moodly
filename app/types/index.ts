@@ -52,3 +52,13 @@ export interface StreakData {
   longestStreak: number;
   lastEntryDate: string | null;
 }
+
+export interface AppSettings {
+  email: string;
+  weeklyUpdates: boolean;
+  monthlyUpdates: boolean;
+}
+  currentStreak: number;
+  longestStreak: number;
+  lastEntryDate: string | null;
+}

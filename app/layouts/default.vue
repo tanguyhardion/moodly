@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <PasswordGate @authenticated="handleAuthenticated" />
+    <SettingsDialog v-model="showSettings" />
 
     <nav class="navbar">
       <div class="nav-content">
@@ -63,14 +64,23 @@
           </NuxtLink>
         </div>
 
-        <button
-          @click="toggleDarkMode"
-          class="theme-toggle"
-          title="Toggle theme"
-        >
-          <Icon v-if="darkMode" name="solar:sun-bold" size="20" />
-          <Icon v-else name="solar:moon-bold" size="20" />
-        </button>
+        <div class="nav-actions">
+          <button
+            @click="showSettings = true"
+            class="theme-toggle"
+            title="Settings"
+          >
+            <Icon name="solar:settings-bold" size="20" />
+          </button>
+          <button
+            @click="toggleDarkMode"
+            class="theme-toggle"
+            title="Toggle theme"
+          >
+            <Icon v-if="darkMode" name="solar:sun-bold" size="20" />
+            <Icon v-else name="solar:moon-bold" size="20" />
+          </button>
+        </div>
       </div>
     </nav>
 
@@ -90,6 +100,7 @@
 const { darkMode, toggleDarkMode, loadEntries } = useMoodly();
 
 const mobileMenuOpen = ref(false);
+const showSettings = ref(false);
 
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value;
@@ -295,6 +306,12 @@ const handleAuthenticated = async () => {
   .nav-link span {
     display: inline;
   }
+}
+
+.nav-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
 }
 
 .theme-toggle {
