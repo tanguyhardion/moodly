@@ -64,7 +64,7 @@ const sortedEntries = computed(() => {
 
 <style scoped>
 .history-page {
-  max-width: 800px;
+  max-width: var(--max-width-md);
   margin: 0 auto;
 }
 
@@ -86,19 +86,19 @@ const sortedEntries = computed(() => {
 .page-header {
   position: relative;
   text-align: center;
-  margin-bottom: 2rem;
-  padding-top: 0.5rem;
+  margin-bottom: var(--spacing-xl);
+  padding-top: var(--spacing-sm);
 }
 
 .page-title {
   font-size: 2rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 0.5rem;
+  margin: 0 0 var(--spacing-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
+  gap: var(--spacing-md);
 }
 
 .export-btn-wrapper {
@@ -115,70 +115,31 @@ const sortedEntries = computed(() => {
 
 .empty-state {
   text-align: center;
-  padding: 4rem 2rem;
+  padding: var(--spacing-2xl) var(--spacing-xl);
 }
 
 .empty-icon {
   color: var(--text-tertiary);
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-md);
 }
 
 .empty-state h3 {
   font-size: 1.5rem;
   color: var(--text-primary);
-  margin: 0 0 0.5rem;
+  margin: 0 0 var(--spacing-sm);
 }
 
 .empty-state p {
   font-size: 1rem;
   color: var(--text-secondary);
-  margin: 0 0 1.5rem;
+  margin: 0 0 var(--spacing-lg);
 }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.625rem;
-  padding: 1rem 2.5rem;
-  border: none;
-  border-radius: var(--radius-md);
-  font-weight: 700;
-  font-size: 1.0625rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  text-decoration: none;
-  letter-spacing: -0.01em;
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-primary {
-  background: var(--gradient-primary);
-  color: white;
-  box-shadow: var(--shadow-colored);
-}
-
-.btn-primary::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--gradient-primary-dark);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: -1;
-}
-
-.btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 35px -5px rgba(var(--color-shadow-primary), 0.4);
-}
-
-.btn-primary:hover::before {
-  opacity: 1;
-}
+/* btn and btn-primary use global classes from main.css */
 
 .entries-list {
   display: grid;
-  gap: 1rem;
+  gap: var(--spacing-md);
 }
 
 .list-enter-active,

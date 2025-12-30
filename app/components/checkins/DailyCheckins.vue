@@ -27,7 +27,7 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
         <Icon
           name="solar:clipboard-check-bold"
           size="24"
-          style="color: #1e40af"
+          class="icon-primary"
         />
       </div>
       <h3 class="checkboxes-title">Daily Check-ins</h3>
@@ -162,11 +162,11 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
 
 <style scoped>
 .checkboxes-section {
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-xl);
   padding: 1.75rem;
   background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: 1.5rem;
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -190,9 +190,9 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
   justify-content: center;
   width: 52px;
   height: 52px;
-  border-radius: 1rem;
-  background: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius-lg);
+  background: var(--icon-bg);
+  box-shadow: var(--shadow-card);
   transition: transform 0.3s ease;
 }
 
@@ -252,20 +252,19 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
   place-items: center;
   width: 32px;
   height: 32px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   border: 2px solid var(--border);
   background: var(--card-bg);
   color: var(--text-secondary);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .checkbox-control input[type="checkbox"]:checked + .checkbox-icon {
-  background: linear-gradient(135deg, #ff6b9d 0%, #ff8db5 100%);
+  background: var(--gradient-pink);
   color: white;
   border-color: var(--primary);
   transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(255, 107, 157, 0.3);
 }
 
 .checkbox-control input[type="checkbox"]:focus-visible + .checkbox-icon {

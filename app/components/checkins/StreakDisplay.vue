@@ -63,9 +63,9 @@ const { streakData, streakMessage, isStreakAtRisk, needsCheckinToday } =
   align-items: center;
   background: var(--bg-glass);
   backdrop-filter: blur(10px);
-  border: 1px solid var(--border-color);
-  padding: 0.5rem 1.25rem;
-  border-radius: 100px;
+  border: 1px solid var(--border);
+  padding: var(--spacing-sm) 1.25rem;
+  border-radius: var(--radius-full);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s ease;
 }
@@ -101,15 +101,15 @@ const { streakData, streakMessage, isStreakAtRisk, needsCheckinToday } =
 }
 
 .has-streak .stat-item.current .value {
-  color: #f5576c; /* Fire color */
+  color: var(--fire);
 }
 
 .at-risk .stat-item.current .value {
-  color: #ff9f43; /* Warning color */
+  color: var(--orange);
 }
 
 .stat-item.best .value {
-  color: #fccb90; /* Gold/Trophy color */
+  color: var(--gold);
   font-weight: 700;
 }
 
@@ -131,8 +131,8 @@ const { streakData, streakMessage, isStreakAtRisk, needsCheckinToday } =
 }
 
 .fire-icon {
-  color: #ff6b6b;
-  filter: drop-shadow(0 0 4px rgba(255, 107, 107, 0.4)) hue-rotate(-10deg)
+  color: var(--fire);
+  filter: drop-shadow(0 0 4px rgba(var(--color-shadow-pink), 0.4)) hue-rotate(-10deg)
     saturate(1.2);
 }
 
@@ -141,12 +141,12 @@ const { streakData, streakMessage, isStreakAtRisk, needsCheckinToday } =
 }
 
 .warning-icon {
-  color: #ff9f43;
+  color: var(--orange);
   filter: drop-shadow(0 0 3px rgba(255, 159, 67, 0.3));
 }
 
 .trophy-icon {
-  color: #ffd700;
+  color: var(--gold);
   filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.4)) brightness(1.1)
     saturate(1.3);
 }
@@ -163,7 +163,7 @@ const { streakData, streakMessage, isStreakAtRisk, needsCheckinToday } =
 .divider {
   width: 1px;
   height: 16px;
-  background-color: var(--border-color);
+  background-color: var(--border);
 }
 
 .streak-toast {

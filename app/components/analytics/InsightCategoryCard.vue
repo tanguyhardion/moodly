@@ -57,7 +57,7 @@ defineProps<{
 <style scoped>
 .insight-category-card {
   background: var(--card-bg);
-  border-radius: 1.5rem;
+  border-radius: var(--radius-xl);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
   display: flex;
@@ -87,9 +87,9 @@ defineProps<{
   justify-content: center;
   width: 52px;
   height: 52px;
-  border-radius: 1rem;
-  background: white;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
+  border-radius: var(--radius-lg);
+  background: var(--icon-bg);
+  box-shadow: var(--shadow-icon);
   flex-shrink: 0;
   transition: transform 0.3s ease;
 }
@@ -216,8 +216,8 @@ defineProps<{
 }
 
 :global(.dark) .icon-container {
-  background: #374151;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: var(--icon-bg);
+  box-shadow: var(--shadow-icon);
 }
 
 :global(.dark) .strength-track {

@@ -125,7 +125,7 @@ const formattedDate = computed(() => {
 .entry-card {
   padding: 1.75rem;
   background: var(--card-bg);
-  border-radius: 1.5rem;
+  border-radius: var(--radius-xl);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -161,9 +161,9 @@ const formattedDate = computed(() => {
   justify-content: center;
   width: 52px;
   height: 52px;
-  border-radius: 1rem;
-  background: white;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
+  border-radius: var(--radius-lg);
+  background: var(--icon-bg);
+  box-shadow: var(--shadow-icon);
   transition: transform 0.3s ease;
 }
 

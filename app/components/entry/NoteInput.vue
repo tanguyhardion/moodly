@@ -31,11 +31,11 @@ defineEmits<{
 
 <style scoped>
 .note-section {
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-xl);
   padding: 1.75rem;
   background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: 1.5rem;
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -59,9 +59,9 @@ defineEmits<{
   justify-content: center;
   width: 52px;
   height: 52px;
-  border-radius: 1rem;
-  background: white;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
+  border-radius: var(--radius-lg);
+  background: var(--icon-bg);
+  box-shadow: var(--shadow-icon);
   transition: transform 0.3s ease;
   color: var(--primary);
 }
@@ -79,9 +79,9 @@ defineEmits<{
 
 .note-input {
   width: 100%;
-  padding: 1rem;
+  padding: var(--spacing-md);
   border: 1px solid var(--border);
-  border-radius: 1rem;
+  border-radius: var(--radius-lg);
   background: var(--bg-secondary);
   color: var(--text-primary);
   font-family: inherit;

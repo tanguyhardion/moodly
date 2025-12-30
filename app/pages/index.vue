@@ -266,7 +266,7 @@ const handleSave = async () => {
 
 <style scoped>
 .home-page {
-  max-width: 600px;
+  max-width: var(--max-width-sm);
   margin: 0 auto;
 }
 
@@ -287,19 +287,19 @@ const handleSave = async () => {
 
 .page-header {
   text-align: center;
-  margin-bottom: 2rem;
-  padding-top: 0.5rem;
+  margin-bottom: var(--spacing-xl);
+  padding-top: var(--spacing-sm);
 }
 
 .page-title {
   font-size: 2rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 0.5rem;
+  margin: 0 0 var(--spacing-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
+  gap: var(--spacing-md);
   letter-spacing: -0.025em;
 }
 
@@ -325,7 +325,7 @@ const handleSave = async () => {
 }
 
 .page-subtitle {
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: var(--text-secondary);
   margin: 0;
   line-height: 1.6;
@@ -339,144 +339,22 @@ const handleSave = async () => {
 
 .metrics-container {
   display: grid;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
 }
 
-.btn {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  padding: 1rem 2.5rem;
-  border: none;
-  border-radius: var(--radius-md);
-  font-weight: 700;
-  font-size: 1.0625rem;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  letter-spacing: -0.01em;
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-primary {
-  background: var(--gradient-primary);
-  color: white;
-  box-shadow: var(--shadow-colored);
-}
-
-.btn-primary::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--gradient-primary-dark);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: -1;
-}
-
-.btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 35px -5px rgba(var(--color-shadow-primary), 0.4);
-}
-
-.btn-primary:hover::before {
-  opacity: 1;
-}
-
-.btn-primary:active {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px -5px rgba(var(--color-shadow-primary), 0.4);
-}
-
+/* Save button - extends global .btn and .btn-primary */
 .save-btn {
   width: 220px;
-  justify-content: center;
+  padding: var(--spacing-md) var(--spacing-xl);
 }
 
-.toast {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  padding: 1.125rem 1.75rem;
-  background: var(--gradient-success);
-  color: white;
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: 0.9375rem;
-  box-shadow: 0 10px 25px rgba(var(--color-shadow-success), 0.4);
-  z-index: 1000;
-  backdrop-filter: blur(10px);
-}
+/* Sticky header uses global .sticky-header and .sticky-content */
 
-.toast-enter-active,
-.toast-leave-active {
-  transition: all 0.3s ease;
-}
-
-.toast-enter-from,
-.toast-leave-to {
-  opacity: 0;
-  transform: translateY(1rem);
-}
-
-.sticky-header {
-  position: fixed;
-  top: 4.5rem; /* Adjust based on navbar height */
-  left: 0;
-  right: 0;
-  z-index: 90;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.sticky-content {
-  pointer-events: auto;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.95),
-    rgba(255, 255, 255, 0.9)
-  );
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-radius: var(--radius-lg);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.12),
-    0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-top: 0.5rem;
-  width: 540px;
-  max-width: 92vw;
-}
-
-:root.dark .sticky-content {
-  background: linear-gradient(
-    135deg,
-    rgba(30, 30, 40, 0.95),
-    rgba(25, 25, 35, 0.9)
-  );
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.slide-down-enter-active,
-.slide-down-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.slide-down-enter-from,
-.slide-down-leave-to {
-  opacity: 0;
-  transform: translateY(-20px);
-}
-
+/* Empty state banner - page-specific */
 .empty-state-banner {
-  margin-bottom: 2rem;
-  padding: 1.75rem 2rem;
+  margin-bottom: var(--spacing-xl);
+  padding: 1.75rem var(--spacing-xl);
   background: linear-gradient(
     135deg,
     var(--primary-light),

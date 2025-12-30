@@ -137,10 +137,10 @@ watch(isAuthenticated, (value) => {
 
 .password-card {
   background: var(--card-bg);
-  padding: 3rem;
-  border-radius: 1.5rem;
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-xl);
   border: 1px solid var(--border);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-2xl);
   max-width: 400px;
   width: 90%;
   text-align: center;
@@ -153,9 +153,9 @@ watch(isAuthenticated, (value) => {
   width: 80px;
   height: 80px;
   background: var(--gradient-primary);
-  border-radius: 1.5rem;
+  border-radius: var(--radius-xl);
   color: white;
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--spacing-lg);
 }
 
 .title {
@@ -178,9 +178,9 @@ watch(isAuthenticated, (value) => {
 }
 
 .password-input {
-  padding: 1rem;
+  padding: var(--spacing-md);
   border: 2px solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
   font-size: 1rem;
   color: var(--text-primary);
   background: var(--card-bg);
@@ -190,7 +190,7 @@ watch(isAuthenticated, (value) => {
 .password-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(var(--color-shadow-primary), 0.1);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .password-input.error {
@@ -202,22 +202,22 @@ watch(isAuthenticated, (value) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem 2rem;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-xl);
   border: none;
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
   background: var(--gradient-primary);
   color: white;
-  box-shadow: 0 4px 12px rgba(var(--color-shadow-primary), 0.3);
+  box-shadow: var(--shadow-colored);
   transition: all 0.3s ease;
 }
 
 .submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(var(--color-shadow-primary), 0.4);
+  box-shadow: var(--shadow-primary);
 }
 
 .submit-btn:active:not(:disabled) {

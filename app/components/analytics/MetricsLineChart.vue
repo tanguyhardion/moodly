@@ -3,7 +3,7 @@
     <div class="chart-header">
       <div class="header-title-group">
         <div class="icon-container">
-          <Icon name="solar:graph-bold" size="24" style="color: #ff6b9d" />
+          <Icon name="solar:graph-bold" size="24" class="icon-pink" />
         </div>
         <h3 class="chart-title">Metrics Over Time</h3>
       </div>
@@ -121,10 +121,10 @@ const xFormatter = (index: number) => {
 .metrics-line-chart {
   padding: 1.75rem;
   background: var(--card-bg);
-  border-radius: 1.5rem;
+  border-radius: var(--radius-xl);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-xl);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -161,9 +161,9 @@ const xFormatter = (index: number) => {
   justify-content: center;
   width: 52px;
   height: 52px;
-  border-radius: 1rem;
-  background: white;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
+  border-radius: var(--radius-lg);
+  background: var(--icon-bg);
+  box-shadow: var(--shadow-icon);
   transition: transform 0.3s ease;
 }
 

@@ -145,11 +145,11 @@ watch(isOpen, (val) => {
 
 .settings-card {
   background: var(--card-bg);
-  border-radius: 24px;
-  padding: 24px;
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
   width: 90%;
   max-width: 500px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-2xl);
   border: 1px solid var(--border);
 }
 
@@ -157,11 +157,11 @@ watch(isOpen, (val) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-lg);
 }
 
 .header h2 {
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
@@ -172,8 +172,8 @@ watch(isOpen, (val) => {
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  padding: 4px;
-  border-radius: 50%;
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -186,42 +186,42 @@ watch(isOpen, (val) => {
 }
 
 .section {
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-lg);
 }
 
 .section h3 {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 600;
   color: var(--text-primary);
-  margin: 0 0 8px 0;
+  margin: 0 0 var(--spacing-sm) 0;
 }
 
 .description {
   color: var(--text-secondary);
-  font-size: 14px;
-  margin-bottom: 16px;
+  font-size: 0.875rem;
+  margin-bottom: var(--spacing-md);
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-md);
 }
 
 .form-group label {
   display: block;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-secondary);
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-sm);
 }
 
 .input {
   width: 100%;
-  padding: 12px;
-  border-radius: 12px;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--card-bg);
   color: var(--text-primary);
-  font-size: 16px;
+  font-size: 1rem;
   transition: all 0.2s;
 }
 
@@ -234,16 +234,16 @@ watch(isOpen, (val) => {
 .toggles {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-md);
 }
 
 .toggle-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: var(--spacing-md) var(--spacing-md);
   background: var(--hover-bg);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid transparent;
@@ -262,8 +262,8 @@ watch(isOpen, (val) => {
 .switch {
   position: relative;
   display: inline-block;
-  width: 44px;
-  height: 24px;
+  width: 2.75rem;
+  height: 1.5rem;
 }
 
 .switch input {
@@ -281,20 +281,20 @@ watch(isOpen, (val) => {
   bottom: 0;
   background-color: var(--border);
   transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 24px;
+  border-radius: var(--radius-xl);
 }
 
 .slider:before {
   position: absolute;
   content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
+  height: 1.125rem;
+  width: 1.125rem;
+  left: 0.1875rem;
+  bottom: 0.1875rem;
   background-color: white;
   transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 50%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
 }
 
 input:checked + .slider {
@@ -302,21 +302,21 @@ input:checked + .slider {
 }
 
 input:checked + .slider:before {
-  transform: translateX(20px);
+  transform: translateX(1.25rem);
 }
 
 .actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: 24px;
+  margin-top: var(--spacing-lg);
 }
 
 .save-btn {
-  background: var(--primary);
+  background: var(--gradient-primary);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 12px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -329,7 +329,7 @@ input:checked + .slider:before {
 
 .save-btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(var(--color-shadow-primary), 0.3);
+  box-shadow: var(--shadow-colored);
 }
 
 /* Transitions */

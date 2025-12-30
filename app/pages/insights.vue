@@ -105,12 +105,12 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem;
-  gap: 1rem;
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  gap: var(--spacing-md);
   text-align: center;
-  background: var(--surface-card);
-  border-radius: 1rem;
-  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
 }
 
 .empty-icon {
@@ -135,25 +135,26 @@ onMounted(() => {
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
   font-size: 1rem;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.2s ease;
-  margin-top: 1rem;
+  margin-top: var(--spacing-md);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   color: white;
   border: none;
+  box-shadow: var(--shadow-colored);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  box-shadow: var(--shadow-primary);
 }
 
 @media (max-width: 768px) {

@@ -18,7 +18,7 @@ defineProps<{
         <Icon
           name="solar:clipboard-check-bold"
           size="24"
-          style="color: #ff6b9d"
+          class="icon-pink"
         />
       </div>
       <h3 class="checkins-title">Daily Check-ins</h3>
@@ -122,10 +122,10 @@ defineProps<{
 .checkins-card {
   padding: 1.75rem;
   background: var(--card-bg);
-  border-radius: 1.5rem;
+  border-radius: var(--radius-xl);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-xl);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -148,9 +148,9 @@ defineProps<{
   justify-content: center;
   width: 52px;
   height: 52px;
-  border-radius: 1rem;
-  background: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius-lg);
+  background: var(--icon-bg);
+  box-shadow: var(--shadow-card);
   transition: transform 0.3s ease;
 }
 
