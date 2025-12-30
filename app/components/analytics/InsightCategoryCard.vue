@@ -100,25 +100,25 @@ defineProps<{
 
 /* Type-specific colors */
 .insight-category-card.habit-impact .icon-container {
-  color: #3b82f6;
+  color: #1d4ed8;
 }
 .insight-category-card.metric-connection .icon-container {
-  color: #ec4899;
+  color: #7c3aed;
 }
 .insight-category-card.habit-pattern .icon-container {
-  color: #06b6d4;
+  color: #0891b2;
 }
 .insight-category-card.weekly-trend .icon-container {
-  color: #8b5cf6;
+  color: #c2410c;
 }
 .insight-category-card.long-term-trend .icon-container {
-  color: #10b981;
+  color: #059669;
 }
 .insight-category-card.trigger .icon-container {
-  color: #f59e0b;
+  color: #d97706;
 }
 .insight-category-card.synergy .icon-container {
-  color: #f97316;
+  color: #dc2626;
 }
 
 .header-content h3 {
@@ -190,7 +190,7 @@ defineProps<{
 .strength-track {
   flex-grow: 1;
   height: 6px;
-  background: var(--border-light);
+  background: var(--slider-track);
   border-radius: 10px;
   overflow: hidden;
   max-width: 120px;

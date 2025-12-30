@@ -237,7 +237,7 @@ const formattedDate = computed(() => {
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--text-secondary);
-  opacity: 0.5;
+  opacity: 0.4;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
 }
@@ -245,10 +245,10 @@ const formattedDate = computed(() => {
 .checkbox-display-item.checked {
   background: linear-gradient(
     135deg,
-    rgba(255, 107, 157, 0.15) 0%,
-    rgba(255, 160, 107, 0.15) 100%
+    var(--primary-rgba-15) 0%,
+    rgba(var(--color-primary-gradient-end), 0.15) 100%
   );
-  border-color: rgba(255, 107, 157, 0.3);
+  border-color: var(--primary-rgba-30);
   color: var(--primary);
   opacity: 1;
   transform: scale(1.02);

@@ -236,13 +236,8 @@ const handleAuthenticated = async () => {
 }
 
 .nav-link.router-link-active {
-  background: linear-gradient(
-    135deg,
-    rgba(var(--color-shadow-primary), 0.15) 0%,
-    rgba(var(--color-primary-gradient-end), 0.15) 100%
-  );
+  background: var(--primary-rgba-12);
   color: var(--primary);
-  box-shadow: 0 0 0 1px var(--focus-ring);
 }
 
 .nav-link.router-link-active::before {

@@ -30,7 +30,7 @@ export function useMetrics() {
       name: "Focus",
       key: "focus",
       icon: "solar:target-bold",
-      color: "#4ECDC4",
+      color: "#10B981",
       emojis: ["🤯", "😵‍💫", "😐", "🎯", "🧠"],
       labels: ["Scattered", "Distracted", "Average", "Focused", "Laser-sharp"],
     },

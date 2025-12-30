@@ -27,7 +27,7 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
         <Icon
           name="solar:clipboard-check-bold"
           size="24"
-          style="color: #ff6b9d"
+          style="color: #1e40af"
         />
       </div>
       <h3 class="checkboxes-title">Daily Check-ins</h3>

@@ -203,31 +203,31 @@ const goToNextDay = () => {
   flex-shrink: 0;
   background: linear-gradient(
     135deg,
-    rgba(255, 107, 157, 0.08) 0%,
-    rgba(255, 160, 107, 0.08) 100%
+    var(--primary-rgba-08) 0%,
+    rgba(var(--color-primary-gradient-end), 0.08) 100%
   );
-  border: 2px solid rgba(255, 107, 157, 0.2);
+  border: 2px solid var(--primary-rgba-20);
   border-radius: var(--radius-md);
   color: var(--text-primary);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 0 0 rgba(255, 107, 157, 0);
+  box-shadow: 0 0 0 0 rgba(var(--color-shadow-primary), 0);
 }
 
 .nav-arrow:hover {
-  border-color: rgba(255, 107, 157, 0.4);
+  border-color: var(--primary-rgba-40);
   background: linear-gradient(
     135deg,
-    rgba(255, 107, 157, 0.12) 0%,
-    rgba(255, 160, 107, 0.12) 100%
+    var(--primary-rgba-12) 0%,
+    rgba(var(--color-primary-gradient-end), 0.12) 100%
   );
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 157, 0.2);
+  box-shadow: 0 4px 12px var(--primary-rgba-20);
 }
 
 .nav-arrow:active {
   transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(255, 107, 157, 0.15);
+  box-shadow: 0 2px 6px rgba(var(--color-shadow-primary), 0.15);
 }
 
 .arrow-placeholder {
@@ -245,10 +245,10 @@ const goToNextDay = () => {
   padding: 1.125rem 1.5rem;
   background: linear-gradient(
     135deg,
-    rgba(255, 107, 157, 0.08) 0%,
-    rgba(255, 160, 107, 0.08) 100%
+    var(--primary-rgba-08) 0%,
+    rgba(var(--color-primary-gradient-end), 0.08) 100%
   );
-  border: 2px solid rgba(255, 107, 157, 0.2);
+  border: 2px solid var(--primary-rgba-20);
   border-radius: var(--radius-md);
   color: var(--text-primary);
   font-size: 1rem;
@@ -256,7 +256,7 @@ const goToNextDay = () => {
   font-family: inherit;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 0 0 rgba(255, 107, 157, 0);
+  box-shadow: 0 0 0 0 rgba(var(--color-shadow-primary), 0);
 }
 
 .button-icon {
@@ -270,19 +270,19 @@ const goToNextDay = () => {
 }
 
 .date-button:hover {
-  border-color: rgba(255, 107, 157, 0.4);
+  border-color: var(--primary-rgba-40);
   background: linear-gradient(
     135deg,
-    rgba(255, 107, 157, 0.12) 0%,
-    rgba(255, 160, 107, 0.12) 100%
+    var(--primary-rgba-12) 0%,
+    rgba(var(--color-primary-gradient-end), 0.12) 100%
   );
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 157, 0.2);
+  box-shadow: 0 4px 12px var(--primary-rgba-20);
 }
 
 .date-button:active {
   transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(255, 107, 157, 0.15);
+  box-shadow: 0 2px 6px rgba(var(--color-shadow-primary), 0.15);
 }
 
 /* Custom vue-datepicker styling */
