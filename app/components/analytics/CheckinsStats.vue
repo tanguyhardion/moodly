@@ -241,7 +241,7 @@ defineProps<{
 
 .checkin-progress-bar {
   height: 100%;
-  background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+  background: var(--gradient-primary);
   border-radius: 4px;
   transition: width 0.6s ease;
 }

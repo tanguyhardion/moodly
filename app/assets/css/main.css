@@ -82,11 +82,6 @@
     var(--accent-gradient-start) 0%,
     var(--accent-gradient-end) 100%
   );
-  --gradient-pink: linear-gradient(
-    135deg,
-    var(--pink-gradient-start) 0%,
-    var(--pink-gradient-end) 100%
-  );
 
   /* Background - Enhanced with gradients */
   --bg-primary: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
@@ -238,11 +233,6 @@
     135deg,
     var(--accent-gradient-start) 0%,
     var(--accent-gradient-end) 100%
-  );
-  --gradient-pink: linear-gradient(
-    135deg,
-    var(--pink-gradient-start) 0%,
-    var(--pink-gradient-end) 100%
   );
 
   /* Background - Enhanced gradients */
