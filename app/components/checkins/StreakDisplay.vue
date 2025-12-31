@@ -132,8 +132,8 @@ const { streakData, streakMessage, isStreakAtRisk, needsCheckinToday } =
 
 .fire-icon {
   color: var(--fire);
-  filter: drop-shadow(0 0 4px rgba(var(--color-shadow-pink), 0.4)) hue-rotate(-10deg)
-    saturate(1.2);
+  filter: drop-shadow(0 0 4px rgba(var(--color-shadow-pink), 0.4))
+    hue-rotate(-10deg) saturate(1.2);
 }
 
 .fire-icon .icon {

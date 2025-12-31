@@ -91,11 +91,7 @@ const shouldShowLabel = (index: number): boolean => {
     <div class="chart-header">
       <div class="header-title-group">
         <div class="icon-container">
-          <Icon
-            name="solar:calendar-mark-bold"
-            size="24"
-            class="icon-pink"
-          />
+          <Icon name="solar:calendar-mark-bold" size="24" class="icon-pink" />
         </div>
         <div class="title-text">
           <h3 class="chart-title">Check-ins Timeline</h3>

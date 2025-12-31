@@ -15,11 +15,7 @@ defineProps<{
   <div class="checkins-card">
     <div class="checkins-header">
       <div class="icon-container">
-        <Icon
-          name="solar:clipboard-check-bold"
-          size="24"
-          class="icon-pink"
-        />
+        <Icon name="solar:clipboard-check-bold" size="24" class="icon-pink" />
       </div>
       <h3 class="checkins-title">Daily Check-ins</h3>
     </div>
