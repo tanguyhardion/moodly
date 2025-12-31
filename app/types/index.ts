@@ -55,10 +55,7 @@ export interface StreakData {
 
 export interface AppSettings {
   email: string;
-  weeklyUpdates: boolean;
-  monthlyUpdates: boolean;
-}
-  currentStreak: number;
-  longestStreak: number;
-  lastEntryDate: string | null;
+  dailyReminders: boolean;
+  weeklyReports: boolean;
+  monthlyReports: boolean;
 }

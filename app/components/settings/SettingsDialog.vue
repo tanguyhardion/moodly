@@ -28,16 +28,23 @@
 
             <div class="toggles">
               <label class="toggle-row">
-                <span>Weekly Summary</span>
+                <span>Daily Reminder</span>
                 <div class="switch">
-                  <input type="checkbox" v-model="settings.weeklyUpdates" />
+                  <input type="checkbox" v-model="settings.dailyReminders" />
                   <span class="slider"></span>
                 </div>
               </label>
               <label class="toggle-row">
-                <span>Monthly Summary</span>
+                <span>Weekly Report</span>
                 <div class="switch">
-                  <input type="checkbox" v-model="settings.monthlyUpdates" />
+                  <input type="checkbox" v-model="settings.weeklyReports" />
+                  <span class="slider"></span>
+                </div>
+              </label>
+              <label class="toggle-row">
+                <span>Monthly Report</span>
+                <div class="switch">
+                  <input type="checkbox" v-model="settings.monthlyReports" />
                   <span class="slider"></span>
                 </div>
               </label>
@@ -80,8 +87,9 @@ const isOpen = computed({
 
 const settings = ref<AppSettings>({
   email: "",
-  weeklyUpdates: false,
-  monthlyUpdates: false,
+  dailyReminders: false,
+  weeklyReports: false,
+  monthlyReports: false,
 });
 
 const loading = ref(false);
