@@ -10,7 +10,8 @@
         </div>
 
         <div class="content">
-          <div class="section">
+          <LoadingState v-if="loading" />
+          <div v-else class="section">
             <h3>Email Summaries</h3>
             <p class="description">
               Receive automated summaries of your mood and insights.
@@ -70,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, watch, computed } from "vue";
 import { moodlyBackendService } from "~/utils/moodly-backend";
 import type { AppSettings } from "~/types";
 
