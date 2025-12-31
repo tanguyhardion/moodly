@@ -357,25 +357,25 @@ const handleSave = async () => {
   padding: 1.75rem var(--spacing-xl);
   background: linear-gradient(
     135deg,
-    var(--primary-light),
-    var(--secondary-light)
+    var(--primary-rgba-12),
+    rgba(var(--color-shadow-secondary), 0.12)
   );
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   gap: 1.25rem;
   box-shadow: var(--shadow-md);
-  border: 2px dashed var(--border-dashed);
+  border: 2px dashed var(--primary-rgba-30);
   backdrop-filter: blur(10px);
 }
 
 :root.dark .empty-state-banner {
   background: linear-gradient(
     135deg,
-    rgba(var(--color-shadow-primary), 0.15),
+    var(--primary-rgba-15),
     rgba(var(--color-shadow-secondary), 0.15)
   );
-  border-color: rgba(var(--color-shadow-primary), 0.3);
+  border-color: var(--primary-rgba-30);
 }
 
 .empty-icon {
