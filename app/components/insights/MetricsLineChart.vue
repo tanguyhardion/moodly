@@ -84,10 +84,14 @@ const chartData = computed(() => {
 
     const dataPoint: Record<string, any> = { label };
 
-    // Only include visible metrics
+    // Only include visible metrics, skip null values
     props.metricConfigs.forEach((config) => {
       if (visibleMetrics.value.includes(config.key)) {
-        dataPoint[config.key] = entry.metrics[config.key];
+        const value = entry.metrics[config.key];
+        // Only include non-null values in the chart
+        if (value !== null) {
+          dataPoint[config.key] = value;
+        }
       }
     });
 

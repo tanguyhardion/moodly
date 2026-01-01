@@ -18,12 +18,21 @@
       >
         <div class="metric-info">
           <Icon :name="metric.icon" size="20" />
-          <span class="metric-value">{{ entry.metrics[metric.key] }}/5</span>
+          <span class="metric-value">{{
+            entry.metrics[metric.key] !== null
+              ? `${entry.metrics[metric.key]}/5`
+              : "N/A"
+          }}</span>
         </div>
         <div class="metric-bar">
           <div
             class="metric-fill"
-            :style="{ width: `${(entry.metrics[metric.key] / 5) * 100}%` }"
+            :style="{
+              width:
+                entry.metrics[metric.key] !== null
+                  ? `${(entry.metrics[metric.key] / 5) * 100}%`
+                  : '0%',
+            }"
           ></div>
         </div>
       </div>

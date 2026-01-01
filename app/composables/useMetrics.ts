@@ -51,13 +51,17 @@ export function useMetrics() {
     days: number = 7,
   ): number => {
     const recentEntries = getEntriesInRange(entries, days);
-    if (recentEntries.length === 0) return 0;
+    // Filter out entries with null values for this metric
+    const validEntries = recentEntries.filter(
+      (entry) => entry.metrics[metric] !== null
+    );
+    if (validEntries.length === 0) return 0;
 
-    const sum = recentEntries.reduce(
-      (acc, entry) => acc + entry.metrics[metric],
+    const sum = validEntries.reduce(
+      (acc, entry) => acc + (entry.metrics[metric] as number),
       0,
     );
-    return sum / recentEntries.length;
+    return sum / validEntries.length;
   };
 
   // Get metric trend (positive, negative, or neutral)
@@ -67,22 +71,26 @@ export function useMetrics() {
     days: number = 7,
   ): "up" | "down" | "neutral" => {
     const recentEntries = getEntriesInRange(entries, days);
-    if (recentEntries.length < 2) return "neutral";
+    // Filter out entries with null values
+    const validEntries = recentEntries.filter(
+      (entry) => entry.metrics[metric] !== null
+    );
+    if (validEntries.length < 2) return "neutral";
 
-    const firstHalf = recentEntries
-      .slice(Math.floor(recentEntries.length / 2))
+    const firstHalf = validEntries
+      .slice(Math.floor(validEntries.length / 2))
       .reverse();
-    const secondHalf = recentEntries
-      .slice(0, Math.floor(recentEntries.length / 2))
+    const secondHalf = validEntries
+      .slice(0, Math.floor(validEntries.length / 2))
       .reverse();
 
     if (firstHalf.length === 0 || secondHalf.length === 0) return "neutral";
 
     const firstAvg =
-      firstHalf.reduce((acc, e) => acc + e.metrics[metric], 0) /
+      firstHalf.reduce((acc, e) => acc + (e.metrics[metric] as number), 0) /
       firstHalf.length;
     const secondAvg =
-      secondHalf.reduce((acc, e) => acc + e.metrics[metric], 0) /
+      secondHalf.reduce((acc, e) => acc + (e.metrics[metric] as number), 0) /
       secondHalf.length;
 
     const diff = secondAvg - firstAvg;

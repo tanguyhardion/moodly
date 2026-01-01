@@ -60,7 +60,14 @@ const loadEntry = () => {
     selectedDate.value.getDay() === 0 || selectedDate.value.getDay() === 6;
 
   if (entry) {
-    metrics.value = { ...entry.metrics };
+    // Load entry metrics, defaulting any null values to 3
+    metrics.value = {
+      mood: entry.metrics.mood ?? 3,
+      energy: entry.metrics.energy ?? 3,
+      sleep: entry.metrics.sleep ?? 3,
+      focus: entry.metrics.focus ?? 3,
+      stress: entry.metrics.stress ?? 3,
+    };
     checkboxes.value = entry.checkboxes
       ? { ...entry.checkboxes }
       : {
