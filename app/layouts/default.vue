@@ -39,12 +39,12 @@
             <span>Home</span>
           </NuxtLink>
           <NuxtLink
-            to="/history"
+            to="/insights"
             class="nav-link"
             @click="mobileMenuOpen = false"
           >
-            <Icon name="solar:history-bold" size="20" />
-            <span>History</span>
+            <Icon name="mdi:sparkles" size="20" />
+            <span>Insights</span>
           </NuxtLink>
           <NuxtLink
             to="/stats"
@@ -55,12 +55,12 @@
             <span>Stats</span>
           </NuxtLink>
           <NuxtLink
-            to="/insights"
+            to="/history"
             class="nav-link"
             @click="mobileMenuOpen = false"
           >
-            <Icon name="mdi:sparkles" size="20" />
-            <span>Insights</span>
+            <Icon name="solar:history-bold" size="20" />
+            <span>History</span>
           </NuxtLink>
         </div>
 

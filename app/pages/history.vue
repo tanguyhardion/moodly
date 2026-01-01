@@ -1,6 +1,6 @@
 <template>
   <div class="page history-page">
-    <LoadingState v-if="!isReady" message="Loading your history..." />
+    <LoadingState v-if="!isInitialized" message="Loading your history..." />
     <div v-else class="history-content">
       <div class="page-header">
         <ExportButton v-if="entries.length > 0" class="export-btn-wrapper" />
@@ -27,12 +27,16 @@
       <div v-else class="entries-list">
         <TransitionGroup name="list">
           <LazyEntryCard
-            v-for="entry in sortedEntries"
+            v-for="entry in displayedEntries"
             :key="entry.id"
             :entry="entry"
             :metric-configs="metricConfigs"
           />
         </TransitionGroup>
+        
+        <div v-if="hasMore" ref="sentinelRef" class="load-sentinel">
+          <LoadingState v-if="isLoadingMore" message="Loading more entries..." />
+        </div>
       </div>
     </div>
   </div>
@@ -41,24 +45,61 @@
 <script setup lang="ts">
 const { entries, metricConfigs, isInitialized } = useMoodly();
 
-const isReady = ref(false);
-
-// Watch for data initialization
-watch(isInitialized, (initialized) => {
-  if (initialized && !isReady.value) {
-    isReady.value = true;
-  }
-});
-
-// Initialize if data is already loaded
-onMounted(() => {
-  if (isInitialized.value) {
-    isReady.value = true;
-  }
-});
+const INITIAL_LOAD = 5;
+const LOAD_MORE_COUNT = 10;
+const displayCount = ref(INITIAL_LOAD);
+const sentinelRef = ref<HTMLElement | null>(null);
+const isLoadingMore = ref(false);
 
 const sortedEntries = computed(() => {
   return [...entries.value].sort((a, b) => b.date.localeCompare(a.date));
+});
+
+const displayedEntries = computed(() => {
+  return sortedEntries.value.slice(0, displayCount.value);
+});
+
+const hasMore = computed(() => {
+  return displayCount.value < sortedEntries.value.length;
+});
+
+const loadMore = async () => {
+  if (isLoadingMore.value) return;
+  
+  isLoadingMore.value = true;
+  // Small delay to show loading state
+  await new Promise(resolve => setTimeout(resolve, 300));
+  displayCount.value += LOAD_MORE_COUNT;
+  isLoadingMore.value = false;
+};
+
+// Set up intersection observer for infinite scroll
+onMounted(() => {
+  if (!sentinelRef.value) return;
+  
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting && hasMore.value && !isLoadingMore.value) {
+        loadMore();
+      }
+    },
+    { threshold: 0.1 }
+  );
+  
+  watch(sentinelRef, (newSentinel) => {
+    if (newSentinel) {
+      observer.observe(newSentinel);
+    }
+  }, { immediate: true });
+  
+  onUnmounted(() => {
+    observer.disconnect();
+  });
+});
+
+// Reset display count when entries change
+watch(entries, () => {
+  displayCount.value = INITIAL_LOAD;
 });
 </script>
 
@@ -149,5 +190,13 @@ const sortedEntries = computed(() => {
 
 .list-move {
   transition: transform 0.3s ease;
+}
+
+.load-sentinel {
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--spacing-md);
 }
 </style>
