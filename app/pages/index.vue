@@ -31,6 +31,11 @@ const checkboxes = ref({
 });
 
 const note = ref("");
+const location = ref<{
+  name: string;
+  latitude: number;
+  longitude: number;
+} | null>(null);
 const showToast = ref(false);
 const isReady = ref(false);
 
@@ -80,6 +85,7 @@ const loadEntry = () => {
           misc: false,
         };
     note.value = entry.note || "";
+    location.value = entry.location || null;
   } else {
     // Reset to defaults if no entry exists
     metrics.value = {
@@ -99,6 +105,7 @@ const loadEntry = () => {
       misc: false,
     };
     note.value = "";
+    location.value = null;
   }
 };
 
@@ -166,6 +173,7 @@ const handleSave = async () => {
       checkboxes.value,
       note.value || undefined,
       dateToString(selectedDate.value),
+      location.value || undefined,
     );
     showToast.value = true;
     setTimeout(() => {
@@ -246,6 +254,8 @@ const handleSave = async () => {
       </div>
 
       <DailyCheckins v-model="checkboxes" />
+
+      <LocationInput v-model="location" />
 
       <NoteInput v-model="note" />
 

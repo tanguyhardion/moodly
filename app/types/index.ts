@@ -19,6 +19,11 @@ export interface DailyEntry {
     alcohol: boolean;
     misc: boolean;
   };
+  location?: {
+    name: string;
+    latitude: number;
+    longitude: number;
+  } | null;
   note?: string;
   createdAt: string; // ISO 8601 timestamp with timezone
 }

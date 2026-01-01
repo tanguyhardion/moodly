@@ -1,4 +1,4 @@
-import type { DailyEntry, AnalyticsInsight } from "~/types";
+import type { DailyEntry, AnalyticsInsight, AppSettings } from "~/types";
 
 const getBackendUrl = (): string => {
   return process.env.NODE_ENV === "development"
@@ -20,7 +20,7 @@ export class MoodlyBackendService {
 
   private async makeRequest<T>(
     endpoint: string,
-    options: RequestInit = {},
+    options: RequestInit = {}
   ): Promise<T> {
     const masterPassword = getMasterPassword();
     if (!masterPassword) {
@@ -44,6 +44,15 @@ export class MoodlyBackendService {
     return data.data;
   }
 
+  async searchLocation(query: string): Promise<any> {
+    const masterPassword = getMasterPassword();
+    return this.makeRequest(
+      `search-location?q=${encodeURIComponent(
+        query
+      )}&masterPassword=${encodeURIComponent(masterPassword!)}`
+    );
+  }
+
   async verifyPassword(password: string): Promise<boolean> {
     try {
       const response = await fetch(`${this.backendUrl}/api/verify-password`, {
@@ -65,7 +74,7 @@ export class MoodlyBackendService {
   async getEntries(): Promise<DailyEntry[]> {
     const masterPassword = getMasterPassword();
     return this.makeRequest<DailyEntry[]>(
-      `get-entries?masterPassword=${encodeURIComponent(masterPassword!)}`,
+      `get-entries?masterPassword=${encodeURIComponent(masterPassword!)}`
     );
   }
 
@@ -83,14 +92,14 @@ export class MoodlyBackendService {
   async getAnalytics(): Promise<{ insights: AnalyticsInsight[] }> {
     const masterPassword = getMasterPassword();
     return this.makeRequest<{ insights: AnalyticsInsight[] }>(
-      `get-analytics?masterPassword=${encodeURIComponent(masterPassword!)}`,
+      `get-analytics?masterPassword=${encodeURIComponent(masterPassword!)}`
     );
   }
 
   async getSettings(): Promise<AppSettings> {
     const masterPassword = getMasterPassword();
     return this.makeRequest<AppSettings>(
-      `settings?masterPassword=${encodeURIComponent(masterPassword!)}`,
+      `settings?masterPassword=${encodeURIComponent(masterPassword!)}`
     );
   }
 

@@ -70,6 +70,7 @@ export function useEntries() {
     checkboxes?: DailyEntry["checkboxes"],
     note?: string,
     date?: string,
+    location?: DailyEntry["location"],
   ) => {
     const targetDate = date || toLocalDateString(new Date());
     const existingIndex = entries.value.findIndex(
@@ -84,6 +85,7 @@ export function useEntries() {
       metrics,
       checkboxes,
       note,
+      location,
       createdAt: existingEntry
         ? existingEntry.createdAt
         : new Date().toISOString(),
