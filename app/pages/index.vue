@@ -17,6 +17,7 @@ const metrics = ref({
   energy: 3,
   sleep: 3,
   focus: 3,
+  stress: 3,
 });
 
 const checkboxes = ref({
@@ -79,6 +80,7 @@ const loadEntry = () => {
       energy: 3,
       sleep: 3,
       focus: 3,
+      stress: 3,
     };
     checkboxes.value = {
       healthyFood: false,

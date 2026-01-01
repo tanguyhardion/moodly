@@ -15,7 +15,7 @@ export function useMetrics() {
       key: "energy",
       icon: "solar:bolt-bold",
       color: "#FFC93C",
-      emojis: ["😴", "🥱", "😶", "💪", "⚡"],
+      emojis: ["🥴", "🥱", "😐", "💪", "⚡"],
       labels: ["Exhausted", "Tired", "Normal", "Energized", "Supercharged"],
     },
     {
@@ -23,7 +23,7 @@ export function useMetrics() {
       key: "sleep",
       icon: "solar:moon-stars-bold",
       color: "#A78BFA",
-      emojis: ["😵", "😪", "😑", "😌", "😴"],
+      emojis: ["😵", "😪", "😐", "😌", "😴"],
       labels: ["Awful", "Poor", "Fair", "Good", "Excellent"],
     },
     {
@@ -33,6 +33,14 @@ export function useMetrics() {
       color: "#10B981",
       emojis: ["🤯", "😵‍💫", "😐", "🎯", "🧠"],
       labels: ["Scattered", "Distracted", "Average", "Focused", "Laser-sharp"],
+    },
+    {
+      name: "Stress",
+      key: "stress",
+      icon: "solar:pulse-bold",
+      color: "#F97316",
+      emojis: ["😰", "😫", "😐", "😇", "🧘"],
+      labels: ["Overwhelmed", "Stressed", "Moderate", "Calm", "Zen"],
     },
   ];
 
