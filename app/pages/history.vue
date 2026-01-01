@@ -26,7 +26,7 @@
 
       <div v-else class="entries-list">
         <TransitionGroup name="list">
-          <EntryCard
+          <LazyEntryCard
             v-for="entry in sortedEntries"
             :key="entry.id"
             :entry="entry"

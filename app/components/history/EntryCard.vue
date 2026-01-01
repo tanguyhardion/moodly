@@ -30,7 +30,7 @@
             :style="{
               width:
                 entry.metrics[metric.key] !== null
-                  ? `${(entry.metrics[metric.key] / 5) * 100}%`
+                  ? `${(entry.metrics[metric.key]! / 5) * 100}%`
                   : '0%',
             }"
           ></div>
