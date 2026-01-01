@@ -250,8 +250,8 @@ const handleAuthenticated = async () => {
 }
 
 .nav-link.router-link-active {
-  background: var(--primary-rgba-12);
-  color: var(--primary);
+  background: var(--nav-link-active-bg);
+  color: var(--nav-link-active-color);
 }
 
 .nav-link.router-link-active::before {
