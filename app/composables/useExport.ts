@@ -24,9 +24,13 @@ export function useExport(
       "Energy",
       "Sleep",
       "Focus",
+      "Stress",
       "Healthy Food",
+      "Caffeine",
       "Gym",
       "Hard Work",
+      "Day Off",
+      "Alcohol",
       "Misc",
       "Note",
       "Created At",
@@ -37,9 +41,13 @@ export function useExport(
       entry.metrics.energy,
       entry.metrics.sleep,
       entry.metrics.focus,
+      entry.metrics.stress,
       entry.checkboxes?.healthyFood ? "Yes" : "No",
+      entry.checkboxes?.caffeine ? "Yes" : "No",
       entry.checkboxes?.gym ? "Yes" : "No",
       entry.checkboxes?.hardWork ? "Yes" : "No",
+      entry.checkboxes?.dayOff ? "Yes" : "No",
+      entry.checkboxes?.alcohol ? "Yes" : "No",
       entry.checkboxes?.misc ? "Yes" : "No",
       entry.note ? `"${entry.note.replace(/"/g, '""')}"` : "",
       entry.createdAt,
@@ -65,9 +73,13 @@ export function useExport(
       "Energy",
       "Sleep",
       "Focus",
+      "Stress",
       "Healthy Food",
+      "Caffeine",
       "Gym",
       "Hard Work",
+      "Day Off",
+      "Alcohol",
       "Misc",
       "Note",
       "Created At",
@@ -79,9 +91,13 @@ export function useExport(
       entry.metrics.energy,
       entry.metrics.sleep,
       entry.metrics.focus,
+      entry.metrics.stress,
       entry.checkboxes?.healthyFood ? "Yes" : "No",
+      entry.checkboxes?.caffeine ? "Yes" : "No",
       entry.checkboxes?.gym ? "Yes" : "No",
       entry.checkboxes?.hardWork ? "Yes" : "No",
+      entry.checkboxes?.dayOff ? "Yes" : "No",
+      entry.checkboxes?.alcohol ? "Yes" : "No",
       entry.checkboxes?.misc ? "Yes" : "No",
       entry.note || "",
       entry.createdAt,
@@ -98,9 +114,13 @@ export function useExport(
       { wch: 8 }, // Energy
       { wch: 6 }, // Sleep
       { wch: 6 }, // Focus
+      { wch: 8 }, // Stress
       { wch: 14 }, // Healthy Food
+      { wch: 10 }, // Caffeine
       { wch: 6 }, // Gym
       { wch: 12 }, // Hard Work
+      { wch: 10 }, // Day Off
+      { wch: 10 }, // Alcohol
       { wch: 6 }, // Misc
       { wch: 30 }, // Note
       { wch: 22 }, // Created At
@@ -137,13 +157,17 @@ export function useExport(
       markdown += `- **Mood**: ${entry.metrics.mood}/5 ${metricConfigs[0]?.emojis[entry.metrics.mood - 1] || ""}\n`;
       markdown += `- **Energy**: ${entry.metrics.energy}/5 ${metricConfigs[1]?.emojis[entry.metrics.energy - 1] || ""}\n`;
       markdown += `- **Sleep**: ${entry.metrics.sleep}/5 ${metricConfigs[2]?.emojis[entry.metrics.sleep - 1] || ""}\n`;
-      markdown += `- **Focus**: ${entry.metrics.focus}/5 ${metricConfigs[3]?.emojis[entry.metrics.focus - 1] || ""}\n\n`;
+      markdown += `- **Focus**: ${entry.metrics.focus}/5 ${metricConfigs[3]?.emojis[entry.metrics.focus - 1] || ""}\n`;
+      markdown += `- **Stress**: ${entry.metrics.stress}/5 ${metricConfigs[4]?.emojis[entry.metrics.stress - 1] || ""}\n\n`;
 
       if (entry.checkboxes) {
         markdown += "### Daily Check-ins\n\n";
         markdown += `- **Healthy Food**: ${entry.checkboxes.healthyFood ? "✅" : "❌"}\n`;
+        markdown += `- **Caffeine**: ${entry.checkboxes.caffeine ? "✅" : "❌"}\n`;
         markdown += `- **Gym**: ${entry.checkboxes.gym ? "✅" : "❌"}\n`;
         markdown += `- **Hard Work**: ${entry.checkboxes.hardWork ? "✅" : "❌"}\n`;
+        markdown += `- **Day Off**: ${entry.checkboxes.dayOff ? "✅" : "❌"}\n`;
+        markdown += `- **Alcohol**: ${entry.checkboxes.alcohol ? "✅" : "❌"}\n`;
         markdown += `- **Misc**: ${entry.checkboxes.misc ? "✅" : "❌"}\n\n`;
       }
 
