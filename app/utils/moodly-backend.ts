@@ -20,7 +20,7 @@ export class MoodlyBackendService {
 
   private async makeRequest<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
   ): Promise<T> {
     const masterPassword = getMasterPassword();
     if (!masterPassword) {
@@ -48,8 +48,8 @@ export class MoodlyBackendService {
     const masterPassword = getMasterPassword();
     return this.makeRequest(
       `search-location?q=${encodeURIComponent(
-        query
-      )}&masterPassword=${encodeURIComponent(masterPassword!)}`
+        query,
+      )}&masterPassword=${encodeURIComponent(masterPassword!)}`,
     );
   }
 
@@ -74,7 +74,7 @@ export class MoodlyBackendService {
   async getEntries(): Promise<DailyEntry[]> {
     const masterPassword = getMasterPassword();
     return this.makeRequest<DailyEntry[]>(
-      `get-entries?masterPassword=${encodeURIComponent(masterPassword!)}`
+      `get-entries?masterPassword=${encodeURIComponent(masterPassword!)}`,
     );
   }
 
@@ -92,14 +92,14 @@ export class MoodlyBackendService {
   async getAnalytics(): Promise<{ insights: AnalyticsInsight[] }> {
     const masterPassword = getMasterPassword();
     return this.makeRequest<{ insights: AnalyticsInsight[] }>(
-      `get-analytics?masterPassword=${encodeURIComponent(masterPassword!)}`
+      `get-analytics?masterPassword=${encodeURIComponent(masterPassword!)}`,
     );
   }
 
   async getSettings(): Promise<AppSettings> {
     const masterPassword = getMasterPassword();
     return this.makeRequest<AppSettings>(
-      `settings?masterPassword=${encodeURIComponent(masterPassword!)}`
+      `settings?masterPassword=${encodeURIComponent(masterPassword!)}`,
     );
   }
 

@@ -53,7 +53,7 @@ export function useMetrics() {
     const recentEntries = getEntriesInRange(entries, days);
     // Filter out entries with null values for this metric
     const validEntries = recentEntries.filter(
-      (entry) => entry.metrics[metric] !== null
+      (entry) => entry.metrics[metric] !== null,
     );
     if (validEntries.length === 0) return 0;
 
@@ -73,7 +73,7 @@ export function useMetrics() {
     const recentEntries = getEntriesInRange(entries, days);
     // Filter out entries with null values
     const validEntries = recentEntries.filter(
-      (entry) => entry.metrics[metric] !== null
+      (entry) => entry.metrics[metric] !== null,
     );
     if (validEntries.length < 2) return "neutral";
 

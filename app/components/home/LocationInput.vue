@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { moodlyBackendService } from '~/utils/moodly-backend';
+import { ref, watch } from "vue";
+import { moodlyBackendService } from "~/utils/moodly-backend";
 
 interface Location {
   name: string;
@@ -13,47 +13,51 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: Location | null): void;
+  (e: "update:modelValue", value: Location | null): void;
 }>();
 
-const searchQuery = ref('');
+const searchQuery = ref("");
 const results = ref<any[]>([]);
 const isLoading = ref(false);
 const showResults = ref(false);
 let debounceTimer: NodeJS.Timeout | null = null;
 
 // Initialize search query if modelValue exists
-watch(() => props.modelValue, (newVal) => {
-  if (newVal && newVal.name !== searchQuery.value) {
-    searchQuery.value = newVal.name;
-  } else if (!newVal) {
-    // Only clear if it's explicitly null and we aren't typing
-    // Actually, if modelValue is null, we should probably clear the input unless the user is in the middle of typing
-    // But since this is a controlled component, if the parent says null, it should be null.
-    // However, we want to avoid clearing while typing if the parent updates.
-    // Let's assume parent updates only on selection.
-    if (!showResults.value) {
-        searchQuery.value = '';
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    if (newVal && newVal.name !== searchQuery.value) {
+      searchQuery.value = newVal.name;
+    } else if (!newVal) {
+      // Only clear if it's explicitly null and we aren't typing
+      // Actually, if modelValue is null, we should probably clear the input unless the user is in the middle of typing
+      // But since this is a controlled component, if the parent says null, it should be null.
+      // However, we want to avoid clearing while typing if the parent updates.
+      // Let's assume parent updates only on selection.
+      if (!showResults.value) {
+        searchQuery.value = "";
+      }
     }
-  }
-}, { immediate: true });
+  },
+  { immediate: true },
+);
 
 const handleInput = (event: Event) => {
   const query = (event.target as HTMLInputElement).value;
   searchQuery.value = query;
-  
+
   if (!query) {
     results.value = [];
     showResults.value = false;
-    emit('update:modelValue', null);
+    emit("update:modelValue", null);
     return;
   }
 
   if (debounceTimer) clearTimeout(debounceTimer);
-  
+
   debounceTimer = setTimeout(async () => {
     if (query.length < 3) return;
-    
+
     isLoading.value = true;
     try {
       const response = await moodlyBackendService.searchLocation(query);
@@ -64,7 +68,7 @@ const handleInput = (event: Event) => {
           name: feature.properties.formatted,
           latitude: feature.properties.lat,
           longitude: feature.properties.lon,
-          id: feature.properties.place_id
+          id: feature.properties.place_id,
         }));
         showResults.value = true;
       }
@@ -79,22 +83,22 @@ const handleInput = (event: Event) => {
 const selectLocation = (location: any) => {
   searchQuery.value = location.name;
   showResults.value = false;
-  emit('update:modelValue', {
+  emit("update:modelValue", {
     name: location.name,
     latitude: location.latitude,
-    longitude: location.longitude
+    longitude: location.longitude,
   });
 };
 
 const clearLocation = () => {
-    searchQuery.value = '';
-    results.value = [];
-    showResults.value = false;
-    emit('update:modelValue', null);
-}
+  searchQuery.value = "";
+  results.value = [];
+  showResults.value = false;
+  emit("update:modelValue", null);
+};
 
 // Close results when clicking outside
-// This would require a click-outside directive or listener. 
+// This would require a click-outside directive or listener.
 // For simplicity, we can rely on selection or blur, but blur is tricky with click.
 // Let's just leave it for now.
 </script>
@@ -108,19 +112,19 @@ const clearLocation = () => {
       <label for="location" class="location-label">Location</label>
     </div>
     <div class="input-wrapper">
-        <input
+      <input
         id="location"
         :value="searchQuery"
         @input="handleInput"
         class="location-input"
         placeholder="Search for a location..."
         autocomplete="off"
-        />
-        <button v-if="searchQuery" @click="clearLocation" class="clear-btn">
-            <Icon name="mdi:close" size="16" />
-        </button>
+      />
+      <button v-if="searchQuery" @click="clearLocation" class="clear-btn">
+        <Icon name="mdi:close" size="16" />
+      </button>
     </div>
-    
+
     <div v-if="showResults && results.length > 0" class="results-dropdown">
       <div
         v-for="result in results"
@@ -178,9 +182,9 @@ const clearLocation = () => {
 }
 
 .input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .location-input {
@@ -201,14 +205,14 @@ const clearLocation = () => {
 }
 
 .clear-btn {
-    position: absolute;
-    right: 10px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
 }
 
 .results-dropdown {
@@ -238,8 +242,8 @@ const clearLocation = () => {
 }
 
 .loading-indicator {
-    margin-top: 5px;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
 }
 </style>
