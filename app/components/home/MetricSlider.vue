@@ -93,7 +93,6 @@ const handleInput = (event: Event) => {
 }
 
 .metric-slider:hover {
-  transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
   border-color: var(--primary-light);
 }

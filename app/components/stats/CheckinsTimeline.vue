@@ -178,7 +178,6 @@ const shouldShowLabel = (index: number): boolean => {
 }
 
 .checkins-timeline:hover {
-  transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
   border-color: var(--primary-light);
 }

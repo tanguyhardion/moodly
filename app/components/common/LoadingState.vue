@@ -33,15 +33,6 @@ defineProps<{
   animation: fadeIn 0.4s ease;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 .loading-spinner {
   position: relative;
   width: 64px;

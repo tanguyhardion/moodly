@@ -71,7 +71,6 @@ const { streakData, streakMessage, isStreakAtRisk, needsCheckinToday } =
 }
 
 .streak-compact:hover {
-  transform: translateY(-1px);
   box-shadow: var(--shadow-md);
   border-color: var(--primary-light);
 }

@@ -67,18 +67,32 @@
         <div class="nav-actions">
           <button
             @click="showSettings = true"
-            class="theme-toggle"
+            class="nav-button"
             title="Settings"
           >
-            <Icon name="solar:settings-bold" size="20" />
+            <Icon
+              name="solar:settings-bold"
+              size="20"
+              class="nav-button-icon"
+            />
           </button>
           <button
             @click="toggleDarkMode"
-            class="theme-toggle"
+            class="nav-button"
             title="Toggle theme"
           >
-            <Icon v-if="darkMode" name="solar:sun-bold" size="20" />
-            <Icon v-else name="solar:moon-bold" size="20" />
+            <Icon
+              v-if="darkMode"
+              name="solar:sun-bold"
+              size="20"
+              class="nav-button-icon"
+            />
+            <Icon
+              v-else
+              name="solar:moon-bold"
+              size="20"
+              class="nav-button-icon"
+            />
           </button>
         </div>
       </div>
@@ -309,7 +323,7 @@ const handleAuthenticated = async () => {
   align-items: center;
 }
 
-.theme-toggle {
+.nav-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -324,14 +338,17 @@ const handleAuthenticated = async () => {
   box-shadow: 0 0 0 1px var(--border-light);
 }
 
-.theme-toggle:hover {
+.nav-button:hover {
   background: var(--border-hover);
-  transform: rotate(20deg) scale(1.05);
   box-shadow: 0 4px 12px rgba(var(--color-shadow-primary), 0.2);
 }
 
-.theme-toggle:active {
-  transform: rotate(20deg) scale(0.95);
+.nav-button .nav-button-icon {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-button:hover .nav-button-icon {
+  transform: rotate(40deg) scale(1.05);
 }
 
 .main-content {

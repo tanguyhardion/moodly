@@ -133,7 +133,6 @@ const xFormatter = (index: number) => {
 }
 
 .metrics-line-chart:hover {
-  transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
   border-color: var(--primary-light);
 }

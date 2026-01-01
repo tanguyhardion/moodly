@@ -172,7 +172,6 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
 }
 
 .checkboxes-section:hover {
-  transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
   border-color: var(--primary-light);
 }
@@ -211,7 +210,6 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
 .checkbox-item:hover {
   background: var(--hover-bg);
   border-color: var(--border-light);
-  transform: translateX(2px);
 }
 
 .checkbox-control {
