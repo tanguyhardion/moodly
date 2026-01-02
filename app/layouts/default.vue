@@ -35,11 +35,7 @@ const handleAuthenticated = async () => {
 }
 
 .navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: var(--nav-bg);
-  z-index: 1;
+  margin-bottom: 1.5rem;
 }
 
 .background-shapes {
