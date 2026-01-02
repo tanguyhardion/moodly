@@ -28,10 +28,14 @@ const handleAuthenticated = async () => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .app-container {
   min-height: 100vh;
   position: relative;
+
+  .main-content {
+    padding-bottom: 2rem;
+  }
 }
 
 .navbar {

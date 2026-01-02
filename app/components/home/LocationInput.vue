@@ -38,7 +38,9 @@ watch(
 );
 
 const hasSearched = computed(() => searchQuery.value.length >= 3);
-const noResults = computed(() => hasSearched.value && !isLoading.value && results.value.length === 0);
+const noResults = computed(
+  () => hasSearched.value && !isLoading.value && results.value.length === 0,
+);
 
 const handleInput = (event: Event) => {
   const query = (event.target as HTMLInputElement).value;
@@ -127,7 +129,10 @@ const handleKeydown = (event: KeyboardEvent) => {
   switch (event.key) {
     case "ArrowDown":
       event.preventDefault();
-      highlightedIndex.value = Math.min(highlightedIndex.value + 1, results.value.length - 1);
+      highlightedIndex.value = Math.min(
+        highlightedIndex.value + 1,
+        results.value.length - 1,
+      );
       break;
     case "ArrowUp":
       event.preventDefault();
@@ -156,7 +161,7 @@ const handleKeydown = (event: KeyboardEvent) => {
       </div>
       <label for="location" class="location-label">Location</label>
     </div>
-    
+
     <div class="autocomplete-wrapper">
       <div class="input-wrapper">
         <input
@@ -171,9 +176,9 @@ const handleKeydown = (event: KeyboardEvent) => {
           autocomplete="off"
           type="text"
         />
-        <button 
-          v-if="searchQuery" 
-          @click="clearLocation" 
+        <button
+          v-if="searchQuery"
+          @click="clearLocation"
           class="clear-btn"
           title="Clear location"
         >
@@ -219,7 +224,10 @@ const handleKeydown = (event: KeyboardEvent) => {
           </div>
 
           <!-- Minimum Characters Required -->
-          <div v-else-if="searchQuery.length > 0 && searchQuery.length < 3" class="min-chars">
+          <div
+            v-else-if="searchQuery.length > 0 && searchQuery.length < 3"
+            class="min-chars"
+          >
             <Icon name="mdi:information-outline" size="18" />
             <span>Type at least 3 characters to search</span>
           </div>
@@ -229,7 +237,7 @@ const handleKeydown = (event: KeyboardEvent) => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .location-section {
   margin-bottom: var(--spacing-xl);
   padding: 1.75rem;
@@ -238,210 +246,228 @@ const handleKeydown = (event: KeyboardEvent) => {
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-.location-section:hover {
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary-light);
-}
+  &:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-light);
+  }
 
-.location-header {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-}
+  .location-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
 
-.location-label {
-  font-weight: 600;
-  color: var(--text-primary);
-  font-size: 1.1rem;
-}
+    .location-label {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 1.1rem;
+    }
+  }
 
-.autocomplete-wrapper {
-  position: relative;
-}
+  .autocomplete-wrapper {
+    position: relative;
 
-.input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
 
-.location-input {
-  width: 100%;
-  padding: var(--spacing-md);
-  padding-right: 40px;
-  border: 2px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  font-size: 1rem;
-  transition: all 0.2s ease;
-  font-family: inherit;
-}
+      .location-input {
+        width: 100%;
+        padding: var(--spacing-md);
+        padding-right: 40px;
+        border: 2px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        font-family: inherit;
 
-.location-input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-bg);
-}
+        &:focus {
+          outline: none;
+          border-color: var(--primary);
+          box-shadow: 0 0 0 3px var(--primary-bg);
+        }
 
-.location-input::placeholder {
-  color: var(--text-secondary);
-}
+        &::placeholder {
+          color: var(--text-secondary);
+        }
+      }
 
-.clear-btn {
-  position: absolute;
-  right: 12px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  border-radius: var(--radius-md);
-  transition: all 0.2s ease;
-  width: 32px;
-  height: 32px;
-}
+      .clear-btn {
+        position: absolute;
+        right: 12px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px;
+        border-radius: var(--radius-md);
+        transition: all 0.2s ease;
+        width: 32px;
+        height: 32px;
 
-.clear-btn:hover {
-  color: var(--text-primary);
-  background: var(--bg-secondary);
-}
+        &:hover {
+          color: var(--text-primary);
+          background: var(--bg-secondary);
+        }
 
-.clear-btn:active {
-  transform: scale(0.95);
-}
+        &:active {
+          transform: scale(0.95);
+        }
+      }
+    }
 
-/* Loading State */
-.loading-state {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-lg);
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-}
+    /* Loading State */
+    .loading-state {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      padding: var(--spacing-lg);
+      color: var(--text-secondary);
+      font-size: 0.95rem;
 
-.spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid var(--primary-bg);
-  border-top-color: var(--primary);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+      .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--primary-bg);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+    }
+
+    /* Results Dropdown */
+    .results-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      z-index: 1000;
+      max-height: 320px;
+      overflow-y: auto;
+      overflow-x: hidden;
+
+      .result-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        padding: var(--spacing-md) var(--spacing-lg);
+        cursor: pointer;
+        transition: all 0.15s ease;
+        color: var(--text-primary);
+        border-bottom: 1px solid var(--border-light);
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        &:hover,
+        &.highlighted {
+          background: var(--primary-bg);
+          color: var(--primary);
+
+          .result-icon {
+            background: var(--primary);
+            color: white;
+          }
+        }
+
+        .result-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          border-radius: var(--radius-md);
+          background: var(--bg-secondary);
+          flex-shrink: 0;
+        }
+
+        .result-content {
+          flex: 1;
+          min-width: 0;
+
+          .result-name {
+            font-weight: 500;
+            white-space: normal;
+            word-break: break-word;
+            font-size: 0.95rem;
+          }
+        }
+      }
+
+      /* Empty States */
+      .no-results,
+      .min-chars {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-md);
+        padding: var(--spacing-xl) var(--spacing-lg);
+        color: var(--text-secondary);
+        text-align: center;
+        min-height: 120px;
+      }
+
+      .no-results {
+        p {
+          margin: 0;
+          font-weight: 500;
+          color: var(--text-primary);
+          font-size: 0.95rem;
+        }
+
+        span {
+          font-size: 0.85rem;
+          color: var(--text-secondary);
+        }
+      }
+
+      .min-chars {
+        min-height: auto;
+        padding: var(--spacing-lg);
+
+        span {
+          font-size: 0.9rem;
+        }
+      }
+
+      /* Scrollbar Styling */
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+
+        &:hover {
+          background: var(--text-secondary);
+        }
+      }
+    }
+  }
 }
 
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
-}
-
-/* Results Dropdown */
-.results-dropdown {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  z-index: 1000;
-  max-height: 320px;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-.result-item {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md) var(--spacing-lg);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  color: var(--text-primary);
-  border-bottom: 1px solid var(--border-light);
-}
-
-.result-item:last-child {
-  border-bottom: none;
-}
-
-.result-item:hover,
-.result-item.highlighted {
-  background: var(--primary-bg);
-  color: var(--primary);
-}
-
-.result-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-md);
-  background: var(--bg-secondary);
-  flex-shrink: 0;
-}
-
-.result-item:hover .result-icon,
-.result-item.highlighted .result-icon {
-  background: var(--primary);
-  color: white;
-}
-
-.result-content {
-  flex: 1;
-  min-width: 0;
-}
-
-.result-name {
-  font-weight: 500;
-  white-space: normal;
-  word-break: break-word;
-  font-size: 0.95rem;
-}
-
-/* Empty States */
-.no-results,
-.min-chars {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-xl) var(--spacing-lg);
-  color: var(--text-secondary);
-  text-align: center;
-  min-height: 120px;
-}
-
-.no-results p {
-  margin: 0;
-  font-weight: 500;
-  color: var(--text-primary);
-  font-size: 0.95rem;
-}
-
-.no-results span,
-.min-chars span {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-}
-
-.min-chars {
-  min-height: auto;
-  padding: var(--spacing-lg);
-}
-
-.min-chars span {
-  font-size: 0.9rem;
 }
 
 /* Transitions */
@@ -468,23 +494,5 @@ const handleKeydown = (event: KeyboardEvent) => {
 .slide-down-leave-to {
   opacity: 0;
   transform: translateY(-8px);
-}
-
-/* Scrollbar Styling */
-.results-dropdown::-webkit-scrollbar {
-  width: 6px;
-}
-
-.results-dropdown::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.results-dropdown::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
-}
-
-.results-dropdown::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
 }
 </style>

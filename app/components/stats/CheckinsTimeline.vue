@@ -166,7 +166,7 @@ const shouldShowLabel = (index: number): boolean => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .checkins-timeline {
   padding: 1.75rem;
   background: var(--card-bg);
@@ -175,11 +175,11 @@ const shouldShowLabel = (index: number): boolean => {
   box-shadow: var(--shadow-sm);
   margin-bottom: var(--spacing-xl);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-.checkins-timeline:hover {
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary-light);
+  &:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-light);
+  }
 }
 
 .chart-header {
@@ -238,15 +238,15 @@ const shouldShowLabel = (index: number): boolean => {
   font-weight: 500;
   color: var(--text-secondary);
   white-space: nowrap;
-}
 
-.y-label span {
-  display: none;
-}
+  span {
+    display: none;
+  }
 
-@media (min-width: 640px) {
-  .y-label span {
-    display: inline;
+  @media (min-width: 640px) {
+    span {
+      display: inline;
+    }
   }
 }
 
@@ -264,10 +264,10 @@ const shouldShowLabel = (index: number): boolean => {
   display: flex;
   height: 36px;
   border-bottom: 1px solid var(--border);
-}
 
-.grid-row:last-child {
-  border-bottom: none;
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
 .cell {
@@ -277,6 +277,11 @@ const shouldShowLabel = (index: number): boolean => {
   min-width: 20px;
   flex: 1;
   cursor: default;
+
+  &:hover .dot {
+    transform: scale(1.4);
+    box-shadow: 0 0 6px currentColor;
+  }
 }
 
 .dot {
@@ -286,11 +291,6 @@ const shouldShowLabel = (index: number): boolean => {
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
-}
-
-.cell:hover .dot {
-  transform: scale(1.4);
-  box-shadow: 0 0 6px currentColor;
 }
 
 .empty-dot {
@@ -321,10 +321,8 @@ const shouldShowLabel = (index: number): boolean => {
   transform-origin: center;
   white-space: nowrap;
   height: 2rem;
-}
 
-@media (min-width: 640px) {
-  .x-label {
+  @media (min-width: 640px) {
     font-size: 0.5625rem;
   }
 }

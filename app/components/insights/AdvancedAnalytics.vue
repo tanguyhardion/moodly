@@ -131,7 +131,7 @@ const refresh = () => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .advanced-analytics-container {
   width: 100%;
 }
@@ -177,17 +177,17 @@ const refresh = () => {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-}
 
-.refresh-btn:hover:not(:disabled) {
-  background: var(--bg-secondary);
-  border-color: var(--border-hover);
-  transform: translateY(-1px);
-}
+  &:hover:not(:disabled) {
+    background: var(--bg-secondary);
+    border-color: var(--border-hover);
+    transform: translateY(-1px);
+  }
 
-.refresh-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
 
 .spin {
@@ -212,19 +212,19 @@ const refresh = () => {
   border-radius: 0.75rem;
   margin-bottom: 2rem;
   border: 1px solid var(--border);
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
 }
 
 .info-icon {
   color: var(--primary);
   font-size: 1.5rem;
   flex-shrink: 0;
-}
-
-.insights-info p {
-  margin: 0;
-  font-size: 0.95rem;
-  color: var(--text-secondary);
-  line-height: 1.5;
 }
 
 .category-grid {
@@ -246,23 +246,23 @@ const refresh = () => {
   background: var(--card-bg);
   border-radius: 1.5rem;
   border: 1px solid var(--border);
+
+  h3 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.5rem;
+    color: var(--text-primary);
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
 }
 
 .empty-icon {
   color: var(--text-tertiary);
   margin-bottom: 1.5rem;
-}
-
-.empty-content h3 {
-  margin: 0 0 0.75rem 0;
-  font-size: 1.5rem;
-  color: var(--text-primary);
-}
-
-.empty-content p {
-  margin: 0;
-  color: var(--text-secondary);
-  line-height: 1.6;
 }
 
 .sub-text {
@@ -294,10 +294,10 @@ const refresh = () => {
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.2s;
-}
 
-.retry-btn:hover {
-  opacity: 0.9;
+  &:hover {
+    opacity: 0.9;
+  }
 }
 
 @media (max-width: 768px) {

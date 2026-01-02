@@ -106,7 +106,7 @@ const loadEntry = () => {
       misc: false,
     };
     note.value = "";
-    
+
     // Use previous entry's location as default for new entries
     const previousEntry = getPreviousEntry(dateToString(selectedDate.value));
     location.value = previousEntry?.location || null;
@@ -287,145 +287,145 @@ const handleSave = async () => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .home-page {
   max-width: var(--max-width-sm);
   margin: 0 auto;
-}
 
-.content {
-  animation: fadeIn 0.3s ease;
-}
-
-.page-header {
-  text-align: center;
-  margin-bottom: var(--spacing-xl);
-  padding-top: var(--spacing-sm);
-}
-
-.page-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 var(--spacing-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-md);
-  letter-spacing: -0.025em;
-}
-
-.wave {
-  display: flex;
-  align-items: center;
-  color: var(--primary);
-  animation: wave 2.5s ease-in-out infinite;
-  filter: drop-shadow(0 2px 4px rgba(var(--color-shadow-primary), 0.3));
-}
-
-@keyframes wave {
-  0%,
-  100% {
-    transform: scale(1) rotate(0deg);
+  .content {
+    animation: fadeIn 0.3s ease;
   }
-  25% {
-    transform: scale(1.1) rotate(10deg);
+
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    padding-top: var(--spacing-sm);
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 var(--spacing-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-md);
+      letter-spacing: -0.025em;
+
+      .wave {
+        display: flex;
+        align-items: center;
+        color: var(--primary);
+        animation: wave 2.5s ease-in-out infinite;
+        filter: drop-shadow(0 2px 4px rgba(var(--color-shadow-primary), 0.3));
+
+        @keyframes wave {
+          0%,
+          100% {
+            transform: scale(1) rotate(0deg);
+          }
+          25% {
+            transform: scale(1.1) rotate(10deg);
+          }
+          75% {
+            transform: scale(1.1) rotate(-10deg);
+          }
+        }
+      }
+    }
+
+    .page-subtitle {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: 1.6;
+      font-weight: 500;
+    }
   }
-  75% {
-    transform: scale(1.1) rotate(-10deg);
+
+  .actions {
+    display: flex;
+    justify-content: center;
+
+    /* Save button - extends global .btn and .btn-primary */
+    .save-btn {
+      width: 220px;
+      padding: var(--spacing-md) var(--spacing-xl);
+    }
   }
-}
 
-.page-subtitle {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  margin: 0;
-  line-height: 1.6;
-  font-weight: 500;
-}
+  .metrics-container {
+    display: grid;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+  }
 
-.actions {
-  display: flex;
-  justify-content: center;
-}
+  /* Sticky header uses global .sticky-header and .sticky-content */
 
-.metrics-container {
-  display: grid;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-xl);
-}
+  /* Empty state banner - page-specific */
+  .empty-state-banner {
+    margin-bottom: var(--spacing-xl);
+    padding: 1.75rem var(--spacing-xl);
+    background: linear-gradient(
+      135deg,
+      var(--primary-rgba-12),
+      rgba(var(--color-shadow-secondary), 0.12)
+    );
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    box-shadow: var(--shadow-md);
+    border: 2px dashed var(--primary-rgba-30);
+    backdrop-filter: blur(10px);
 
-/* Save button - extends global .btn and .btn-primary */
-.save-btn {
-  width: 220px;
-  padding: var(--spacing-md) var(--spacing-xl);
-}
+    .empty-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      background: var(--bg-glass);
+      border-radius: var(--radius-md);
+      color: var(--primary);
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
 
-/* Sticky header uses global .sticky-header and .sticky-content */
+      :root.dark & {
+        background: var(--bg-glass-light);
+        color: var(--primary-light);
+      }
+    }
 
-/* Empty state banner - page-specific */
-.empty-state-banner {
-  margin-bottom: var(--spacing-xl);
-  padding: 1.75rem var(--spacing-xl);
-  background: linear-gradient(
-    135deg,
-    var(--primary-rgba-12),
-    rgba(var(--color-shadow-secondary), 0.12)
-  );
-  border-radius: var(--radius-lg);
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  box-shadow: var(--shadow-md);
-  border: 2px dashed var(--primary-rgba-30);
-  backdrop-filter: blur(10px);
-}
+    .empty-content {
+      flex: 1;
 
-.empty-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 60px;
-  height: 60px;
-  background: var(--bg-glass);
-  border-radius: var(--radius-md);
-  color: var(--primary);
-  flex-shrink: 0;
-  box-shadow: var(--shadow-sm);
-}
+      .empty-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 0.375rem;
+        letter-spacing: -0.01em;
+      }
 
-:root.dark .empty-icon {
-  background: var(--bg-glass-light);
-  color: var(--primary-light);
-}
+      .empty-description {
+        font-size: 0.9375rem;
+        color: var(--text-secondary);
+        margin: 0;
+        line-height: 1.5;
+      }
+    }
+  }
 
-.empty-content {
-  flex: 1;
-}
+  .empty-state-enter-active,
+  .empty-state-leave-active {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-.empty-title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 0.375rem;
-  letter-spacing: -0.01em;
-}
-
-.empty-description {
-  font-size: 0.9375rem;
-  color: var(--text-secondary);
-  margin: 0;
-  line-height: 1.5;
-}
-
-.empty-state-enter-active,
-.empty-state-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.empty-state-enter-from,
-.empty-state-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
+  .empty-state-enter-from,
+  .empty-state-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
 }
 </style>

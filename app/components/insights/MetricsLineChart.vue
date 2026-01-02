@@ -121,7 +121,7 @@ const xFormatter = (index: number) => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .metrics-line-chart {
   padding: 1.75rem;
   background: var(--card-bg);
@@ -130,11 +130,11 @@ const xFormatter = (index: number) => {
   box-shadow: var(--shadow-sm);
   margin-bottom: var(--spacing-xl);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-.metrics-line-chart:hover {
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary-light);
+  &:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-light);
+  }
 }
 
 .chart-header {
@@ -142,10 +142,8 @@ const xFormatter = (index: number) => {
   flex-direction: column;
   gap: 1rem;
   margin-bottom: 1.5rem;
-}
 
-@media (min-width: 640px) {
-  .chart-header {
+  @media (min-width: 640px) {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
@@ -184,17 +182,21 @@ const xFormatter = (index: number) => {
   color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
-}
 
-.legend-item:hover {
-  border-color: var(--metric-color);
-  color: var(--text-primary);
-}
+  &:hover {
+    border-color: var(--metric-color);
+    color: var(--text-primary);
+  }
 
-.legend-item.active {
-  background: color-mix(in srgb, var(--metric-color) 15%, transparent);
-  border-color: var(--metric-color);
-  color: var(--text-primary);
+  &.active {
+    background: color-mix(in srgb, var(--metric-color) 15%, transparent);
+    border-color: var(--metric-color);
+    color: var(--text-primary);
+  }
+
+  &:not(.active) .legend-dot {
+    opacity: 0.4;
+  }
 }
 
 .legend-dot {
@@ -202,10 +204,6 @@ const xFormatter = (index: number) => {
   height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
-}
-
-.legend-item:not(.active) .legend-dot {
-  opacity: 0.4;
 }
 
 .chart-container {

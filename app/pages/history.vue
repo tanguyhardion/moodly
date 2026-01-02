@@ -33,9 +33,12 @@
             :metric-configs="metricConfigs"
           />
         </TransitionGroup>
-        
+
         <div v-if="hasMore" ref="sentinelRef" class="load-sentinel">
-          <LoadingState v-if="isLoadingMore" message="Loading more entries..." />
+          <LoadingState
+            v-if="isLoadingMore"
+            message="Loading more entries..."
+          />
         </div>
       </div>
     </div>
@@ -65,10 +68,10 @@ const hasMore = computed(() => {
 
 const loadMore = async () => {
   if (isLoadingMore.value) return;
-  
+
   isLoadingMore.value = true;
   // Small delay to show loading state
-  await new Promise(resolve => setTimeout(resolve, 300));
+  await new Promise((resolve) => setTimeout(resolve, 300));
   displayCount.value += LOAD_MORE_COUNT;
   isLoadingMore.value = false;
 };
@@ -76,22 +79,26 @@ const loadMore = async () => {
 // Set up intersection observer for infinite scroll
 onMounted(() => {
   if (!sentinelRef.value) return;
-  
+
   const observer = new IntersectionObserver(
     (entries) => {
-      if (entries[0].isIntersecting && hasMore.value && !isLoadingMore.value) {
+      if (entries[0]?.isIntersecting && hasMore.value && !isLoadingMore.value) {
         loadMore();
       }
     },
-    { threshold: 0.1 }
+    { threshold: 0.1 },
   );
-  
-  watch(sentinelRef, (newSentinel) => {
-    if (newSentinel) {
-      observer.observe(newSentinel);
-    }
-  }, { immediate: true });
-  
+
+  watch(
+    sentinelRef,
+    (newSentinel) => {
+      if (newSentinel) {
+        observer.observe(newSentinel);
+      }
+    },
+    { immediate: true },
+  );
+
   onUnmounted(() => {
     observer.disconnect();
   });
@@ -103,100 +110,99 @@ watch(entries, () => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .history-page {
   max-width: var(--max-width-md);
   margin: 0 auto;
-}
 
-.history-content {
-  animation: fadeIn 0.3s ease;
-}
+  .history-content {
+    animation: fadeIn 0.3s ease;
+  }
 
+  .page-header {
+    position: relative;
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    padding-top: var(--spacing-sm);
 
-.page-header {
-  position: relative;
-  text-align: center;
-  margin-bottom: var(--spacing-xl);
-  padding-top: var(--spacing-sm);
-}
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 var(--spacing-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-md);
+    }
 
-.page-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 var(--spacing-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-md);
-}
+    .export-btn-wrapper {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
 
-.export-btn-wrapper {
-  position: absolute;
-  top: 0;
-  right: 0;
-}
+    .page-subtitle {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+  }
 
-.page-subtitle {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  margin: 0;
-}
+  .empty-state {
+    text-align: center;
+    padding: var(--spacing-2xl) var(--spacing-xl);
 
-.empty-state {
-  text-align: center;
-  padding: var(--spacing-2xl) var(--spacing-xl);
-}
+    .empty-icon {
+      color: var(--text-tertiary);
+      margin-bottom: var(--spacing-md);
+    }
 
-.empty-icon {
-  color: var(--text-tertiary);
-  margin-bottom: var(--spacing-md);
-}
+    h3 {
+      font-size: 1.5rem;
+      color: var(--text-primary);
+      margin: 0 0 var(--spacing-sm);
+    }
 
-.empty-state h3 {
-  font-size: 1.5rem;
-  color: var(--text-primary);
-  margin: 0 0 var(--spacing-sm);
-}
+    p {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin: 0 0 var(--spacing-lg);
+    }
 
-.empty-state p {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  margin: 0 0 var(--spacing-lg);
-}
+    /* btn and btn-primary use global classes from main.css */
+  }
 
-/* btn and btn-primary use global classes from main.css */
+  .entries-list {
+    display: grid;
+    gap: var(--spacing-md);
+  }
 
-.entries-list {
-  display: grid;
-  gap: var(--spacing-md);
-}
+  .list-enter-active,
+  .list-leave-active {
+    transition: all 0.3s ease;
+  }
 
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.3s ease;
-}
+  .list-enter-from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
 
-.list-enter-from {
-  opacity: 0;
-  transform: translateX(-20px);
-}
+  .list-leave-to {
+    opacity: 0;
+    transform: translateX(20px);
+  }
 
-.list-leave-to {
-  opacity: 0;
-  transform: translateX(20px);
-}
+  .list-move {
+    transition: transform 0.3s ease;
+  }
 
-.list-move {
-  transition: transform 0.3s ease;
-}
-
-.load-sentinel {
-  min-height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: var(--spacing-md);
+  .load-sentinel {
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: var(--spacing-md);
+  }
 }
 </style>

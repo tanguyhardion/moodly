@@ -114,7 +114,7 @@ defineProps<{
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .checkins-card {
   padding: 1.75rem;
   background: var(--card-bg);
@@ -123,11 +123,11 @@ defineProps<{
   box-shadow: var(--shadow-sm);
   margin-bottom: var(--spacing-xl);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-.checkins-card:hover {
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary-light);
+  &:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-light);
+  }
 }
 
 .checkins-header {
@@ -158,12 +158,16 @@ defineProps<{
   border-radius: var(--radius-md);
   border: 1px solid var(--border-light);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-.checkin-stat:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--border-hover);
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-hover);
+
+    .checkin-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+  }
 }
 
 .checkin-icon {
@@ -176,40 +180,36 @@ defineProps<{
   flex-shrink: 0;
   transition: transform 0.3s ease;
   box-shadow: var(--shadow-sm);
-}
 
-.checkin-stat:hover .checkin-icon {
-  transform: scale(1.1) rotate(5deg);
-}
+  &.healthy-food {
+    background: linear-gradient(135deg, #34c759 0%, #30d158 100%);
+    color: white;
+  }
 
-.checkin-icon.healthy-food {
-  background: linear-gradient(135deg, #34c759 0%, #30d158 100%);
-  color: white;
-}
+  &.caffeine {
+    background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+    color: white;
+  }
 
-.checkin-icon.caffeine {
-  background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
-  color: white;
-}
+  &.gym {
+    background: linear-gradient(135deg, #ff453a 0%, #ff6b6b 100%);
+    color: white;
+  }
 
-.checkin-icon.gym {
-  background: linear-gradient(135deg, #ff453a 0%, #ff6b6b 100%);
-  color: white;
-}
+  &.hard-work {
+    background: linear-gradient(135deg, #007aff 0%, #5ac8fa 100%);
+    color: white;
+  }
 
-.checkin-icon.hard-work {
-  background: linear-gradient(135deg, #007aff 0%, #5ac8fa 100%);
-  color: white;
-}
+  &.alcohol {
+    background: linear-gradient(135deg, #bf5af2 0%, #da8fff 100%);
+    color: white;
+  }
 
-.checkin-icon.alcohol {
-  background: linear-gradient(135deg, #bf5af2 0%, #da8fff 100%);
-  color: white;
-}
-
-.checkin-icon.misc {
-  background: linear-gradient(135deg, #ffd60a 0%, #ffcc00 100%);
-  color: white;
+  &.misc {
+    background: linear-gradient(135deg, #ffd60a 0%, #ffcc00 100%);
+    color: white;
+  }
 }
 
 .checkin-info {

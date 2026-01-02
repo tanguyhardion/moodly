@@ -152,71 +152,71 @@ const checkInRate = computed(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .stats-page {
   max-width: 900px;
   margin: 0 auto;
-}
 
-.stats-content-wrapper {
-  animation: fadeIn 0.3s ease;
-}
+  .stats-content-wrapper {
+    animation: fadeIn 0.3s ease;
 
-.page-header {
-  text-align: center;
-  margin-bottom: var(--spacing-xl);
-  padding-top: var(--spacing-sm);
-}
+    .page-header {
+      text-align: center;
+      margin-bottom: var(--spacing-xl);
+      padding-top: var(--spacing-sm);
 
-.page-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 var(--spacing-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-md);
-}
+      .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 var(--spacing-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-md);
+      }
 
-.page-subtitle {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  margin: 0;
-}
+      .page-subtitle {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        margin: 0;
+      }
+    }
 
-.empty-state {
-  text-align: center;
-  padding: var(--spacing-2xl) var(--spacing-xl);
-}
+    .empty-state {
+      text-align: center;
+      padding: var(--spacing-2xl) var(--spacing-xl);
 
-.empty-icon {
-  color: var(--text-tertiary);
-  margin-bottom: var(--spacing-md);
-}
+      .empty-icon {
+        color: var(--text-tertiary);
+        margin-bottom: var(--spacing-md);
+      }
 
-.empty-state h3 {
-  font-size: 1.5rem;
-  color: var(--text-primary);
-  margin: 0 0 var(--spacing-sm);
-}
+      h3 {
+        font-size: 1.5rem;
+        color: var(--text-primary);
+        margin: 0 0 var(--spacing-sm);
+      }
 
-.empty-state p {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  margin: 0 0 var(--spacing-lg);
-}
+      p {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        margin: 0 0 var(--spacing-lg);
+      }
 
-/* btn and btn-primary use global classes from main.css */
+      /* btn and btn-primary use global classes from main.css */
+    }
 
-/* Sticky header uses global .sticky-header and .sticky-content with local overrides */
-.sticky-content {
-  padding: var(--spacing-sm);
-  width: auto;
-}
+    /* Sticky header uses global .sticky-header and .sticky-content with local overrides */
+    .sticky-content {
+      padding: var(--spacing-sm);
+      width: auto;
 
-/* Override PeriodSelector margin in sticky mode */
-.sticky-content :deep(.period-selector) {
-  margin-bottom: 0;
+      /* Override PeriodSelector margin in sticky mode */
+      :deep(.period-selector) {
+        margin-bottom: 0;
+      }
+    }
+  }
 }
 </style>

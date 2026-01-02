@@ -137,7 +137,7 @@ watch(isOpen, (val) => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .settings-overlay {
   position: fixed;
   top: 0;
@@ -167,13 +167,13 @@ watch(isOpen, (val) => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-lg);
-}
 
-.header h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0;
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+  }
 }
 
 .close-btn {
@@ -187,22 +187,22 @@ watch(isOpen, (val) => {
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
-}
 
-.close-btn:hover {
-  background: var(--hover-bg);
-  color: var(--text-primary);
+  &:hover {
+    background: var(--hover-bg);
+    color: var(--text-primary);
+  }
 }
 
 .section {
   margin-bottom: var(--spacing-lg);
-}
 
-.section h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0 0 var(--spacing-sm) 0;
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-sm) 0;
+  }
 }
 
 .description {
@@ -213,14 +213,14 @@ watch(isOpen, (val) => {
 
 .form-group {
   margin-bottom: var(--spacing-md);
-}
 
-.form-group label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  margin-bottom: var(--spacing-sm);
+  label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+  }
 }
 
 .input {
@@ -232,12 +232,12 @@ watch(isOpen, (val) => {
   color: var(--text-primary);
   font-size: 1rem;
   transition: all 0.2s;
-}
 
-.input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--focus-ring);
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--focus-ring);
+  }
 }
 
 .toggles {
@@ -256,16 +256,16 @@ watch(isOpen, (val) => {
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid transparent;
-}
 
-.toggle-row:hover {
-  background: var(--border-light);
-  border-color: var(--border-hover);
-}
+  &:hover {
+    background: var(--border-light);
+    border-color: var(--border-hover);
+  }
 
-.toggle-row span {
-  font-weight: 600;
-  color: var(--text-primary);
+  span {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
 }
 
 .switch {
@@ -273,12 +273,12 @@ watch(isOpen, (val) => {
   display: inline-block;
   width: 2.75rem;
   height: 1.5rem;
-}
 
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
 }
 
 .slider {
@@ -291,27 +291,27 @@ watch(isOpen, (val) => {
   background-color: var(--border);
   transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: var(--radius-xl);
-}
 
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 1.125rem;
-  width: 1.125rem;
-  left: 0.1875rem;
-  bottom: 0.1875rem;
-  background-color: white;
-  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: var(--radius-full);
-  box-shadow: var(--shadow-sm);
+  &::before {
+    position: absolute;
+    content: "";
+    height: 1.125rem;
+    width: 1.125rem;
+    left: 0.1875rem;
+    bottom: 0.1875rem;
+    background-color: white;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-sm);
+  }
 }
 
 input:checked + .slider {
   background-color: var(--primary);
-}
 
-input:checked + .slider:before {
-  transform: translateX(1.25rem);
+  &::before {
+    transform: translateX(1.25rem);
+  }
 }
 
 .actions {
@@ -329,16 +329,16 @@ input:checked + .slider:before {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-}
 
-.save-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
 
-.save-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-colored);
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-colored);
+  }
 }
 
 /* Transitions */

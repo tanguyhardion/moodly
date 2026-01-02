@@ -49,7 +49,7 @@ const { streakData, streakMessage, isStreakAtRisk, needsCheckinToday } =
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .streak-wrapper {
   display: flex;
   flex-direction: column;
@@ -68,11 +68,34 @@ const { streakData, streakMessage, isStreakAtRisk, needsCheckinToday } =
   border-radius: var(--radius-full);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s ease;
-}
 
-.streak-compact:hover {
-  box-shadow: var(--shadow-md);
-  border-color: var(--primary-light);
+  &:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-light);
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    font-weight: 600;
+
+    &.current {
+      color: var(--text-primary);
+
+      .value {
+        color: var(--primary);
+        font-weight: 700;
+      }
+    }
+
+    &.best .value {
+      color: var(--gold);
+      font-weight: 700;
+    }
+  }
 }
 
 .streak-stats {
@@ -81,35 +104,16 @@ const { streakData, streakMessage, isStreakAtRisk, needsCheckinToday } =
   gap: 1rem;
 }
 
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  color: var(--text-secondary);
-  font-size: 0.9375rem;
-  font-weight: 600;
+.has-streak {
+  .stat-item.current .value {
+    color: var(--fire);
+  }
 }
 
-.stat-item.current {
-  color: var(--text-primary);
-}
-
-.stat-item.current .value {
-  color: var(--primary);
-  font-weight: 700;
-}
-
-.has-streak .stat-item.current .value {
-  color: var(--fire);
-}
-
-.at-risk .stat-item.current .value {
-  color: var(--orange);
-}
-
-.stat-item.best .value {
-  color: var(--gold);
-  font-weight: 700;
+.at-risk {
+  .stat-item.current .value {
+    color: var(--orange);
+  }
 }
 
 .icon {
@@ -133,10 +137,10 @@ const { streakData, streakMessage, isStreakAtRisk, needsCheckinToday } =
   color: var(--fire);
   filter: drop-shadow(0 0 4px rgba(var(--color-shadow-pink), 0.4))
     hue-rotate(-10deg) saturate(1.2);
-}
 
-.fire-icon .icon {
-  filter: hue-rotate(10deg);
+  .icon {
+    filter: hue-rotate(10deg);
+  }
 }
 
 .warning-icon {
@@ -175,12 +179,14 @@ const { streakData, streakMessage, isStreakAtRisk, needsCheckinToday } =
 }
 
 /* Dark mode adjustments */
-.dark-mode .streak-compact {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
-}
+.dark-mode {
+  .streak-compact {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
 
-.dark-mode .divider {
-  background-color: rgba(255, 255, 255, 0.1);
+  .divider {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
 }
 </style>

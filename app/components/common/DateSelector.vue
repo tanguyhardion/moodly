@@ -114,7 +114,7 @@ const goToNextDay = () => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .date-selector {
   margin-bottom: var(--spacing-xl);
   padding: 1.75rem;
@@ -123,148 +123,152 @@ const goToNextDay = () => {
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-.date-selector:hover {
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary-light);
-}
+  &:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-light);
+  }
 
-.date-selector.is-simple {
-  margin-bottom: 0;
-  padding: 0.5rem;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-}
+  &.is-simple {
+    margin-bottom: 0;
+    padding: 0.5rem;
+    background: transparent;
+    border: none;
+    box-shadow: none;
 
-.date-selector.is-simple:hover {
-  transform: none;
-}
+    &:hover {
+      transform: none;
+    }
 
-.date-selector.is-simple .date-button {
-  padding: 0.75rem 1rem;
-}
+    .date-button {
+      padding: 0.75rem 1rem;
+    }
 
-.date-selector.is-simple .nav-arrow {
-  width: 40px;
-  height: 40px;
-}
+    .nav-arrow {
+      width: 40px;
+      height: 40px;
+    }
+  }
 
-.selector-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
+  .selector-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 
-.date-label {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0;
-}
+    .calendar-icon {
+      color: var(--primary);
+    }
+  }
 
-.date-picker-wrapper {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.75rem;
-}
+  .date-label {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+  }
 
-.date-picker {
-  flex: 1;
-}
+  .date-picker-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+  }
 
-.nav-arrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  flex-shrink: 0;
-  background: linear-gradient(
-    135deg,
-    var(--primary-rgba-08) 0%,
-    rgba(var(--color-primary-gradient-end), 0.08) 100%
-  );
-  border: 2px solid var(--primary-rgba-20);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 0 0 rgba(var(--color-shadow-primary), 0);
-}
+  .date-picker {
+    flex: 1;
+  }
 
-.nav-arrow:hover {
-  border-color: var(--primary-rgba-40);
-  background: linear-gradient(
-    135deg,
-    var(--primary-rgba-12) 0%,
-    rgba(var(--color-primary-gradient-end), 0.12) 100%
-  );
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px var(--primary-rgba-20);
-}
+  .nav-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    background: linear-gradient(
+      135deg,
+      var(--primary-rgba-08) 0%,
+      rgba(var(--color-primary-gradient-end), 0.08) 100%
+    );
+    border: 2px solid var(--primary-rgba-20);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 0 0 rgba(var(--color-shadow-primary), 0);
 
-.nav-arrow:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(var(--color-shadow-primary), 0.15);
-}
+    &:hover {
+      border-color: var(--primary-rgba-40);
+      background: linear-gradient(
+        135deg,
+        var(--primary-rgba-12) 0%,
+        rgba(var(--color-primary-gradient-end), 0.12) 100%
+      );
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--primary-rgba-20);
+    }
 
-.arrow-placeholder {
-  width: 48px;
-  height: 48px;
-  flex-shrink: 0;
-}
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(var(--color-shadow-primary), 0.15);
+    }
+  }
 
-.date-button {
-  position: relative;
-  display: flex;
-  align-items: center;
-  flex: 1;
-  width: 100%;
-  padding: 1.125rem 1.5rem;
-  background: linear-gradient(
-    135deg,
-    var(--primary-rgba-08) 0%,
-    rgba(var(--color-primary-gradient-end), 0.08) 100%
-  );
-  border: 2px solid var(--primary-rgba-20);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-  font-size: 1rem;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 0 0 rgba(var(--color-shadow-primary), 0);
-}
+  .arrow-placeholder {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+  }
 
-.button-icon {
-  flex-shrink: 0;
-}
+  .date-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    width: 100%;
+    padding: 1.125rem 1.5rem;
+    background: linear-gradient(
+      135deg,
+      var(--primary-rgba-08) 0%,
+      rgba(var(--color-primary-gradient-end), 0.08) 100%
+    );
+    border: 2px solid var(--primary-rgba-20);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 0 0 rgba(var(--color-shadow-primary), 0);
 
-.button-text {
-  flex: 1;
-  text-align: center;
-  margin-right: 20px;
-}
+    .button-icon {
+      flex-shrink: 0;
+    }
 
-.date-button:hover {
-  border-color: var(--primary-rgba-40);
-  background: linear-gradient(
-    135deg,
-    var(--primary-rgba-12) 0%,
-    rgba(var(--color-primary-gradient-end), 0.12) 100%
-  );
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px var(--primary-rgba-20);
-}
+    .button-text {
+      flex: 1;
+      text-align: center;
+      margin-right: 20px;
+    }
 
-.date-button:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(var(--color-shadow-primary), 0.15);
+    &:hover {
+      border-color: var(--primary-rgba-40);
+      background: linear-gradient(
+        135deg,
+        var(--primary-rgba-12) 0%,
+        rgba(var(--color-primary-gradient-end), 0.12) 100%
+      );
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--primary-rgba-20);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(var(--color-shadow-primary), 0.15);
+    }
+  }
 }
 
 /* Custom vue-datepicker styling */

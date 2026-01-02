@@ -160,7 +160,7 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .checkboxes-section {
   margin-bottom: var(--spacing-xl);
   padding: 1.75rem;
@@ -169,99 +169,99 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-.checkboxes-section:hover {
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary-light);
-}
+  &:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-light);
+  }
 
-.checkboxes-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
+  .checkboxes-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 
-.checkboxes-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0;
-}
+    .checkboxes-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0;
+    }
+  }
 
-.checkbox-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 
-.checkbox-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  cursor: pointer;
-  padding: 1rem 0.875rem;
-  border-radius: var(--radius-md);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid transparent;
-}
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      cursor: pointer;
+      padding: 1rem 0.875rem;
+      border-radius: var(--radius-md);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
 
-.checkbox-item:hover {
-  background: var(--hover-bg);
-  border-color: var(--border-light);
-}
+      &:hover {
+        background: var(--hover-bg);
+        border-color: var(--border-light);
+      }
 
-.checkbox-control {
-  display: inline-block;
-  width: 28px;
-  height: 28px;
-  position: relative;
-}
+      .checkbox-control {
+        display: inline-block;
+        width: 28px;
+        height: 28px;
+        position: relative;
 
-.checkbox-control input[type="checkbox"] {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  opacity: 0;
-  cursor: pointer;
-}
+        input[type="checkbox"] {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          opacity: 0;
+          cursor: pointer;
 
-.checkbox-icon {
-  display: inline-grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  border: 2px solid var(--border);
-  background: var(--card-bg);
-  color: var(--text-secondary);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: var(--shadow-sm);
-}
+          &:checked + .checkbox-icon {
+            color: white;
+            transform: scale(1.05);
+            background: var(--primary);
+            border-color: var(--primary);
+          }
 
-.checkbox-control input[type="checkbox"]:checked + .checkbox-icon {
-  color: white;
-  transform: scale(1.05);
-  background: var(--primary);
-  border-color: var(--primary);
-}
+          &:focus-visible + .checkbox-icon {
+            outline: none;
+            box-shadow: 0 0 0 3px var(--focus-ring);
+            border-color: var(--primary);
+          }
+        }
 
-.checkbox-control input[type="checkbox"]:focus-visible + .checkbox-icon {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--focus-ring);
-  border-color: var(--primary);
-}
+        .checkbox-icon {
+          display: inline-grid;
+          place-items: center;
+          width: 32px;
+          height: 32px;
+          border-radius: var(--radius-sm);
+          border: 2px solid var(--border);
+          background: var(--card-bg);
+          color: var(--text-secondary);
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: var(--shadow-sm);
+        }
+      }
 
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  user-select: none;
+      .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        user-select: none;
+      }
+    }
+  }
 }
 </style>

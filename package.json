@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
-    "@types/uuid": "^9.0.1"
+    "@types/uuid": "^9.0.1",
+    "sass": "^1.97.1"
   }
 }
