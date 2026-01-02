@@ -135,7 +135,6 @@ defineEmits<{
 .nav-section {
   display: none;
   align-items: center;
-  flex: 1;
 }
 
 .logo-section {
@@ -250,6 +249,7 @@ defineEmits<{
 @media (max-width: 768px) {
   .nav-section {
     display: flex;
+    flex: 1;
   }
 
   .burger-menu {
@@ -263,6 +263,10 @@ defineEmits<{
   .logo-section {
     flex: 1;
     justify-content: center;
+  }
+
+  .nav-actions {
+    flex: 1;
   }
 
   .nav-links {
@@ -300,7 +304,6 @@ defineEmits<{
   display: flex;
   gap: 0.75rem;
   align-items: center;
-  flex: 1;
   justify-content: flex-end;
 }
 
