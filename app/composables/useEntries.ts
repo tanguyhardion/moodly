@@ -130,6 +130,14 @@ export function useEntries() {
     );
   };
 
+  // Get the most recent entry before a given date
+  const getPreviousEntry = (beforeDate: string): DailyEntry | undefined => {
+    const sortedEntries = [...entries.value].sort((a: DailyEntry, b: DailyEntry) =>
+      b.date.localeCompare(a.date),
+    );
+    return sortedEntries.find((entry: DailyEntry) => entry.date < beforeDate);
+  };
+
   return {
     entries,
     isLoading,
@@ -143,5 +151,6 @@ export function useEntries() {
     hasEntryForDate,
     saveEntry,
     getEntriesInRange,
+    getPreviousEntry,
   };
 }

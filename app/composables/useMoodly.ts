@@ -54,6 +54,7 @@ export function useMoodly() {
     hasEntryForDate: entriesManager.hasEntryForDate,
     saveEntry: entriesManager.saveEntry,
     getEntriesInRange: entriesManager.getEntriesInRange,
+    getPreviousEntry: entriesManager.getPreviousEntry,
 
     // Metrics
     metricConfigs: metricsManager.metricConfigs,

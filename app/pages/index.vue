@@ -8,6 +8,7 @@ const {
   isInitialized,
   isLoading,
   entries,
+  getPreviousEntry,
 } = useMoodly();
 
 const { updateStreakFromEntries } = useStreak();
@@ -105,7 +106,10 @@ const loadEntry = () => {
       misc: false,
     };
     note.value = "";
-    location.value = null;
+    
+    // Use previous entry's location as default for new entries
+    const previousEntry = getPreviousEntry(dateToString(selectedDate.value));
+    location.value = previousEntry?.location || null;
   }
 };
 
