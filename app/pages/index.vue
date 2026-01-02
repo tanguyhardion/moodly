@@ -381,15 +381,6 @@ const handleSave = async () => {
   backdrop-filter: blur(10px);
 }
 
-:root.dark .empty-state-banner {
-  background: linear-gradient(
-    135deg,
-    var(--primary-rgba-15),
-    rgba(var(--color-shadow-secondary), 0.15)
-  );
-  border-color: var(--primary-rgba-30);
-}
-
 .empty-icon {
   display: flex;
   align-items: center;

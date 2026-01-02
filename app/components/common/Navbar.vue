@@ -302,7 +302,7 @@ defineEmits<{
 
 .nav-actions {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.1rem;
   align-items: center;
   justify-content: flex-end;
 }
@@ -314,12 +314,11 @@ defineEmits<{
   width: 42px;
   height: 42px;
   border: none;
-  background: var(--hover-bg);
+  background: transparent;
   color: var(--text-primary);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 0 1px var(--border-light);
 }
 
 .nav-button:hover {

@@ -22,7 +22,7 @@
   /* Decorative Colors (for icons, badges, highlights) */
   --pink: #ff6b9d;
   --orange: #ff9f43;
-  --gold: #ffd700;
+  --gold: #d4af37;
   --fire: #f5576c;
 
   /* Shadow Colors (RGB) */
@@ -84,7 +84,7 @@
   );
 
   /* Background - Enhanced with gradients */
-  --bg-primary: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  --bg-primary: linear-gradient(135deg, #e8ecf0 0%, #e0e4e8 100%);
   --bg-secondary: #f8fafc;
   --card-bg: #ffffff;
   --card-bg-hover: #f8fafc;
