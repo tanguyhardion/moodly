@@ -135,6 +135,7 @@ defineEmits<{
 .nav-section {
   display: none;
   align-items: center;
+  flex: 1;
 }
 
 .logo-section {
@@ -299,6 +300,8 @@ defineEmits<{
   display: flex;
   gap: 0.75rem;
   align-items: center;
+  flex: 1;
+  justify-content: flex-end;
 }
 
 .nav-button {
