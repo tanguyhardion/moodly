@@ -145,7 +145,7 @@ onMounted(() => {
     }
 
     @media (max-width: 768px) {
-      padding: 1.5rem 1rem;
+      padding: 0rem 0.25rem;
 
       .page-title {
         font-size: 1.75rem;
