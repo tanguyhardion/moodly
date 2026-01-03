@@ -57,13 +57,6 @@
       </div>
 
       <div class="nav-actions">
-        <button
-          @click="$emit('openSettings')"
-          class="nav-button"
-          title="Settings"
-        >
-          <Icon name="solar:settings-bold" size="20" class="nav-button-icon" />
-        </button>
         <button @click="toggleDarkMode" class="nav-button" title="Toggle theme">
           <Icon
             v-if="darkMode"
@@ -77,6 +70,13 @@
             size="20"
             class="nav-button-icon"
           />
+        </button>
+        <button
+          @click="$emit('openSettings')"
+          class="nav-button"
+          title="Settings"
+        >
+          <Icon name="solar:settings-bold" size="20" class="nav-button-icon" />
         </button>
       </div>
     </div>
