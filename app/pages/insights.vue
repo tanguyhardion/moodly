@@ -54,8 +54,13 @@ onMounted(() => {
   width: 100%;
   padding: 0 2rem;
 
+  @media (max-width: 768px) {
+    padding: 0 1rem;
+  }
+
   .insights-content-wrapper {
     max-width: 1200px;
+    margin: 0 auto;
     animation: fadeIn 0.5s ease;
 
     .page-header {
