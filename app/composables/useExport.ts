@@ -25,12 +25,12 @@ export function useExport(
       "Sleep",
       "Focus",
       "Stress",
+      "Day Off",
       "Healthy Food",
       "Caffeine",
+      "Alcohol",
       "Gym",
       "Hard Work",
-      "Day Off",
-      "Alcohol",
       "Misc",
       "Note",
       "Created At",
@@ -42,12 +42,12 @@ export function useExport(
       entry.metrics.sleep,
       entry.metrics.focus,
       entry.metrics.stress,
+      entry.checkboxes?.dayOff ? "Yes" : "No",
       entry.checkboxes?.healthyFood ? "Yes" : "No",
       entry.checkboxes?.caffeine ? "Yes" : "No",
+      entry.checkboxes?.alcohol ? "Yes" : "No",
       entry.checkboxes?.gym ? "Yes" : "No",
       entry.checkboxes?.hardWork ? "Yes" : "No",
-      entry.checkboxes?.dayOff ? "Yes" : "No",
-      entry.checkboxes?.alcohol ? "Yes" : "No",
       entry.checkboxes?.misc ? "Yes" : "No",
       entry.note ? `"${entry.note.replace(/"/g, '""')}"` : "",
       entry.createdAt,
@@ -74,12 +74,12 @@ export function useExport(
       "Sleep",
       "Focus",
       "Stress",
+      "Day Off",
       "Healthy Food",
       "Caffeine",
+      "Alcohol",
       "Gym",
       "Hard Work",
-      "Day Off",
-      "Alcohol",
       "Misc",
       "Note",
       "Created At",
@@ -92,12 +92,12 @@ export function useExport(
       entry.metrics.sleep,
       entry.metrics.focus,
       entry.metrics.stress,
+      entry.checkboxes?.dayOff ? "Yes" : "No",
       entry.checkboxes?.healthyFood ? "Yes" : "No",
       entry.checkboxes?.caffeine ? "Yes" : "No",
+      entry.checkboxes?.alcohol ? "Yes" : "No",
       entry.checkboxes?.gym ? "Yes" : "No",
       entry.checkboxes?.hardWork ? "Yes" : "No",
-      entry.checkboxes?.dayOff ? "Yes" : "No",
-      entry.checkboxes?.alcohol ? "Yes" : "No",
       entry.checkboxes?.misc ? "Yes" : "No",
       entry.note || "",
       entry.createdAt,
@@ -159,15 +159,16 @@ export function useExport(
       markdown += `- **Sleep**: ${entry.metrics.sleep}/5 ${metricConfigs[2]?.emojis[entry.metrics.sleep - 1] || ""}\n`;
       markdown += `- **Focus**: ${entry.metrics.focus}/5 ${metricConfigs[3]?.emojis[entry.metrics.focus - 1] || ""}\n`;
       markdown += `- **Stress**: ${entry.metrics.stress}/5 ${metricConfigs[4]?.emojis[entry.metrics.stress - 1] || ""}\n\n`;
+      markdown += `- **Look**: ${entry.metrics.look}/5 ${metricConfigs[5]?.emojis[entry.metrics.look - 1] || ""}\n\n`;
 
       if (entry.checkboxes) {
         markdown += "### Daily Check-ins\n\n";
+        markdown += `- **Day Off**: ${entry.checkboxes.dayOff ? "✅" : "❌"}\n`;
         markdown += `- **Healthy Food**: ${entry.checkboxes.healthyFood ? "✅" : "❌"}\n`;
         markdown += `- **Caffeine**: ${entry.checkboxes.caffeine ? "✅" : "❌"}\n`;
+        markdown += `- **Alcohol**: ${entry.checkboxes.alcohol ? "✅" : "❌"}\n`;
         markdown += `- **Gym**: ${entry.checkboxes.gym ? "✅" : "❌"}\n`;
         markdown += `- **Hard Work**: ${entry.checkboxes.hardWork ? "✅" : "❌"}\n`;
-        markdown += `- **Day Off**: ${entry.checkboxes.dayOff ? "✅" : "❌"}\n`;
-        markdown += `- **Alcohol**: ${entry.checkboxes.alcohol ? "✅" : "❌"}\n`;
         markdown += `- **Misc**: ${entry.checkboxes.misc ? "✅" : "❌"}\n\n`;
       }
 

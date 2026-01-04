@@ -1,12 +1,12 @@
 <script setup lang="ts">
 const props = defineProps<{
   modelValue: {
+    dayOff: boolean;
     healthyFood: boolean;
     caffeine: boolean;
+    alcohol: boolean;
     gym: boolean;
     hardWork: boolean;
-    dayOff: boolean;
-    alcohol: boolean;
     misc: boolean;
   };
 }>();
@@ -33,6 +33,24 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
       <h3 class="checkboxes-title">Daily Check-ins</h3>
     </div>
     <div class="checkbox-group">
+      <label class="checkbox-item">
+        <span class="checkbox-control">
+          <input
+            type="checkbox"
+            :checked="modelValue.dayOff"
+            @change="
+              updateCheckbox(
+                'dayOff',
+                ($event.target as HTMLInputElement).checked,
+              )
+            "
+          />
+          <span class="checkbox-icon" aria-hidden="true">
+            <Icon name="solar:sofa-bold" size="18" />
+          </span>
+        </span>
+        <span class="checkbox-label">Day Off</span>
+      </label>
       <label class="checkbox-item">
         <span class="checkbox-control">
           <input
@@ -73,6 +91,24 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
         <span class="checkbox-control">
           <input
             type="checkbox"
+            :checked="modelValue.alcohol"
+            @change="
+              updateCheckbox(
+                'alcohol',
+                ($event.target as HTMLInputElement).checked,
+              )
+            "
+          />
+          <span class="checkbox-icon" aria-hidden="true">
+            <Icon name="solar:cup-star-bold" size="18" />
+          </span>
+        </span>
+        <span class="checkbox-label">Alcohol</span>
+      </label>
+      <label class="checkbox-item">
+        <span class="checkbox-control">
+          <input
+            type="checkbox"
             :checked="modelValue.gym"
             @change="
               updateCheckbox('gym', ($event.target as HTMLInputElement).checked)
@@ -101,42 +137,6 @@ const updateCheckbox = (key: keyof typeof props.modelValue, value: boolean) => {
           </span>
         </span>
         <span class="checkbox-label">Hard Work</span>
-      </label>
-      <label class="checkbox-item">
-        <span class="checkbox-control">
-          <input
-            type="checkbox"
-            :checked="modelValue.dayOff"
-            @change="
-              updateCheckbox(
-                'dayOff',
-                ($event.target as HTMLInputElement).checked,
-              )
-            "
-          />
-          <span class="checkbox-icon" aria-hidden="true">
-            <Icon name="solar:sofa-bold" size="18" />
-          </span>
-        </span>
-        <span class="checkbox-label">Day Off</span>
-      </label>
-      <label class="checkbox-item">
-        <span class="checkbox-control">
-          <input
-            type="checkbox"
-            :checked="modelValue.alcohol"
-            @change="
-              updateCheckbox(
-                'alcohol',
-                ($event.target as HTMLInputElement).checked,
-              )
-            "
-          />
-          <span class="checkbox-icon" aria-hidden="true">
-            <Icon name="solar:cup-star-bold" size="18" />
-          </span>
-        </span>
-        <span class="checkbox-label">Alcohol</span>
       </label>
       <label class="checkbox-item">
         <span class="checkbox-control">

@@ -12,12 +12,12 @@ export interface DailyEntry {
     look: number | null;
   };
   checkboxes?: {
+    dayOff: boolean;
     healthyFood: boolean;
     caffeine: boolean;
+    alcohol: boolean;
     gym: boolean;
     hardWork: boolean;
-    dayOff: boolean;
-    alcohol: boolean;
     misc: boolean;
   };
   location?: {
