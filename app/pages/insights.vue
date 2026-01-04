@@ -52,11 +52,6 @@ onMounted(() => {
 <style scoped lang="scss">
 .insights-page {
   width: 100%;
-  padding: 0 2rem;
-
-  @media (max-width: 768px) {
-    padding: 0 1rem;
-  }
 
   .insights-content-wrapper {
     max-width: 1200px;
@@ -150,8 +145,6 @@ onMounted(() => {
     }
 
     @media (max-width: 768px) {
-      padding: 0rem 0.25rem;
-
       .page-title {
         font-size: 1.75rem;
       }
