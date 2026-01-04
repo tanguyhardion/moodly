@@ -42,6 +42,14 @@ export function useMetrics() {
       emojis: ["😰", "😫", "😐", "😇", "🧘"],
       labels: ["Overwhelmed", "Stressed", "Moderate", "Calm", "Zen"],
     },
+    {
+      name: "Look",
+      key: "look",
+      icon: "solar:star-bold",
+      color: "#06B6D4",
+      emojis: ["🧟", "🥀", "😐", "✨", "🔥"],
+      labels: ["Rough", "Dull", "Okay", "Fresh", "Fire"],
+    },
   ];
 
   // Calculate average for a metric

@@ -19,6 +19,7 @@ const metrics = ref({
   sleep: 3,
   focus: 3,
   stress: 3,
+  look: 3,
 });
 
 const checkboxes = ref({
@@ -73,6 +74,7 @@ const loadEntry = () => {
       sleep: entry.metrics.sleep ?? 3,
       focus: entry.metrics.focus ?? 3,
       stress: entry.metrics.stress ?? 3,
+      look: entry.metrics.look ?? 3,
     };
     checkboxes.value = entry.checkboxes
       ? { ...entry.checkboxes }
@@ -94,6 +96,7 @@ const loadEntry = () => {
       energy: 3,
       sleep: 3,
       focus: 3,
+      look: 3,
       stress: 3,
     };
     checkboxes.value = {

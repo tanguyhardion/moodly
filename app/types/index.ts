@@ -1,4 +1,4 @@
-export type MetricType = "mood" | "energy" | "sleep" | "focus" | "stress";
+export type MetricType = "mood" | "energy" | "sleep" | "focus" | "stress" | "look";
 
 export interface DailyEntry {
   id: string;
@@ -9,6 +9,7 @@ export interface DailyEntry {
     sleep: number | null;
     focus: number | null;
     stress: number | null;
+    look: number | null;
   };
   checkboxes?: {
     healthyFood: boolean;
