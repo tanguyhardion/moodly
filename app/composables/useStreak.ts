@@ -126,13 +126,16 @@ export function useStreak() {
   });
 
   /**
-   * Check if streak is at risk (no entry today and it's not the first day)
+   * Check if streak is at risk (no entry today, it's past 8pm and it's not the first day)
    */
   const isStreakAtRisk = computed(() => {
     if (streakData.value.currentStreak === 0) return false;
 
-    const today = toLocalDateString(new Date());
-    return streakData.value.lastEntryDate !== today;
+    const now = new Date();
+    const today = toLocalDateString(now);
+    const isPast8PM = now.getHours() >= 20;
+
+    return streakData.value.lastEntryDate !== today && isPast8PM;
   });
 
   /**
