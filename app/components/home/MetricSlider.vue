@@ -31,6 +31,25 @@
         ></span>
       </div>
     </div>
+
+    <div v-if="showHoursInput" class="hours-input-container">
+      <label for="sleep-hours" class="hours-label">
+        <Icon name="solar:moon-stars-bold" size="18" />
+        Hours slept
+      </label>
+      <input
+        id="sleep-hours"
+        type="number"
+        min="0"
+        max="24"
+        step="0.5"
+        :value="hoursValue ?? ''"
+        @input="handleHoursInput"
+        class="hours-input"
+        :style="{ '--slider-color': config.color }"
+        placeholder="e.g., 7.5"
+      />
+    </div>
   </div>
 </template>
 
@@ -39,12 +58,19 @@ import type { MetricConfig } from "~/types";
 
 interface Props {
   modelValue: number;
+  hoursValue?: number | null;
   config: MetricConfig;
+  showHoursInput?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  showHoursInput: false,
+  hoursValue: null,
+});
+
 const emit = defineEmits<{
   "update:modelValue": [value: number];
+  "update:hoursValue": [value: number | null];
 }>();
 
 const currentEmoji = computed(() => {
@@ -60,6 +86,12 @@ const currentLabel = computed(() => {
 const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement;
   emit("update:modelValue", parseInt(target.value));
+};
+
+const handleHoursInput = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const value = target.value === "" ? null : parseFloat(target.value);
+  emit("update:hoursValue", value);
 };
 </script>
 
@@ -227,6 +259,63 @@ const handleInput = (event: Event) => {
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
           border-color: rgba(255, 255, 255, 0.5);
         }
+      }
+    }
+  }
+
+  .hours-input-container {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    .hours-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    .hours-input {
+      flex: 1;
+      padding: 0.625rem 0.875rem;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--input-bg);
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      outline: none;
+
+      &:hover {
+        border-color: var(--slider-color);
+      }
+
+      &:focus {
+        border-color: var(--slider-color);
+        box-shadow: 0 0 0 3px var(--slider-color);
+        box-shadow: 0 0 0 3px rgba(var(--slider-color-rgb), 0.1);
+      }
+
+      &::placeholder {
+        color: var(--text-tertiary);
+      }
+
+      /* Remove spinner for number input */
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      &[type="number"] {
+        -moz-appearance: textfield;
       }
     }
   }

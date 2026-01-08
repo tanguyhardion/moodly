@@ -22,6 +22,8 @@ const metrics = ref({
   look: 3,
 });
 
+const sleepHours = ref<number | null>(null);
+
 const checkboxes = ref({
   healthyFood: false,
   caffeine: false,
@@ -76,6 +78,7 @@ const loadEntry = () => {
       stress: entry.metrics.stress ?? 3,
       look: entry.metrics.look ?? 3,
     };
+    sleepHours.value = entry.metrics.sleepHours ?? null;
     checkboxes.value = entry.checkboxes
       ? { ...entry.checkboxes }
       : {
@@ -99,6 +102,7 @@ const loadEntry = () => {
       look: 3,
       stress: 3,
     };
+    sleepHours.value = null;
     checkboxes.value = {
       healthyFood: false,
       caffeine: false,
@@ -175,8 +179,13 @@ onMounted(() => {
 
 const handleSave = async () => {
   try {
+    // Create metrics object with sleepHours
+    const metricsWithSleep = {
+      ...metrics.value,
+      sleepHours: sleepHours.value,
+    };
     await saveEntry(
-      metrics.value,
+      metricsWithSleep,
       checkboxes.value,
       note.value || undefined,
       dateToString(selectedDate.value),
@@ -257,6 +266,9 @@ const handleSave = async () => {
           :key="config.key"
           v-model="metrics[config.key]"
           :config="config"
+          :show-hours-input="config.key === 'sleep'"
+          :hours-value="sleepHours"
+          @update:hours-value="sleepHours = $event"
         />
       </div>
 

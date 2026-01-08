@@ -45,6 +45,8 @@
           :metric-configs="metricConfigs"
         />
 
+        <SleepHoursStats :entries="recentEntries" />
+
         <CheckinsStats :check-in-rate="checkInRate" />
 
         <CheckinsTimeline :entries="recentEntries" />

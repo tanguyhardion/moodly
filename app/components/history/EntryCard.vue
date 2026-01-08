@@ -38,6 +38,14 @@
       </div>
     </div>
 
+    <div v-if="entry.metrics.sleepHours !== null" class="sleep-hours-display">
+      <div class="sleep-hours-item">
+        <Icon name="solar:moon-stars-bold" size="18" />
+        <span class="sleep-label">Hours slept:</span>
+        <span class="sleep-value">{{ entry.metrics.sleepHours }}h</span>
+      </div>
+    </div>
+
     <div v-if="entry.checkboxes" class="checkboxes-display">
       <div
         class="checkbox-display-item"
@@ -212,6 +220,45 @@ const formattedDate = computed(() => {
           transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
           box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
+      }
+    }
+  }
+
+  .sleep-hours-display {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.125rem;
+    background: linear-gradient(
+      135deg,
+      var(--primary-rgba-10) 0%,
+      rgba(var(--color-primary-gradient-end), 0.1) 100%
+    );
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    margin-bottom: 1rem;
+    font-weight: 500;
+
+    .sleep-hours-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-primary);
+      font-size: 0.9375rem;
+
+      :deep(svg) {
+        color: var(--primary);
+      }
+
+      .sleep-label {
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .sleep-value {
+        color: var(--primary);
+        font-weight: 700;
+        font-size: 1rem;
       }
     }
   }
