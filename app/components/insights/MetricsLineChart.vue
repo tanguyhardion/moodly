@@ -53,7 +53,7 @@ interface Props {
 const props = defineProps<Props>();
 
 // Track which metrics are visible
-const visibleMetrics = ref<MetricType[]>(["mood", "energy", "sleep", "focus"]);
+const visibleMetrics = ref<MetricType[]>(["mood", "energy", "sleep", "focus", "stress", "look"]);
 
 const toggleMetric = (metric: MetricType) => {
   const index = visibleMetrics.value.indexOf(metric);

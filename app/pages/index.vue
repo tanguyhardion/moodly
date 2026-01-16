@@ -108,7 +108,7 @@ const loadEntry = () => {
       caffeine: false,
       gym: false,
       hardWork: false,
-      dayOff: false,
+      dayOff: isWeekend,
       alcohol: false,
       misc: false,
     };
