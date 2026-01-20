@@ -44,9 +44,10 @@
             :model-value="bedtime"
             @update:model-value="emit('update:bedtime', $event)"
             time-picker
-            format="hh:mm"
+            format="hh:mm a"
             model-type="HH:mm"
             :dark="darkMode"
+            :time-config="{ is24: false }"
             auto-apply
             class="time-picker"
             :style="{ '--slider-color': config.color }"
@@ -70,9 +71,10 @@
             :model-value="wakeUpTime"
             @update:model-value="emit('update:wakeUpTime', $event)"
             time-picker
-            format="hh:mm"
+            format="hh:mm a"
             model-type="HH:mm"
             :dark="darkMode"
+            :time-config="{ is24: false }"
             auto-apply
             class="time-picker"
             :style="{ '--slider-color': config.color }"

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getCurrentDateString, isWeekend } from "~/utils/helpers";
+
 const {
   metricConfigs,
   saveEntry,
@@ -51,24 +53,15 @@ const selectedDate = ref<Date>(new Date());
 // Max date is today
 const maxDate = new Date();
 
-// Convert date to string format
-const dateToString = (date: Date): string => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
 // Computed property to check if entry exists for selected date
 const hasEntry = computed(() =>
-  hasEntryForDate(dateToString(selectedDate.value)),
+  hasEntryForDate(getCurrentDateString(selectedDate.value)),
 );
 
 // Function to load entry for the selected date
 const loadEntry = () => {
-  const entry = getEntryByDate(dateToString(selectedDate.value));
-  const isWeekend =
-    selectedDate.value.getDay() === 0 || selectedDate.value.getDay() === 6;
+  const entry = getEntryByDate(getCurrentDateString(selectedDate.value));
+  const _isWeekend = isWeekend(selectedDate.value);
 
   if (entry) {
     // Load entry metrics, defaulting any null values to 3
@@ -90,7 +83,7 @@ const loadEntry = () => {
           caffeine: false,
           gym: false,
           hardWork: false,
-          dayOff: isWeekend,
+          dayOff: _isWeekend,
           alcohol: false,
           misc: false,
         };
@@ -114,14 +107,16 @@ const loadEntry = () => {
       caffeine: false,
       gym: false,
       hardWork: false,
-      dayOff: isWeekend,
+      dayOff: _isWeekend,
       alcohol: false,
       misc: false,
     };
     note.value = "";
 
     // Use previous entry's location as default for new entries
-    const previousEntry = getPreviousEntry(dateToString(selectedDate.value));
+    const previousEntry = getPreviousEntry(
+      getCurrentDateString(selectedDate.value),
+    );
     location.value = previousEntry?.location || null;
   }
 };
@@ -198,8 +193,12 @@ const handleSave = async () => {
         wakeDate.setDate(wakeDate.getDate() + 1);
       }
 
-      const diffMs = wakeDate.getTime() - bedDate.getTime();
-      calculatedSleepHours = Math.round((diffMs / (1000 * 60 * 60)) * 10) / 10;
+      // Subtract 15 minutes to account for time to fall asleep
+      const diffMs = wakeDate.getTime() - bedDate.getTime() - 15 * 60 * 1000;
+      calculatedSleepHours = Math.max(
+        0,
+        Math.round((diffMs / (1000 * 60 * 60)) * 10) / 10,
+      );
     }
 
     // Create metrics object with sleepHours
@@ -213,7 +212,7 @@ const handleSave = async () => {
       metricsWithSleep,
       checkboxes.value,
       note.value || undefined,
-      dateToString(selectedDate.value),
+      getCurrentDateString(selectedDate.value),
       location.value || undefined,
     );
     showToast.value = true;
