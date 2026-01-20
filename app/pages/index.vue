@@ -23,6 +23,8 @@ const metrics = ref({
 });
 
 const sleepHours = ref<number | null>(null);
+const bedtime = ref<string | null>(null);
+const wakeUpTime = ref<string | null>(null);
 
 const checkboxes = ref({
   healthyFood: false,
@@ -79,6 +81,8 @@ const loadEntry = () => {
       look: entry.metrics.look ?? 3,
     };
     sleepHours.value = entry.metrics.sleepHours ?? null;
+    bedtime.value = entry.metrics.bedtime ?? null;
+    wakeUpTime.value = entry.metrics.wakeUpTime ?? null;
     checkboxes.value = entry.checkboxes
       ? { ...entry.checkboxes }
       : {
@@ -103,6 +107,8 @@ const loadEntry = () => {
       stress: 3,
     };
     sleepHours.value = null;
+    bedtime.value = null;
+    wakeUpTime.value = null;
     checkboxes.value = {
       healthyFood: false,
       caffeine: false,
@@ -179,10 +185,29 @@ onMounted(() => {
 
 const handleSave = async () => {
   try {
+    // Calculate sleep hours from bedtime and wakeUpTime
+    let calculatedSleepHours = null;
+    if (bedtime.value && wakeUpTime.value) {
+      const [bedH, bedM] = bedtime.value.split(":").map(Number);
+      const [wakeH, wakeM] = wakeUpTime.value.split(":").map(Number);
+
+      const bedDate = new Date(2000, 0, 1, bedH, bedM);
+      let wakeDate = new Date(2000, 0, 1, wakeH, wakeM);
+
+      if (wakeDate < bedDate) {
+        wakeDate.setDate(wakeDate.getDate() + 1);
+      }
+
+      const diffMs = wakeDate.getTime() - bedDate.getTime();
+      calculatedSleepHours = Math.round((diffMs / (1000 * 60 * 60)) * 10) / 10;
+    }
+
     // Create metrics object with sleepHours
     const metricsWithSleep = {
       ...metrics.value,
-      sleepHours: sleepHours.value,
+      bedtime: bedtime.value,
+      wakeUpTime: wakeUpTime.value,
+      sleepHours: calculatedSleepHours,
     };
     await saveEntry(
       metricsWithSleep,
@@ -267,8 +292,10 @@ const handleSave = async () => {
           v-model="metrics[config.key]"
           :config="config"
           :show-hours-input="config.key === 'sleep'"
-          :hours-value="sleepHours"
-          @update:hours-value="sleepHours = $event"
+          :bedtime="bedtime"
+          :wake-up-time="wakeUpTime"
+          @update:bedtime="bedtime = $event"
+          @update:wake-up-time="wakeUpTime = $event"
         />
       </div>
 

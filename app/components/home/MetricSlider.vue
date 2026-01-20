@@ -33,45 +33,88 @@
     </div>
 
     <div v-if="showHoursInput" class="hours-input-container">
-      <label for="sleep-hours" class="hours-label">
-        <Icon name="solar:moon-stars-bold" size="18" />
-        Hours slept
-      </label>
-      <input
-        id="sleep-hours"
-        type="number"
-        min="0"
-        max="24"
-        step="0.5"
-        :value="hoursValue ?? ''"
-        @input="handleHoursInput"
-        class="hours-input"
-        :style="{ '--slider-color': config.color }"
-        placeholder="e.g., 7.5"
-      />
+      <div class="time-input-group">
+        <label for="bedtime" class="hours-label">
+          <Icon name="solar:moon-stars-bold" size="18" />
+          Went to bed
+        </label>
+        <ClientOnly>
+          <VueDatePicker
+            id="bedtime"
+            :model-value="bedtime"
+            @update:model-value="emit('update:bedtime', $event)"
+            time-picker
+            format="hh:mm"
+            model-type="HH:mm"
+            :dark="darkMode"
+            auto-apply
+            class="time-picker"
+            :style="{ '--slider-color': config.color }"
+          >
+            <template #input-icon>
+              <span class="picker-icon">
+                <Icon name="solar:clock-circle-bold" size="18" />
+              </span>
+            </template>
+          </VueDatePicker>
+        </ClientOnly>
+      </div>
+      <div class="time-input-group">
+        <label for="wake-up-time" class="hours-label">
+          <Icon name="solar:sun-bold" size="18" />
+          Woke up
+        </label>
+        <ClientOnly>
+          <VueDatePicker
+            id="wake-up-time"
+            :model-value="wakeUpTime"
+            @update:model-value="emit('update:wakeUpTime', $event)"
+            time-picker
+            format="hh:mm"
+            model-type="HH:mm"
+            :dark="darkMode"
+            auto-apply
+            class="time-picker"
+            :style="{ '--slider-color': config.color }"
+          >
+            <template #input-icon>
+              <span class="picker-icon">
+                <Icon name="solar:clock-circle-bold" size="18" />
+              </span>
+            </template>
+          </VueDatePicker>
+        </ClientOnly>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { VueDatePicker } from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 import type { MetricConfig } from "~/types";
 
 interface Props {
   modelValue: number;
-  hoursValue?: number | null;
+  bedtime?: string | null;
+  wakeUpTime?: string | null;
   config: MetricConfig;
   showHoursInput?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   showHoursInput: false,
-  hoursValue: null,
+  bedtime: null,
+  wakeUpTime: null,
 });
 
 const emit = defineEmits<{
   "update:modelValue": [value: number];
-  "update:hoursValue": [value: number | null];
+  "update:bedtime": [value: string | null];
+  "update:wakeUpTime": [value: string | null];
 }>();
+
+const { darkMode } = useDarkMode();
 
 const currentEmoji = computed(() => {
   const index = Math.max(0, Math.min(4, props.modelValue - 1));
@@ -86,12 +129,6 @@ const currentLabel = computed(() => {
 const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement;
   emit("update:modelValue", parseInt(target.value));
-};
-
-const handleHoursInput = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  const value = target.value === "" ? null : parseFloat(target.value);
-  emit("update:hoursValue", value);
 };
 </script>
 
@@ -267,55 +304,65 @@ const handleHoursInput = (event: Event) => {
     margin-top: 1.5rem;
     padding-top: 1.5rem;
     border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .time-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
 
     .hours-label {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-size: 0.9375rem;
+      font-size: 0.875rem;
       font-weight: 600;
-      color: var(--text-primary);
+      color: var(--text-secondary);
       white-space: nowrap;
     }
 
-    .hours-input {
-      flex: 1;
-      padding: 0.625rem 0.875rem;
-      border: 2px solid var(--border);
-      border-radius: var(--radius-lg);
-      background: var(--input-bg);
-      color: var(--text-primary);
-      font-size: 1rem;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      outline: none;
+    .time-picker {
+      width: 100%;
+      --dp-border-radius: var(--radius-lg);
+      --dp-input-padding: 0.625rem 0.875rem 0.625rem 2.5rem;
+      --dp-background-color: var(--input-bg);
+      --dp-text-color: var(--text-primary);
+      --dp-border-color: var(--border);
+      --dp-border-color-hover: var(--slider-color);
+      --dp-primary-color: var(--slider-color);
 
-      &:hover {
-        border-color: var(--slider-color);
+      :deep(.dp__input) {
+        font-family: inherit;
+        font-weight: 500;
+        font-size: 1rem;
+        height: auto;
+        border: 1px solid var(--border);
+        transition: all 0.2s ease;
+        padding-top: 0.625rem;
+        padding-bottom: 0.625rem;
+
+        &:hover {
+          border-color: var(--slider-color);
+        }
+
+        &:focus {
+          border-color: var(--slider-color);
+        }
       }
 
-      &:focus {
-        border-color: var(--slider-color);
-        box-shadow: 0 0 0 3px var(--slider-color);
-        box-shadow: 0 0 0 3px rgba(var(--slider-color-rgb), 0.1);
-      }
-
-      &::placeholder {
+      .picker-icon {
+        display: flex;
+        align-items: center;
         color: var(--text-tertiary);
-      }
-
-      /* Remove spinner for number input */
-      &::-webkit-outer-spin-button,
-      &::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-      }
-
-      &[type="number"] {
-        -moz-appearance: textfield;
+        margin-left: 0.5rem;
       }
     }
   }
