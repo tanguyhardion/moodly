@@ -19,6 +19,8 @@ const formatDateDisplay = (date: Date) => {
   today.setHours(0, 0, 0, 0);
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
 
   const entryDate = new Date(date);
   entryDate.setHours(0, 0, 0, 0);
@@ -27,6 +29,8 @@ const formatDateDisplay = (date: Date) => {
     return "Today";
   } else if (entryDate.getTime() === yesterday.getTime()) {
     return "Yesterday";
+  } else if (entryDate.getTime() === tomorrow.getTime()) {
+    return "Tomorrow";
   } else {
     return date.toLocaleDateString("en-US", {
       weekday: "long",
@@ -37,13 +41,13 @@ const formatDateDisplay = (date: Date) => {
   }
 };
 
-// Check if selected date is today
-const isToday = computed(() => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const selected = new Date(props.modelValue);
-  selected.setHours(0, 0, 0, 0);
-  return selected.getTime() === today.getTime();
+// Check if we can navigate to the next day
+const canGoNext = computed(() => {
+  const current = new Date(props.modelValue);
+  current.setHours(0, 0, 0, 0);
+  const max = new Date(props.maxDate);
+  max.setHours(0, 0, 0, 0);
+  return current < max;
 });
 
 // Navigate to previous day
@@ -55,10 +59,9 @@ const goToPreviousDay = () => {
 
 // Navigate to next day
 const goToNextDay = () => {
-  const newDate = new Date(props.modelValue);
-  newDate.setDate(newDate.getDate() + 1);
-  // Don't go beyond maxDate
-  if (newDate <= props.maxDate) {
+  if (canGoNext.value) {
+    const newDate = new Date(props.modelValue);
+    newDate.setDate(newDate.getDate() + 1);
     emit("update:modelValue", newDate);
   }
 };
@@ -102,7 +105,7 @@ const goToNextDay = () => {
         </VueDatePicker>
       </ClientOnly>
       <button
-        v-if="!isToday"
+        v-if="canGoNext"
         class="nav-arrow right-arrow"
         @click="goToNextDay"
         title="Next day"

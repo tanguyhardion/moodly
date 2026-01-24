@@ -7,18 +7,20 @@
       <h3 class="metric-name">{{ config.name }}</h3>
     </div>
 
-    <div class="emoji-display">
+    <div v-if="!bedtimeOnly" class="emoji-display">
       <span class="emoji">{{ currentEmoji }}</span>
       <span class="label">{{ currentLabel }}</span>
     </div>
 
-    <div class="slider-container">
+    <div v-if="!bedtimeOnly" class="slider-container">
       <input
         type="range"
         min="1"
         max="5"
         :value="modelValue"
         @input="handleInput"
+        @touchstart="handleTouchStart"
+        @touchmove="handleTouchMove"
         class="slider"
         :style="{ '--slider-color': config.color }"
       />
@@ -32,59 +34,81 @@
       </div>
     </div>
 
-    <div v-if="showHoursInput" class="hours-input-container">
+    <div v-if="showHoursInput" class="hours-input-container" :class="{ 'bedtime-only': bedtimeOnly }">
       <div class="time-input-group">
         <label for="bedtime" class="hours-label">
           <Icon name="solar:moon-stars-bold" size="18" />
           Went to bed
         </label>
         <ClientOnly>
-          <VueDatePicker
-            id="bedtime"
-            :model-value="bedtime"
-            @update:model-value="emit('update:bedtime', $event)"
-            time-picker
-            format="hh:mm a"
-            model-type="HH:mm"
-            :dark="darkMode"
-            :time-config="{ is24: false }"
-            auto-apply
-            class="time-picker"
-            :style="{ '--slider-color': config.color }"
-          >
-            <template #input-icon>
-              <span class="picker-icon">
-                <Icon name="solar:clock-circle-bold" size="18" />
-              </span>
-            </template>
-          </VueDatePicker>
+          <div class="time-picker-with-button">
+            <VueDatePicker
+              id="bedtime"
+              :model-value="bedtime"
+              @update:model-value="emit('update:bedtime', $event)"
+              time-picker
+              format="hh:mm a"
+              model-type="HH:mm"
+              :dark="darkMode"
+              :time-config="{ is24: false }"
+              auto-apply
+              class="time-picker"
+              :style="{ '--slider-color': config.color }"
+            >
+              <template #input-icon>
+                <span class="picker-icon">
+                  <Icon name="solar:clock-circle-bold" size="18" />
+                </span>
+              </template>
+            </VueDatePicker>
+            <button 
+              type="button" 
+              @click="setCurrentTimeBedtime" 
+              class="now-button"
+              :style="{ '--slider-color': config.color }"
+              title="Set current time"
+            >
+              Now
+            </button>
+          </div>
         </ClientOnly>
       </div>
-      <div class="time-input-group">
+      <div v-if="!bedtimeOnly" class="time-input-group">
         <label for="wake-up-time" class="hours-label">
           <Icon name="solar:sun-bold" size="18" />
           Woke up
         </label>
         <ClientOnly>
-          <VueDatePicker
-            id="wake-up-time"
-            :model-value="wakeUpTime"
-            @update:model-value="emit('update:wakeUpTime', $event)"
-            time-picker
-            format="hh:mm a"
-            model-type="HH:mm"
-            :dark="darkMode"
-            :time-config="{ is24: false }"
-            auto-apply
-            class="time-picker"
-            :style="{ '--slider-color': config.color }"
-          >
-            <template #input-icon>
-              <span class="picker-icon">
-                <Icon name="solar:clock-circle-bold" size="18" />
-              </span>
-            </template>
-          </VueDatePicker>
+          <div class="time-picker-with-button">
+            <VueDatePicker
+              id="wake-up-time"
+              :model-value="wakeUpTime"
+              @update:model-value="emit('update:wakeUpTime', $event)"
+              time-picker
+              format="hh:mm a"
+              model-type="HH:mm"
+              :dark="darkMode"
+              :time-config="{ is24: false }"
+              auto-apply
+              class="time-picker"
+              :style="{ '--slider-color': config.color }"
+            >
+              <template #input-icon>
+                <span class="picker-icon">
+                  <Icon name="solar:clock-circle-bold" size="18" />
+                </span>
+              </template>
+            </VueDatePicker>
+            <button 
+              type="button" 
+              @click="setCurrentTimeWakeup" 
+              class="now-button"
+              :style="{ '--slider-color': config.color }"
+              title="Set current time"
+            >
+              Now
+            </button>
+          </div>
         </ClientOnly>
       </div>
     </div>
@@ -102,12 +126,14 @@ interface Props {
   wakeUpTime?: string | null;
   config: MetricConfig;
   showHoursInput?: boolean;
+  bedtimeOnly?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   showHoursInput: false,
   bedtime: null,
   wakeUpTime: null,
+  bedtimeOnly: false,
 });
 
 const emit = defineEmits<{
@@ -131,6 +157,48 @@ const currentLabel = computed(() => {
 const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement;
   emit("update:modelValue", parseInt(target.value));
+};
+
+// Track touch interactions to distinguish between scrolling and slider interaction
+let touchStartX = 0;
+let touchStartY = 0;
+let isIntentionalSliderTouch = false;
+
+const handleTouchStart = (event: TouchEvent) => {
+  touchStartX = event.touches[0].clientX;
+  touchStartY = event.touches[0].clientY;
+  isIntentionalSliderTouch = false;
+};
+
+const handleTouchMove = (event: TouchEvent) => {
+  if (isIntentionalSliderTouch) return;
+
+  const touchMoveX = event.touches[0].clientX;
+  const touchMoveY = event.touches[0].clientY;
+  const deltaX = Math.abs(touchMoveX - touchStartX);
+  const deltaY = Math.abs(touchMoveY - touchStartY);
+
+  // If vertical movement is greater than horizontal, prevent slider interaction
+  if (deltaY > deltaX) {
+    event.preventDefault();
+  } else if (deltaX > 10) {
+    // If horizontal movement is intentional (>10px), allow slider interaction
+    isIntentionalSliderTouch = true;
+  }
+};
+
+const setCurrentTimeBedtime = () => {
+  const now = new Date();
+  const hours = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  emit('update:bedtime', `${hours}:${minutes}`);
+};
+
+const setCurrentTimeWakeup = () => {
+  const now = new Date();
+  const hours = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  emit('update:wakeUpTime', `${hours}:${minutes}`);
 };
 </script>
 
@@ -214,6 +282,7 @@ const handleInput = (event: Event) => {
   .slider-container {
     position: relative;
     padding: 0.5rem 0;
+    touch-action: pan-y; // Allow vertical scrolling, prevent horizontal pan
 
     .slider {
       width: 100%;
@@ -226,6 +295,7 @@ const handleInput = (event: Event) => {
       cursor: pointer;
       transition: all 0.2s ease;
       box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+      touch-action: none; // Allow full control over touch on the slider itself
 
       &::-webkit-slider-thumb {
         -webkit-appearance: none;
@@ -315,6 +385,13 @@ const handleInput = (event: Event) => {
       gap: 1rem;
     }
 
+    &.bedtime-only {
+      grid-template-columns: 1fr;
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+
     .time-input-group {
       display: flex;
       flex-direction: column;
@@ -331,8 +408,14 @@ const handleInput = (event: Event) => {
       white-space: nowrap;
     }
 
+    .time-picker-with-button {
+      display: flex;
+      gap: 0.5rem;
+      align-items: stretch;
+    }
+
     .time-picker {
-      width: 100%;
+      flex: 1;
       --dp-border-radius: var(--radius-lg);
       --dp-input-padding: 0.625rem 0.875rem 0.625rem 2.5rem;
       --dp-background-color: var(--input-bg);
@@ -365,6 +448,31 @@ const handleInput = (event: Event) => {
         align-items: center;
         color: var(--text-tertiary);
         margin-left: 0.5rem;
+      }
+    }
+
+    .now-button {
+      padding: 0.625rem 1rem;
+      background: var(--slider-color);
+      color: white;
+      border: none;
+      border-radius: var(--radius-lg);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      &:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
     }
   }

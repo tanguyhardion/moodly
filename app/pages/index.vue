@@ -50,8 +50,34 @@ const isReady = ref(false);
 // Selected date (defaults to today)
 const selectedDate = ref<Date>(new Date());
 
-// Max date is today
-const maxDate = new Date();
+// Max date is today, but allow tomorrow after 10pm
+const maxDate = computed(() => {
+  const d = new Date();
+  if (d.getHours() >= 22) {
+    const tomorrow = new Date(d);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow;
+  }
+  return d;
+});
+
+// Check if selected date is tomorrow
+const isTomorrow = computed(() => {
+  if (!selectedDate.value) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const selected = new Date(selectedDate.value);
+  selected.setHours(0, 0, 0, 0);
+  return selected > today;
+});
+
+// Filter metrics to show only sleep (bedtime) for tomorrow
+const filteredMetricConfigs = computed(() => {
+  if (isTomorrow.value) {
+    return metricConfigs.filter((c) => c.key === "sleep");
+  }
+  return metricConfigs;
+});
 
 // Computed property to check if entry exists for selected date
 const hasEntry = computed(() =>
@@ -149,6 +175,8 @@ watch(
 
 const dateSelectorRef = ref<HTMLElement | null>(null);
 const showStickyHeader = ref(false);
+const saveBtnRef = ref<HTMLElement | null>(null);
+const showFab = ref(false);
 
 // Intersection Observer for sticky header
 onMounted(() => {
@@ -171,6 +199,27 @@ onMounted(() => {
   if (dateSelectorRef.value) {
     observer.observe(dateSelectorRef.value);
   }
+
+  const fabObserver = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0];
+      if (entry) {
+        // Show FAB only if the save button is NOT visible 
+        // AND checks if we haven't scrolled past it (though usually it's at bottom).
+        // If the button is below the viewport (top > 0) and not intersecting, we show FAB.
+        showFab.value = !entry.isIntersecting;
+      }
+    },
+    { threshold: 0.1 }, 
+  );
+
+  if (saveBtnRef.value) {
+    fabObserver.observe(saveBtnRef.value);
+  }
+
+  watch(saveBtnRef, (el) => {
+    if (el) fabObserver.observe(el);
+  });
 
   // Watch for ref changes (e.g. after loading)
   watch(dateSelectorRef, (el) => {
@@ -202,18 +251,32 @@ const handleSave = async () => {
     }
 
     // Create metrics object with sleepHours
-    const metricsWithSleep = {
-      ...metrics.value,
-      bedtime: bedtime.value,
-      wakeUpTime: wakeUpTime.value,
-      sleepHours: calculatedSleepHours,
-    };
+    // If saving for tomorrow (bedtime only), set other metrics to null
+    const metricsToSave = isTomorrow.value
+      ? {
+          mood: null,
+          energy: null,
+          sleep: null,
+          focus: null,
+          stress: null,
+          look: null,
+          bedtime: bedtime.value,
+          wakeUpTime: null,
+          sleepHours: null,
+        }
+      : {
+          ...metrics.value,
+          bedtime: bedtime.value,
+          wakeUpTime: wakeUpTime.value,
+          sleepHours: calculatedSleepHours,
+        };
+
     await saveEntry(
-      metricsWithSleep,
-      checkboxes.value,
-      note.value || undefined,
+      metricsToSave,
+      isTomorrow.value ? undefined : checkboxes.value,
+      isTomorrow.value ? undefined : note.value || undefined,
       getCurrentDateString(selectedDate.value),
-      location.value || undefined,
+      isTomorrow.value ? undefined : location.value || undefined,
     );
     showToast.value = true;
     setTimeout(() => {
@@ -233,19 +296,21 @@ const handleSave = async () => {
       <div class="page-header">
         <h1 class="page-title">
           <HeartFaceIcon class="wave" />
-          How are you feeling?
+          {{ isTomorrow ? "Going to bed?" : "How are you feeling?" }}
         </h1>
         <p class="page-subtitle">
           {{
-            hasEntry
-              ? "Update your check-in"
-              : "Take a moment to check in with yourself"
+            isTomorrow
+              ? "Set your bedtime for tomorrow"
+              : hasEntry
+                ? "Update your check-in"
+                : "Take a moment to check in with yourself"
           }}
         </p>
       </div>
 
       <!-- Streak Display -->
-      <StreakDisplay />
+      <StreakDisplay v-if="!isTomorrow" />
 
       <div ref="dateSelectorRef">
         <DateSelector
@@ -271,7 +336,7 @@ const handleSave = async () => {
 
       <!-- Empty State Banner -->
       <Transition name="empty-state">
-        <div v-if="!hasEntry" class="empty-state-banner">
+        <div v-if="!hasEntry && !isTomorrow" class="empty-state-banner">
           <div class="empty-icon">
             <Icon name="solar:calendar-mark-broken" size="32" />
           </div>
@@ -286,26 +351,28 @@ const handleSave = async () => {
 
       <div class="metrics-container">
         <MetricSlider
-          v-for="config in metricConfigs"
+          v-for="config in filteredMetricConfigs"
           :key="config.key"
           v-model="metrics[config.key]"
           :config="config"
           :show-hours-input="config.key === 'sleep'"
           :bedtime="bedtime"
           :wake-up-time="wakeUpTime"
+          :bedtime-only="isTomorrow"
           @update:bedtime="bedtime = $event"
           @update:wake-up-time="wakeUpTime = $event"
         />
       </div>
 
-      <DailyCheckins v-model="checkboxes" />
+      <DailyCheckins v-if="!isTomorrow" v-model="checkboxes" />
 
-      <LocationInput v-model="location" />
+      <LocationInput v-if="!isTomorrow" v-model="location" />
 
-      <NoteInput v-model="note" />
+      <NoteInput v-if="!isTomorrow" v-model="note" />
 
       <div class="actions">
         <button
+          ref="saveBtnRef"
           @click="handleSave"
           class="btn btn-primary save-btn"
           :disabled="isLoading"
@@ -313,7 +380,13 @@ const handleSave = async () => {
           <Icon v-if="!isLoading" name="solar:check-circle-bold" size="20" />
           <Icon v-else name="svg-spinners:ring-resize" size="20" />
           {{
-            isLoading ? "Saving..." : hasEntry ? "Update Entry" : "Save Entry"
+            isLoading
+              ? "Saving..."
+              : isTomorrow
+                ? "Save Bedtime"
+                : hasEntry
+                  ? "Update Entry"
+                  : "Save Entry"
           }}
         </button>
       </div>
@@ -323,6 +396,20 @@ const handleSave = async () => {
           <Icon name="solar:check-circle-bold" size="20" />
           Entry saved successfully!
         </div>
+      </Transition>
+
+      <Transition name="fab">
+        <button
+          v-if="showFab && isReady"
+          @click="handleSave"
+          class="fab-btn"
+          :class="{ 'is-loading': isLoading }"
+          :aria-label="hasEntry ? 'Update Entry' : 'Save Entry'"
+          :disabled="isLoading"
+        >
+          <Icon v-if="!isLoading" name="solar:check-circle-bold" size="28" />
+          <Icon v-else name="svg-spinners:ring-resize" size="28" />
+        </button>
       </Transition>
     </div>
   </div>
@@ -467,6 +554,71 @@ const handleSave = async () => {
   .empty-state-leave-to {
     opacity: 0;
     transform: translateY(-10px);
+  }
+
+  /* Floating Action Button */
+  .fab-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    
+    // Copying gradient styles from .btn-primary
+    background: var(--gradient-primary);
+    position: fixed; /* Re-affirm fixed since we have 'position: absolute' in ::before */
+    overflow: hidden; /* Ensure pseudo-element doesn't overflow round shape */
+    
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(var(--color-shadow-primary), 0.4);
+    cursor: pointer;
+    z-index: 99;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    -webkit-tap-highlight-color: transparent;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--gradient-primary-dark);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(var(--color-shadow-primary), 0.6);
+      
+      &::before {
+        opacity: 1;
+      }
+    }
+
+    &:active {
+      transform: scale(0.9);
+    }
+
+    &.is-loading {
+      cursor: wait;
+      opacity: 0.8;
+    }
+  }
+
+  .fab-enter-active,
+  .fab-leave-active {
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .fab-enter-from,
+  .fab-leave-to {
+    opacity: 0;
+    transform: scale(0) rotate(-90deg);
   }
 }
 </style>
