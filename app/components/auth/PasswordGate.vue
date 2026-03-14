@@ -5,7 +5,6 @@
         <Icon name="solar:lock-password-bold" size="48" />
       </div>
       <h1 class="title">Welcome to Moodly</h1>
-      <p class="subtitle">Enter your master password to continue</p>
 
       <form @submit.prevent="handleSubmit" class="password-form">
         <input
@@ -137,7 +136,7 @@ watch(isAuthenticated, (value) => {
 
 .password-card {
   background: var(--card-bg);
-  padding: var(--spacing-2xl);
+  padding: var(--spacing-xl) var(--spacing-2xl);
   border-radius: var(--radius-xl);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-2xl);
@@ -162,12 +161,6 @@ watch(isAuthenticated, (value) => {
   font-size: 2rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 0.5rem;
-}
-
-.subtitle {
-  font-size: 1rem;
-  color: var(--text-secondary);
   margin: 0 0 2rem;
 }
 
