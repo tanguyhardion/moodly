@@ -1,44 +1,50 @@
 <template>
-  <div class="page history-page">
-    <LoadingState v-if="!isInitialized" message="Loading your history..." />
-    <div v-else class="history-content">
-      <div class="page-header">
-        <ExportButton v-if="entries.length > 0" class="export-btn-wrapper" />
-        <h1 class="page-title">
-          <Icon name="solar:history-bold" size="28" />
-          Your Journey
-        </h1>
-        <p class="page-subtitle">
-          {{ entries.length }}
-          {{ entries.length === 1 ? "entry" : "entries" }} recorded
-        </p>
+  <div class="page-container">
+    <div class="page-header">
+      <h1 class="page-title">
+        <Icon name="solar:history-bold" size="28" class="icon-primary" />
+        History
+      </h1>
+      <p class="page-subtitle">Browse your past entries</p>
+    </div>
+
+    <LoadingState v-if="isLoading" message="Loading history..." />
+
+    <div v-else-if="entries.length === 0" class="empty-state">
+      <div class="empty-state-icon">
+        <Icon name="solar:clipboard-list-bold" size="48" />
       </div>
+      <p class="empty-state-title">No entries yet</p>
+      <p class="empty-state-description">
+        Start logging from the dashboard to see your history here.
+      </p>
+    </div>
 
-      <div v-if="entries.length === 0" class="empty-state">
-        <Icon name="solar:document-add-bold" size="64" class="empty-icon" />
-        <h3>No entries yet</h3>
-        <p>Start your journey by creating your first check-in</p>
-        <NuxtLink to="/" class="btn btn-primary">
-          <Icon name="solar:add-circle-bold" size="20" />
-          Create Entry
-        </NuxtLink>
-      </div>
-
-      <div v-else class="entries-list">
-        <TransitionGroup name="list">
-          <LazyEntryCard
-            v-for="entry in displayedEntries"
-            :key="entry.id"
-            :entry="entry"
-            :metric-configs="metricConfigs"
-          />
-        </TransitionGroup>
-
-        <div v-if="hasMore" ref="sentinelRef" class="load-sentinel">
-          <LoadingState
-            v-if="isLoadingMore"
-            message="Loading more entries..."
-          />
+    <div v-else class="history-list">
+      <div
+        v-for="entry in sortedEntries"
+        :key="entry.id"
+        class="history-card"
+      >
+        <div class="card-header">
+          <span class="card-date">{{ formatDate(entry.date) }}</span>
+          <button
+            class="delete-btn"
+            @click="handleDelete(entry.id)"
+            title="Delete entry"
+            type="button"
+          >
+            <Icon name="solar:trash-bin-trash-bold" size="16" />
+          </button>
+        </div>
+        <div class="card-metrics">
+          <template v-for="config in metricConfigs" :key="config.id">
+            <div v-if="entry.data[config.id] != null" class="metric-chip">
+              <Icon v-if="config.icon" :name="config.icon" size="14" :style="{ color: config.color || 'var(--primary)' }" />
+              <span class="chip-label">{{ config.label }}:</span>
+              <span class="chip-value">{{ formatMetricValue(entry.data[config.id] ?? null, config) }}</span>
+            </div>
+          </template>
         </div>
       </div>
     </div>
@@ -46,163 +52,124 @@
 </template>
 
 <script setup lang="ts">
-const { entries, metricConfigs, isInitialized } = useMoodly();
+import type { MetricConfig, MetricValue, LocationValue } from '~/types';
 
-const INITIAL_LOAD = 5;
-const LOAD_MORE_COUNT = 10;
-const displayCount = ref(INITIAL_LOAD);
-const sentinelRef = ref<HTMLElement | null>(null);
-const isLoadingMore = ref(false);
+const { entries, isLoading, deleteEntry, metricConfigs } = useMoodly();
 
-const sortedEntries = computed(() => {
-  return [...entries.value].sort((a, b) => b.date.localeCompare(a.date));
-});
+const sortedEntries = computed(() =>
+  [...entries.value].sort((a, b) => b.date.localeCompare(a.date))
+);
 
-const displayedEntries = computed(() => {
-  return sortedEntries.value.slice(0, displayCount.value);
-});
-
-const hasMore = computed(() => {
-  return displayCount.value < sortedEntries.value.length;
-});
-
-const loadMore = async () => {
-  if (isLoadingMore.value) return;
-
-  isLoadingMore.value = true;
-  // Small delay to show loading state
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  displayCount.value += LOAD_MORE_COUNT;
-  isLoadingMore.value = false;
-};
-
-// Set up intersection observer for infinite scroll
-onMounted(() => {
-  if (!sentinelRef.value) return;
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      if (entries[0]?.isIntersecting && hasMore.value && !isLoadingMore.value) {
-        loadMore();
-      }
-    },
-    { threshold: 0.1 },
-  );
-
-  watch(
-    sentinelRef,
-    (newSentinel) => {
-      if (newSentinel) {
-        observer.observe(newSentinel);
-      }
-    },
-    { immediate: true },
-  );
-
-  onUnmounted(() => {
-    observer.disconnect();
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
   });
-});
+}
 
-// Reset display count when entries change
-watch(entries, () => {
-  displayCount.value = INITIAL_LOAD;
-});
+function formatMetricValue(value: MetricValue, config: MetricConfig): string {
+  if (value == null) return '—';
+  if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+  if (typeof value === 'object' && 'name' in value) return (value as LocationValue).name;
+  if (config.type === 'slider') return `${value} / ${(config as any).max}`;
+  if (config.type === 'number' && (config as any).unit) return `${value} ${(config as any).unit}`;
+  return String(value);
+}
+
+async function handleDelete(id: string) {
+  if (confirm('Delete this entry?')) {
+    await deleteEntry(id);
+  }
+}
 </script>
 
 <style scoped lang="scss">
-.history-page {
-  max-width: var(--max-width-md);
+.page-container {
+  max-width: 720px;
   margin: 0 auto;
+  padding: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
 
-  .history-content {
-    animation: fadeIn 0.3s ease;
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.history-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-hover);
   }
 
-  .page-header {
-    position: relative;
-    text-align: center;
-    margin-bottom: var(--spacing-xl);
-    padding-top: var(--spacing-sm);
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
 
-    .page-title {
-      font-size: 2rem;
+    .card-date {
       font-weight: 700;
+      font-size: 1rem;
       color: var(--text-primary);
-      margin: 0 0 var(--spacing-sm);
+    }
+
+    .delete-btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: var(--spacing-md);
-    }
-
-    .export-btn-wrapper {
-      position: absolute;
-      top: 0;
-      right: 0;
-    }
-
-    .page-subtitle {
-      font-size: 1rem;
-      color: var(--text-secondary);
-      margin: 0;
-    }
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: var(--spacing-2xl) var(--spacing-xl);
-
-    .empty-icon {
+      width: 30px;
+      height: 30px;
+      border: none;
+      background: transparent;
       color: var(--text-tertiary);
-      margin-bottom: var(--spacing-md);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+
+      &:hover {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--error);
+      }
     }
-
-    h3 {
-      font-size: 1.5rem;
-      color: var(--text-primary);
-      margin: 0 0 var(--spacing-sm);
-    }
-
-    p {
-      font-size: 1rem;
-      color: var(--text-secondary);
-      margin: 0 0 var(--spacing-lg);
-    }
-
-    /* btn and btn-primary use global classes from main.css */
   }
 
-  .entries-list {
-    display: grid;
-    gap: var(--spacing-md);
-  }
-
-  .list-enter-active,
-  .list-leave-active {
-    transition: all 0.3s ease;
-  }
-
-  .list-enter-from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-
-  .list-leave-to {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-
-  .list-move {
-    transition: transform 0.3s ease;
-  }
-
-  .load-sentinel {
-    min-height: 100px;
+  .card-metrics {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: var(--spacing-md);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    .metric-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.375rem 0.625rem;
+      background: var(--hover-bg);
+      border-radius: var(--radius-sm);
+      font-size: 0.8125rem;
+
+      .chip-label {
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .chip-value {
+        color: var(--text-primary);
+        font-weight: 600;
+      }
+    }
   }
 }
 </style>

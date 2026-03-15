@@ -1,156 +1,75 @@
-import type { DailyEntry } from "~/types";
+import type { DailyEntry, MetricDataMap } from "~/types";
 import { moodlyBackendService } from "~/utils/moodly-backend";
 import { generateId } from "~/utils/helpers";
 
-// Global state (singleton) - shared across all components
 const entries = ref<DailyEntry[]>([]);
 const isLoading = ref(false);
 const isInitialized = ref(false);
-const dataVersion = ref(0); // Tracks when data changes to trigger refetch
-
-// Helper to get local date string YYYY-MM-DD
-const toLocalDateString = (date: Date): string => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
 
 export function useEntries() {
-  // Get today's entry
-  const getTodayEntry = (): DailyEntry | undefined => {
-    const today = toLocalDateString(new Date());
-    return entries.value.find((entry: DailyEntry) => entry.date === today);
-  };
-
-  // Get entry for a specific date
   const getEntryByDate = (date: string): DailyEntry | undefined => {
-    return entries.value.find((entry: DailyEntry) => entry.date === date);
+    return entries.value.find(e => e.date === date);
   };
 
-  // Check if entry exists for today
-  const hasTodayEntry = computed(() => {
-    return getTodayEntry() !== undefined;
-  });
-
-  // Check if entry exists for a specific date
-  const hasEntryForDate = (date: string): boolean => {
-    return getEntryByDate(date) !== undefined;
-  };
-
-  // Load entries from database
-  const loadEntries = async (force: boolean = false) => {
-    // Skip if already initialized and not forced
-    if (isInitialized.value && !force) {
-      return;
-    }
-
+  const loadEntries = async (force = false) => {
+    if (isInitialized.value && !force) return;
+    isLoading.value = true;
     try {
-      isLoading.value = true;
       const data = await moodlyBackendService.getEntries();
       entries.value = data;
       isInitialized.value = true;
     } catch (error) {
       console.error("Failed to load entries:", error);
-      isInitialized.value = true;
     } finally {
       isLoading.value = false;
     }
   };
 
-  // Reload entries from database (used after mutations)
-  const reloadEntries = async () => {
-    await loadEntries(true);
-    dataVersion.value++;
-  };
-
-  // Save or update entry
-  const saveEntry = async (
-    metrics: DailyEntry["metrics"],
-    checkboxes?: DailyEntry["checkboxes"],
-    note?: string,
-    date?: string,
-    location?: DailyEntry["location"],
-  ) => {
-    const targetDate = date || toLocalDateString(new Date());
-    const existingIndex = entries.value.findIndex(
-      (entry: DailyEntry) => entry.date === targetDate,
-    );
-    const existingEntry =
-      existingIndex >= 0 ? entries.value[existingIndex] : null;
-
-    const entry: DailyEntry = {
-      id: existingEntry ? existingEntry.id : generateId(),
-      date: targetDate,
-      metrics,
-      checkboxes,
-      note,
-      location,
-      createdAt: existingEntry
-        ? existingEntry.createdAt
-        : new Date().toISOString(),
-    };
-
+  const saveEntry = async (date: string, data: MetricDataMap) => {
     try {
-      isLoading.value = true;
-      const savedEntry = await moodlyBackendService.saveEntry(entry);
+      const existing = getEntryByDate(date);
+      const saved = await moodlyBackendService.saveEntry({
+        id: existing?.id ?? generateId(),
+        date,
+        data,
+      });
 
-      if (existingIndex >= 0) {
-        entries.value[existingIndex] = savedEntry;
+      // Update local cache
+      const idx = entries.value.findIndex(e => e.date === date);
+      if (idx >= 0) {
+        entries.value[idx] = saved;
       } else {
-        entries.value.push(savedEntry);
+        entries.value.unshift(saved);
       }
-
-      // Sort by date descending
-      entries.value.sort((a: DailyEntry, b: DailyEntry) =>
-        b.date.localeCompare(a.date),
-      );
-
-      // Increment data version to notify other components
-      dataVersion.value++;
+      return saved;
     } catch (error) {
       console.error("Failed to save entry:", error);
       throw error;
-    } finally {
-      isLoading.value = false;
     }
   };
 
-  // Get entries for date range
-  const getEntriesInRange = (days: number): DailyEntry[] => {
-    if (days === 0) {
-      return entries.value;
+  const deleteEntry = async (id: string) => {
+    try {
+      await moodlyBackendService.deleteEntry(id);
+      entries.value = entries.value.filter(e => e.id !== id);
+    } catch (error) {
+      console.error("Failed to delete entry:", error);
+      throw error;
     }
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
-    const startDateStr = toLocalDateString(startDate);
-
-    return entries.value.filter(
-      (entry: DailyEntry) => entry.date >= startDateStr,
-    );
   };
 
-  // Get the most recent entry before a given date
-  const getPreviousEntry = (beforeDate: string): DailyEntry | undefined => {
-    const sortedEntries = [...entries.value].sort(
-      (a: DailyEntry, b: DailyEntry) => b.date.localeCompare(a.date),
-    );
-    return sortedEntries.find((entry: DailyEntry) => entry.date < beforeDate);
+  const reloadEntries = async () => {
+    await loadEntries(true);
   };
 
   return {
     entries,
     isLoading,
     isInitialized,
-    dataVersion,
     loadEntries,
-    reloadEntries,
-    getTodayEntry,
-    getEntryByDate,
-    hasTodayEntry,
-    hasEntryForDate,
     saveEntry,
-    getEntriesInRange,
-    getPreviousEntry,
+    deleteEntry,
+    reloadEntries,
+    getEntryByDate,
   };
 }

@@ -21,15 +21,13 @@
 </template>
 
 <script setup lang="ts">
-const { exportToJSON, exportToCSV, exportToExcel, exportToMarkdown } =
-  useMoodly();
+import { downloadFile } from '~/utils/helpers';
+
+const { entries } = useMoodly();
 const showMenu = ref(false);
 
 const formats = [
   { type: "json", label: "JSON", icon: "solar:code-file-bold" },
-  { type: "csv", label: "CSV", icon: "solar:document-text-bold" },
-  { type: "excel", label: "Excel", icon: "solar:document-bold" },
-  { type: "markdown", label: "Markdown", icon: "solar:file-text-bold" },
 ];
 
 const toggleMenu = () => {
@@ -37,19 +35,9 @@ const toggleMenu = () => {
 };
 
 const handleExport = (type: string) => {
-  switch (type) {
-    case "json":
-      exportToJSON();
-      break;
-    case "csv":
-      exportToCSV();
-      break;
-    case "excel":
-      exportToExcel();
-      break;
-    case "markdown":
-      exportToMarkdown();
-      break;
+  if (type === 'json') {
+    const blob = new Blob([JSON.stringify(entries.value, null, 2)], { type: 'application/json' });
+    downloadFile(blob, `moodly-export-${new Date().toISOString().split('T')[0]}.json`);
   }
   showMenu.value = false;
 };

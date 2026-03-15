@@ -1,118 +1,62 @@
-import type { DailyEntry, AnalyticsInsight, AppSettings } from "~/types";
+import type { DailyEntry, MetricConfig, AppSettings, ApiResponse } from "~/types";
 
-const getBackendUrl = (): string => {
-  return process.env.NODE_ENV === "development"
-    ? "http://localhost:3001" // Local backend for development
-    : "https://moodly-backend.vercel.app"; // Production backend
-};
+const API_BASE = import.meta.env.DEV
+  ? "http://localhost:3001"
+  : "https://moodly-backend.vercel.app";
 
-const getMasterPassword = (): string | null => {
-  if (typeof window === "undefined") return null;
-  return sessionStorage.getItem("moodly-master-password");
-};
-
-export class MoodlyBackendService {
-  private readonly backendUrl: string;
-
-  constructor() {
-    this.backendUrl = getBackendUrl();
-  }
-
-  private async makeRequest<T>(
-    endpoint: string,
-    options: RequestInit = {},
-  ): Promise<T> {
-    const masterPassword = getMasterPassword();
-    if (!masterPassword) {
-      throw new Error("Not authenticated");
-    }
-
-    const response = await fetch(`${this.backendUrl}/api/${endpoint}`, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
-    });
-
-    const data = await response.json();
-
-    if (!data.success) {
-      throw new Error(data.error || "Request failed");
-    }
-
-    return data.data;
-  }
-
-  async searchLocation(query: string): Promise<any> {
-    const masterPassword = getMasterPassword();
-    return this.makeRequest(
-      `search-location?q=${encodeURIComponent(
-        query,
-      )}&masterPassword=${encodeURIComponent(masterPassword!)}`,
-    );
-  }
-
-  async verifyPassword(password: string): Promise<boolean> {
-    try {
-      const response = await fetch(`${this.backendUrl}/api/verify-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ masterPassword: password }),
-      });
-
-      const data = await response.json();
-      return data.success;
-    } catch (error) {
-      console.error("Password verification error:", error);
-      return false;
-    }
-  }
-
-  async getEntries(): Promise<DailyEntry[]> {
-    const masterPassword = getMasterPassword();
-    return this.makeRequest<DailyEntry[]>(
-      `get-entries?masterPassword=${encodeURIComponent(masterPassword!)}`,
-    );
-  }
-
-  async saveEntry(entry: DailyEntry): Promise<DailyEntry> {
-    const masterPassword = getMasterPassword();
-    return this.makeRequest<DailyEntry>("save-entry", {
-      method: "POST",
-      body: JSON.stringify({
-        masterPassword,
-        entry,
-      }),
-    });
-  }
-
-  async getAnalytics(): Promise<{ insights: AnalyticsInsight[] }> {
-    const masterPassword = getMasterPassword();
-    return this.makeRequest<{ insights: AnalyticsInsight[] }>(
-      `get-analytics?masterPassword=${encodeURIComponent(masterPassword!)}`,
-    );
-  }
-
-  async getSettings(): Promise<AppSettings> {
-    const masterPassword = getMasterPassword();
-    return this.makeRequest<AppSettings>(
-      `settings?masterPassword=${encodeURIComponent(masterPassword!)}`,
-    );
-  }
-
-  async saveSettings(settings: AppSettings): Promise<void> {
-    const masterPassword = getMasterPassword();
-    return this.makeRequest<void>("settings", {
-      method: "POST",
-      body: JSON.stringify({
-        masterPassword,
-        ...settings,
-      }),
-    });
-  }
+function getMasterPassword(): string {
+  return sessionStorage.getItem("moodly-master-password") ?? "";
 }
 
-export const moodlyBackendService = new MoodlyBackendService();
+function authParams(): string {
+  return `masterPassword=${encodeURIComponent(getMasterPassword())}`;
+}
+
+async function apiGet<T>(path: string, params: Record<string, string> = {}): Promise<T> {
+  const qs = new URLSearchParams({ ...params, masterPassword: getMasterPassword() });
+  const res = await fetch(`${API_BASE}${path}?${qs.toString()}`);
+  const json: ApiResponse<T> = await res.json();
+  if (!json.success) throw new Error(json.error ?? "Request failed");
+  return json.data as T;
+}
+
+async function apiPost<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...body as Record<string, unknown>, masterPassword: getMasterPassword() }),
+  });
+  const json: ApiResponse<T> = await res.json();
+  if (!json.success) throw new Error(json.error ?? "Request failed");
+  return json.data as T;
+}
+
+export const moodlyBackendService = {
+  // --- Entries ---
+  getEntries: (params?: { from?: string; to?: string; date?: string }): Promise<DailyEntry[]> =>
+    apiGet<DailyEntry[]>("/api/get-entries", params as Record<string, string>),
+
+  saveEntry: (entry: { id?: string; date: string; data: Record<string, unknown> }): Promise<DailyEntry> =>
+    apiPost<DailyEntry>("/api/save-entry", entry),
+
+  deleteEntry: (id: string): Promise<{ id: string }> =>
+    apiPost<{ id: string }>("/api/delete-entry", { id }),
+
+  // --- Metric Configuration ---
+  getMetricConfig: (): Promise<{ metrics: MetricConfig[]; updatedAt: string | null }> =>
+    apiGet<{ metrics: MetricConfig[]; updatedAt: string | null }>("/api/metric-config"),
+
+  saveMetricConfig: (metrics: MetricConfig[]): Promise<{ success: boolean }> =>
+    apiPost<{ success: boolean }>("/api/metric-config", { metrics }),
+
+  // --- Settings ---
+  getSettings: (): Promise<AppSettings> =>
+    apiGet<AppSettings>("/api/settings"),
+
+  saveSettings: (settings: AppSettings): Promise<{ success: boolean }> =>
+    apiPost<{ success: boolean }>("/api/settings", settings),
+
+  // --- Location Search ---
+  searchLocation: (query: string): Promise<unknown> =>
+    apiGet<unknown>("/api/search-location", { q: query }),
+};

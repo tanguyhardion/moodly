@@ -18,13 +18,13 @@
 </template>
 
 <script setup lang="ts">
-const { loadEntries } = useMoodly();
+const { initialize } = useMoodly();
 
 const showSettings = ref(false);
 
 const handleAuthenticated = async () => {
-  // Load entries after authentication
-  await loadEntries();
+  // Load entries and metric config after authentication
+  await initialize();
 };
 </script>
 

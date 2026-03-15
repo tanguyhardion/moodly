@@ -1,77 +1,188 @@
-export type MetricType =
-  | "mood"
-  | "energy"
-  | "sleep"
-  | "focus"
-  | "stress"
-  | "look";
+// ============================================
+// Moodly - Core Type System
+// Uses Discriminated Unions for type-safe metric configurations
+// ============================================
+
+// --- Metric Type Identifiers ---
+export type MetricType = 'slider' | 'checkbox' | 'number' | 'time' | 'location' | 'text' | 'calculated';
+
+// --- Base Metric Configuration ---
+interface MetricConfigBase {
+  /** Unique identifier for this metric */
+  id: string;
+  /** The metric type discriminant */
+  type: MetricType;
+  /** Display label */
+  label: string;
+  /** Icon name (Iconify format, e.g. "solar:heart-bold") */
+  icon?: string;
+  /** Theme color for this metric */
+  color?: string;
+  /** Display order index */
+  order: number;
+  /** Group name for visual grouping on the dashboard */
+  group?: string;
+}
+
+// --- Discriminated Union: Metric Configurations ---
+
+export interface SliderMetricConfig extends MetricConfigBase {
+  type: 'slider';
+  min: number;
+  max: number;
+  step: number;
+  /** Labels for min and max ends, e.g. ["Terrible", "Amazing"] */
+  labels?: [string, string];
+}
+
+export interface CheckboxMetricConfig extends MetricConfigBase {
+  type: 'checkbox';
+}
+
+export interface NumberMetricConfig extends MetricConfigBase {
+  type: 'number';
+  min?: number;
+  max?: number;
+  step?: number;
+  unit?: string;
+  placeholder?: string;
+}
+
+export interface TimeMetricConfig extends MetricConfigBase {
+  type: 'time';
+  /** Placeholder text, e.g. "HH:MM" */
+  placeholder?: string;
+}
+
+export interface LocationMetricConfig extends MetricConfigBase {
+  type: 'location';
+  placeholder?: string;
+}
+
+export interface TextMetricConfig extends MetricConfigBase {
+  type: 'text';
+  placeholder?: string;
+  /** Maximum character length */
+  maxLength?: number;
+  /** Whether to render as a multi-line textarea */
+  multiline?: boolean;
+}
+
+// --- Calculated Metric Formula Types ---
+
+export interface TimeDiffFormula {
+  formulaType: 'time_diff';
+  /** ID of the "from" time metric (e.g. bedtime) */
+  fromMetricId: string;
+  /** ID of the "to" time metric (e.g. wake-up) */
+  toMetricId: string;
+  unit: 'hours' | 'minutes';
+}
+
+/** Discriminated union of all formula types — extensible for future operations */
+export type CalculatedFormula = TimeDiffFormula;
+
+export interface CalculatedMetricConfig extends MetricConfigBase {
+  type: 'calculated';
+  formula: CalculatedFormula;
+}
+
+/** Union of all metric configurations */
+export type MetricConfig =
+  | SliderMetricConfig
+  | CheckboxMetricConfig
+  | NumberMetricConfig
+  | TimeMetricConfig
+  | LocationMetricConfig
+  | TextMetricConfig
+  | CalculatedMetricConfig;
+
+// --- Metric Value Types ---
+
+export interface LocationValue {
+  name: string;
+  latitude: number;
+  longitude: number;
+}
+
+/** All possible metric values */
+export type MetricValue = number | boolean | string | LocationValue | null;
+
+/** Type-safe map of metric id -> value */
+export type MetricDataMap = Record<string, MetricValue>;
+
+// --- Daily Entry ---
 
 export interface DailyEntry {
   id: string;
-  date: string; // ISO date string
-  metrics: {
-    mood: number | null;
-    energy: number | null;
-    sleep: number | null;
-    bedtime: string | null;
-    wakeUpTime: string | null;
-    sleepHours: number | null;
-    focus: number | null;
-    stress: number | null;
-    look: number | null;
-  };
-  checkboxes?: {
-    dayOff: boolean;
-    healthyFood: boolean;
-    caffeine: boolean;
-    alcohol: boolean;
-    gym: boolean;
-    hardWork: boolean;
-    misc: boolean;
-  };
-  location?: {
-    name: string;
-    latitude: number;
-    longitude: number;
-  } | null;
-  note?: string;
-  createdAt: string; // ISO 8601 timestamp with timezone
+  date: string; // YYYY-MM-DD
+  data: MetricDataMap;
+  createdAt: string;
+  updatedAt?: string;
 }
 
-export interface MetricConfig {
-  name: string;
-  key: MetricType;
-  icon: string;
-  color: string;
-  emojis: string[];
-  labels: string[];
+// --- User's Metric Configuration (persisted) ---
+
+export interface UserMetricConfiguration {
+  id?: number;
+  metrics: MetricConfig[];
+  updatedAt?: string;
 }
 
-export interface AnalyticsInsight {
-  type:
-    | "habit-impact"
-    | "metric-connection"
-    | "habit-pattern"
-    | "habit-comparison"
-    | "weekly-trend"
-    | "trigger"
-    | "long-term-trend"
-    | "synergy";
-  label: string;
-  text: string;
-  score: number;
-  details?: string;
-}
-
-export interface StreakData {
-  currentStreak: number;
-  longestStreak: number;
-  lastEntryDate: string | null;
-}
+// --- App Settings ---
 
 export interface AppSettings {
   email: string;
   dailyReminders: boolean;
   weeklyReports: boolean;
   monthlyReports: boolean;
+  theme?: 'light' | 'dark' | 'system';
 }
+
+// --- API Response Types ---
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
+
+// --- Default Values ---
+
+export function getDefaultValueForType(config: MetricConfig): MetricValue {
+  switch (config.type) {
+    case 'slider':
+      return config.min;
+    case 'checkbox':
+      return false;
+    case 'number':
+      return config.min ?? 0;
+    case 'time':
+      return '';
+    case 'location':
+      return null;
+    case 'text':
+      return '';
+    case 'calculated':
+      return null;
+  }
+}
+
+// --- Metric Type Metadata (for builder UI) ---
+
+export interface MetricTypeOption {
+  type: MetricType;
+  label: string;
+  description: string;
+  icon: string;
+}
+
+export const METRIC_TYPE_OPTIONS: MetricTypeOption[] = [
+  { type: 'slider', label: 'Slider', description: 'Rate on a scale (e.g. 1-5, 1-10)', icon: 'solar:slider-horizontal-bold' },
+  { type: 'checkbox', label: 'Checkbox', description: 'Yes/No habit tracking', icon: 'solar:check-square-bold' },
+  { type: 'number', label: 'Number', description: 'Quantitative value (e.g. glasses of water)', icon: 'solar:hashtag-bold' },
+  { type: 'time', label: 'Time', description: 'Track a specific time (e.g. bedtime)', icon: 'solar:clock-circle-bold' },
+  { type: 'location', label: 'Location', description: 'Tag a place or city', icon: 'solar:map-point-bold' },
+  { type: 'text', label: 'Text / Note', description: 'Journal entry or short note', icon: 'solar:document-text-bold' },
+  { type: 'calculated', label: 'Calculated', description: 'Auto-computed from other metrics (e.g. sleep hours)', icon: 'solar:calculator-bold' },
+];

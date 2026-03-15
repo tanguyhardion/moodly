@@ -654,7 +654,7 @@ button:focus-visible {
 /* Toast Notification */
 .toast {
   position: fixed;
-  bottom: var(--spacing-xl);
+  top: var(--spacing-xl);
   right: var(--spacing-xl);
   display: flex;
   align-items: center;
@@ -747,5 +747,5 @@ button:focus-visible {
 .toast-enter-from,
 .toast-leave-to {
   opacity: 0;
-  transform: translateY(1rem);
+  transform: translateY(-1rem);
 }

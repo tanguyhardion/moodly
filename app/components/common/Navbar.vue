@@ -42,7 +42,11 @@
           <Icon name="mdi:sparkles" size="20" />
           <span>Insights</span>
         </NuxtLink>
-        <NuxtLink to="/stats" class="nav-link" @click="mobileMenuOpen = false">
+        <NuxtLink
+          to="/stats"
+          class="nav-link"
+          @click="mobileMenuOpen = false"
+        >
           <Icon name="solar:chart-bold" size="20" />
           <span>Stats</span>
         </NuxtLink>

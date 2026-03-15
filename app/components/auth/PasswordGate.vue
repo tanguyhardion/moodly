@@ -132,11 +132,16 @@ watch(isAuthenticated, (value) => {
     align-items: flex-start;
     padding-top: 2rem;
   }
+
+  .password-card {
+    padding: var(--spacing-xl) !important;
+    width: 85% !important;
+  }
 }
 
 .password-card {
   background: var(--card-bg);
-  padding: var(--spacing-xl) var(--spacing-2xl);
+  padding: var(--spacing-2xl);
   border-radius: var(--radius-xl);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-2xl);

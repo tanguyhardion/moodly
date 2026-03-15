@@ -20,14 +20,6 @@ export function getCurrentDateString(date: Date = new Date()): string {
 }
 
 /**
- * Check if a date is a weekend
- */
-export function isWeekend(date: Date): boolean {
-  const day = date.getDay();
-  return day === 0 || day === 6;
-}
-
-/**
  * Helper to parse YYYY-MM-DD to local Date (at 00:00:00)
  */
 export function parseLocalDateString(dateStr: string): Date {
