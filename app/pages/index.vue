@@ -154,7 +154,13 @@ const {
 } = useMoodly();
 
 // --- Date ---
-const maxDate = new Date();
+const maxDate = computed(() => {
+  const d = new Date();
+  if (d.getHours() >= 20) {
+    d.setDate(d.getDate() + 1);
+  }
+  return d;
+});
 const selectedDate = ref(new Date());
 
 const selectedDateString = computed(() =>
