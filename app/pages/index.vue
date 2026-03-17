@@ -306,6 +306,14 @@ function showToastNotification(message: string) {
   max-width: 720px;
   margin: 0 auto;
   padding: 1.5rem;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 1rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 0.75rem;
+  }
 }
 
 .dashboard-header {

@@ -19,7 +19,19 @@
     </div>
 
     <div v-else class="insights-content">
-      <PeriodSelector v-model="period" :periods="PERIODS" />
+      <div ref="periodSelectorRef">
+        <PeriodSelector v-model="period" :periods="PERIODS" />
+      </div>
+
+      <Transition name="slide-down">
+        <div v-if="showStickyHeader" class="sticky-header">
+          <div class="sticky-content">
+            <div class="sticky-period">
+              <PeriodSelector v-model="period" :periods="PERIODS" />
+            </div>
+          </div>
+        </div>
+      </Transition>
 
       <InsightPrimaryMetricSelector />
 
@@ -55,6 +67,20 @@ const PERIODS = [
   { label: '90d', days: 90 },
   { label: 'All', days: 0 },
 ];
+
+const periodSelectorRef = ref<HTMLElement | null>(null);
+const showStickyHeader = ref(false);
+
+onMounted(() => {
+  const checkSticky = () => {
+    if (!periodSelectorRef.value) return;
+    const rect = periodSelectorRef.value.getBoundingClientRect();
+    showStickyHeader.value = rect.bottom < 80;
+  };
+
+  window.addEventListener('scroll', checkSticky, { passive: true });
+  onUnmounted(() => window.removeEventListener('scroll', checkSticky));
+});
 </script>
 
 <style scoped lang="scss">
@@ -64,9 +90,25 @@ const PERIODS = [
   padding: 1.5rem;
   position: relative;
   z-index: 1;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 1rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 0.75rem;
+  }
 }
 
 .insights-content {
   animation: fadeIn 0.4s ease;
+}
+
+.sticky-period {
+  padding: 0.625rem 0.75rem;
+
+  :deep(.period-selector) {
+    margin-bottom: 0;
+  }
 }
 </style>

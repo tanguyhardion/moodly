@@ -13,7 +13,7 @@
           </span>
           <div class="prediction-direction" :class="prediction!.direction">
             <Icon
-              :name="prediction!.direction === 'up' ? 'solar:arrow-up-bold' : prediction!.direction === 'down' ? 'solar:arrow-down-bold' : 'solar:minus-bold'"
+              :name="prediction!.direction === 'up' ? 'solar:arrow-up-bold' : prediction!.direction === 'down' ? 'solar:arrow-down-bold' : 'solar:minus-circle-bold'"
               size="13"
             />
             {{ prediction!.direction === 'up' ? 'Trending up' : prediction!.direction === 'down' ? 'Trending down' : 'Stable' }}

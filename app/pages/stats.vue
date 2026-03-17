@@ -41,7 +41,7 @@
       <div class="summary-grid">
         <div class="summary-card">
           <div class="summary-icon" style="background: var(--primary-rgba-12); color: var(--primary)">
-            <Icon name="solar:calendar-check-bold" size="20" />
+            <Icon name="solar:calendar-bold" size="20" />
           </div>
           <div class="summary-info">
             <span class="summary-value">{{ filteredEntries.length }}</span>
@@ -697,6 +697,14 @@ const metricStatsCards = computed<MetricStats[]>(() =>
   padding: 1.5rem;
   position: relative;
   z-index: 1;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 1rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 0.75rem;
+  }
 }
 
 .stats-content {

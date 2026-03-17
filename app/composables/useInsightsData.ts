@@ -359,7 +359,7 @@ export function useInsightsData() {
       if (bestWeekAvg > 0) {
         list.push({
           key: 'best-week',
-          icon: 'solar:stars-bold-bold',
+          icon: 'solar:stars-bold',
           iconBg: 'rgba(255, 159, 67, 0.12)',
           iconColor: 'var(--orange)',
           title: 'Best 7-Day Period',
@@ -529,7 +529,7 @@ export function useInsightsData() {
       } else if (fillPct < 50) {
         list.push({
           key: 'inconsistent',
-          icon: 'solar:calendar-check-bold',
+          icon: 'solar:calendar-bold',
           iconBg: 'rgba(245, 158, 11, 0.12)',
           iconColor: 'var(--warning)',
           title: 'Log more consistently',

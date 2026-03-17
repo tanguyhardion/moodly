@@ -45,7 +45,7 @@
 
       <!-- Selected location -->
       <div v-if="currentLocation && typeof currentLocation === 'object'" class="selected-location">
-        <Icon name="solar:map-point-check-bold" size="16" class="selected-icon" />
+        <Icon name="solar:map-point-bold" size="16" class="selected-icon" />
         <span>{{ (currentLocation as LocationValue).name }}</span>
       </div>
     </div>

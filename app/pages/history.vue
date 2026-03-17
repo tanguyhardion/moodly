@@ -22,7 +22,7 @@
 
     <div v-else class="history-list">
       <div
-        v-for="entry in sortedEntries"
+        v-for="entry in displayedEntries"
         :key="entry.id"
         class="history-card"
       >
@@ -37,28 +37,84 @@
             <Icon name="solar:trash-bin-trash-bold" size="16" />
           </button>
         </div>
-        <div class="card-metrics">
-          <template v-for="config in metricConfigs" :key="config.id">
-            <div v-if="entry.data[config.id] != null" class="metric-chip">
-              <Icon v-if="config.icon" :name="config.icon" size="14" :style="{ color: config.color || 'var(--primary)' }" />
-              <span class="chip-label">{{ config.label }}:</span>
-              <span class="chip-value">{{ formatMetricValue(entry.data[config.id] ?? null, config) }}</span>
+        <div class="card-grouped-metrics">
+          <template v-for="[groupName, groupMetrics] in groupedMetrics" :key="groupName">
+            <div v-if="hasDataInGroup(entry, groupMetrics)" class="history-metric-group">
+              <div v-if="groupName" class="history-group-title">{{ groupName }}</div>
+              <div class="card-metrics">
+                <template v-for="config in groupMetrics" :key="config.id">
+                  <div v-if="isValidMetricValue(entry.data[config.id] ?? null, config)" class="metric-chip">
+                    <Icon v-if="config.icon" :name="config.icon" size="14" :style="{ color: config.color || 'var(--primary)' }" />
+                    <span class="chip-label">{{ config.label }}{{ config.type !== 'checkbox' ? ':' : '' }}</span>
+                    <span v-if="config.type !== 'checkbox'" class="chip-value">{{ formatMetricValue(entry.data[config.id] ?? null, config) }}</span>
+                  </div>
+                </template>
+              </div>
             </div>
           </template>
         </div>
+      </div>
+      
+      <div v-if="displayedCount < sortedEntries.length" ref="loadMoreSentinel" class="load-more-sentinel">
+        <Icon name="svg-spinners:ring-resize" size="24" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { MetricConfig, MetricValue, LocationValue } from '~/types';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import type { MetricConfig, MetricValue, LocationValue, DailyEntry } from '~/types';
 
-const { entries, isLoading, deleteEntry, metricConfigs } = useMoodly();
+const { entries, isLoading, deleteEntry, groupedMetrics } = useMoodly();
 
 const sortedEntries = computed(() =>
   [...entries.value].sort((a, b) => b.date.localeCompare(a.date))
 );
+
+const displayedCount = ref(10);
+const displayedEntries = computed(() => sortedEntries.value.slice(0, displayedCount.value));
+
+function isValidMetricValue(value: any, config: MetricConfig): boolean {
+  if (value == null) return false;
+  if (config.type === 'checkbox') return value === true;
+  if (typeof value === 'string' && value.trim() === '') return false;
+  if (config.type === 'location' && typeof value === 'object') {
+    return 'name' in value && (value as LocationValue).name.trim() !== '';
+  }
+  return true;
+}
+
+function hasDataInGroup(entry: DailyEntry, groupMetrics: MetricConfig[]): boolean {
+  return groupMetrics.some(config => isValidMetricValue(entry.data[config.id] ?? null, config));
+}
+
+const loadMoreSentinel = ref<HTMLElement | null>(null);
+let observer: IntersectionObserver | null = null;
+
+onMounted(() => {
+  observer = new IntersectionObserver((intersectEntries) => {
+    if (intersectEntries[0].isIntersecting) {
+      if (displayedCount.value < sortedEntries.value.length) {
+        displayedCount.value += 10;
+      }
+    }
+  }, { rootMargin: '200px' });
+
+  watch(loadMoreSentinel, (el) => {
+    if (el) {
+      observer?.observe(el);
+    } else {
+      observer?.disconnect();
+    }
+  }, { immediate: true });
+});
+
+onUnmounted(() => {
+  if (observer) {
+    observer.disconnect();
+  }
+});
 
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr + 'T00:00:00');
@@ -93,6 +149,14 @@ async function handleDelete(id: string) {
   padding: 1.5rem;
   position: relative;
   z-index: 1;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 1rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 0.75rem;
+  }
 }
 
 .history-list {
@@ -146,6 +210,26 @@ async function handleDelete(id: string) {
     }
   }
 
+  .card-grouped-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .history-metric-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .history-group-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
   .card-metrics {
     display: flex;
     flex-wrap: wrap;
@@ -171,5 +255,13 @@ async function handleDelete(id: string) {
       }
     }
   }
+}
+
+.load-more-sentinel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  color: var(--primary);
 }
 </style>

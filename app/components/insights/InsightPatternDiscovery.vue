@@ -59,7 +59,7 @@
             <span class="trend-label">{{ t.label }}</span>
             <div class="trend-direction" :class="t.direction">
               <Icon
-                :name="t.direction === 'up' ? 'solar:arrow-up-bold' : t.direction === 'down' ? 'solar:arrow-down-bold' : 'solar:minus-bold'"
+                :name="t.direction === 'up' ? 'solar:arrow-up-bold' : t.direction === 'down' ? 'solar:arrow-down-bold' : 'solar:minus-circle-bold'"
                 size="12"
               />
               <span>{{ t.summary }}</span>
@@ -126,7 +126,7 @@
           </div>
           <div class="trigger-delta" :class="t.delta > 0 ? 'positive' : t.delta < 0 ? 'negative' : 'neutral'">
             <Icon
-              :name="t.delta > 0 ? 'solar:arrow-up-bold' : t.delta < 0 ? 'solar:arrow-down-bold' : 'solar:minus-bold'"
+              :name="t.delta > 0 ? 'solar:arrow-up-bold' : t.delta < 0 ? 'solar:arrow-down-bold' : 'solar:minus-circle-bold'"
               size="12"
             />
             {{ t.delta > 0 ? '+' : '' }}{{ fmtNum(Math.abs(t.delta), primaryMetric) }}
