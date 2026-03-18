@@ -58,6 +58,14 @@
           <Icon name="solar:history-bold" size="20" />
           <span>History</span>
         </NuxtLink>
+        <NuxtLink
+          to="/letters"
+          class="nav-link"
+          @click="mobileMenuOpen = false"
+        >
+          <Icon name="solar:letter-bold" size="20" />
+          <span>Letters</span>
+        </NuxtLink>
       </div>
 
       <div class="nav-actions">

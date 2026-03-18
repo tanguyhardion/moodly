@@ -59,4 +59,8 @@ export const moodlyBackendService = {
   // --- Location Search ---
   searchLocation: (query: string): Promise<unknown> =>
     apiGet<unknown>("/api/search-location", { q: query }),
+
+  // --- Letters ---
+  createLetter: (message: string, sendDate: string): Promise<{ id: number; message: string; sendDate: string; createdAt: string }> =>
+    apiPost<{ id: number; message: string; sendDate: string; createdAt: string }>("/api/letters", { message, sendDate }),
 };
