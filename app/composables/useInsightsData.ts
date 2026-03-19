@@ -511,33 +511,6 @@ export function useInsightsData() {
       });
     }
 
-    const recent14 = [...entries.value]
-      .sort((a, b) => a.date.localeCompare(b.date))
-      .slice(-14);
-    if (recent14.length >= 14) {
-      const filled = recent14.filter(e => e.data[primaryMetricId.value] != null).length;
-      const fillPct = Math.round((filled / 14) * 100);
-      if (fillPct >= 90) {
-        list.push({
-          key: 'consistent',
-          icon: 'solar:star-bold',
-          iconBg: 'rgba(212, 175, 55, 0.12)',
-          iconColor: 'var(--gold)',
-          title: 'Great consistency!',
-          description: `You've logged ${pm.label} ${fillPct}% of days in the last 2 weeks.`,
-        });
-      } else if (fillPct < 50) {
-        list.push({
-          key: 'inconsistent',
-          icon: 'solar:calendar-bold',
-          iconBg: 'rgba(245, 158, 11, 0.12)',
-          iconColor: 'var(--warning)',
-          title: 'Log more consistently',
-          description: `You've only logged ${pm.label} ${fillPct}% of days recently. More data = better insights.`,
-        });
-      }
-    }
-
     if (dayOfWeekInfo.value.hasData) {
       list.push({
         key: 'best-day',
@@ -549,7 +522,211 @@ export function useInsightsData() {
       });
     }
 
-    return list.slice(0, 4);
+    // ── NEW: Negative triggers ──
+    const negativeTrigger = triggers.value.find(t => t.delta < -0.3);
+    if (negativeTrigger) {
+      list.push({
+        key: `negative-trigger-${negativeTrigger.metricId}`,
+        icon: 'solar:danger-bold',
+        iconBg: 'rgba(239, 68, 68, 0.12)',
+        iconColor: 'var(--error)',
+        title: `Reduce "${negativeTrigger.label}" days`,
+        description: `Your ${pm.label} averages ${fmtNum(Math.abs(negativeTrigger.delta), pm)} lower when you check this habit.`,
+      });
+    }
+
+    // ── NEW: Habit stacking (checkbox correlations) ──
+    if (checkboxMetrics.value.length >= 2) {
+      const allDates = filteredEntries.value.map(e => e.date);
+      const uniqueDates = Array.from(new Set(allDates));
+
+      for (const cbA of checkboxMetrics.value) {
+        for (const cbB of checkboxMetrics.value) {
+          if (cbA.id === cbB.id) continue;
+          if (list.find(r => r.key === `habit-stack-${cbA.id}-${cbB.id}`)) continue;
+
+          const pairs = uniqueDates.map(date => {
+            const entry = filteredEntries.value.find(e => e.date === date);
+            return {
+              valA: entry?.data[cbA.id] === true ? 1 : 0,
+              valB: entry?.data[cbB.id] === true ? 1 : 0,
+            };
+          }).filter(p => p.valA !== 0 || p.valB !== 0);
+
+          if (pairs.length < 10) continue;
+
+          const aVals = pairs.map(p => p.valA);
+          const bVals = pairs.map(p => p.valB);
+          const r = pearson(aVals, bVals);
+
+          if (r > 0.35 && list.length < 20) {
+            const aCount = aVals.filter(v => v === 1).length;
+            const bCount = bVals.filter(v => v === 1).length;
+            const both = pairs.filter(p => p.valA === 1 && p.valB === 1).length;
+            const pct = Math.round((both / Math.min(aCount, bCount)) * 100);
+
+            list.push({
+              key: `habit-stack-${cbA.id}-${cbB.id}`,
+              icon: 'solar:link-bold',
+              iconBg: 'rgba(30, 64, 175, 0.12)',
+              iconColor: 'var(--primary)',
+              title: `Stack: "${cbA.label}" → "${cbB.label}"`,
+              description: `These habits often go together (${pct}% overlap). Try pairing them intentionally.`,
+            });
+            break;
+          }
+        }
+        if (list.some(r => r.key.startsWith('habit-stack'))) break;
+      }
+    }
+
+    // ── NEW: Abandoned habits (low recent fill rate) ──
+    for (const cb of checkboxMetrics.value) {
+      if (list.length >= 20) break;
+      const recentFilled = filteredEntries.value.filter(e => e.data[cb.id] != null).length;
+      const recentFillRate = filteredEntries.value.length ? recentFilled / filteredEntries.value.length : 0;
+
+      const allFilled = entries.value.filter(e => e.data[cb.id] != null).length;
+      const allFillRate = entries.value.length ? allFilled / entries.value.length : 0;
+
+      if (recentFillRate < 0.3 && allFillRate > 0.6 && filteredEntries.value.length >= 14) {
+        list.push({
+          key: `abandoned-${cb.id}`,
+          icon: 'solar:refresh-bold',
+          iconBg: 'rgba(245, 158, 11, 0.12)',
+          iconColor: 'var(--warning)',
+          title: `Revive "${cb.label}"`,
+          description: `You used to track this ${Math.round(allFillRate * 100)}% of days, now only ${Math.round(recentFillRate * 100)}% recently.`,
+        });
+        break;
+      }
+    }
+
+    // ── NEW: Declining non-primary metrics ──
+    const decliningMetric = trendData.value.find(t => t.metricId !== primaryMetricId.value && t.direction === 'down');
+    if (decliningMetric && list.length < 20) {
+      const metric = metricConfigs.value.find(m => m.id === decliningMetric.metricId);
+      if (metric) {
+        list.push({
+          key: `declining-${decliningMetric.metricId}`,
+          icon: 'solar:graph-down-bold',
+          iconBg: 'rgba(239, 68, 68, 0.12)',
+          iconColor: 'var(--error)',
+          title: `Address declining ${decliningMetric.label}`,
+          description: `This metric is trending down. Consider reviewing what might have changed.`,
+        });
+      }
+    }
+
+    // ── NEW: Low fill rate metrics ──
+    for (const metric of metricConfigs.value) {
+      if (list.length >= 20) break;
+      if (metric.id === primaryMetricId.value) continue;
+
+      const filled = filteredEntries.value.filter(e => e.data[metric.id] != null).length;
+      const fillRate = filteredEntries.value.length ? filled / filteredEntries.value.length : 0;
+
+      if (fillRate < 0.3 && fillRate > 0 && filteredEntries.value.length >= 14) {
+        list.push({
+          key: `low-fill-${metric.id}`,
+          icon: 'solar:question-circle-bold',
+          iconBg: 'rgba(245, 158, 11, 0.12)',
+          iconColor: 'var(--warning)',
+          title: `Track "${metric.label}" more often`,
+          description: `Only logged ${filled}/${filteredEntries.value.length} days. More data helps identify patterns.`,
+        });
+        break;
+      }
+    }
+
+    // ── NEW: Location insights (best locations) ──
+    for (const locInsight of locationInsights.value) {
+      if (list.length >= 20) break;
+      if (locInsight.places.length < 2) continue;
+
+      const best = locInsight.places[0];
+      const other = locInsight.places[1];
+
+      if (best.avgMood != null && other.avgMood != null && best.avgMood > other.avgMood + 1.0) {
+        list.push({
+          key: `location-${locInsight.metricId}`,
+          icon: 'solar:map-point-bold',
+          iconBg: 'rgba(16, 185, 129, 0.12)',
+          iconColor: 'var(--success)',
+          title: `Your ${pm.label} peaks at "${best.name}"`,
+          description: `Avg ${fmtNum(best.avgMood, pm)} there vs ${fmtNum(other.avgMood, pm)} at "${other.name}". Consider spending more time in that location.`,
+        });
+        break;
+      }
+    }
+
+    // ── NEW: Milestone celebrations ──
+    const totalEntries = entries.value.length;
+    const milestones = [50, 100, 250, 500, 1000];
+    for (const milestone of milestones) {
+      if (totalEntries >= milestone - 10 && totalEntries < milestone) {
+        const remaining = milestone - totalEntries;
+        list.push({
+          key: `milestone-${milestone}`,
+          icon: 'solar:cup-star-bold',
+          iconBg: 'rgba(212, 175, 55, 0.12)',
+          iconColor: 'var(--gold)',
+          title: `Almost at ${milestone} entries!`,
+          description: `You have ${totalEntries} entries. Just ${remaining} more to hit this milestone!`,
+        });
+        break;
+      }
+    }
+
+    // ── NEW: Personal best challenge ──
+    const pbAchievement = achievements.value.find(a => a.key.startsWith('pb-'));
+    if (pbAchievement && list.length < 20) {
+      list.push({
+        key: 'challenge-personal-best',
+        icon: 'solar:target-bold',
+        iconBg: 'rgba(30, 64, 175, 0.12)',
+        iconColor: 'var(--primary)',
+        title: `Challenge: Beat your ${pm.label} record`,
+        description: pbAchievement.description + ' Can you top it?',
+      });
+    }
+
+    // ── NEW: Best vs worst day action ──
+    if (dayOfWeekInfo.value.hasData && dayOfWeekInfo.value.bestVal - dayOfWeekInfo.value.worstVal > 1.5) {
+      const diff = (dayOfWeekInfo.value.bestVal - dayOfWeekInfo.value.worstVal).toFixed(1);
+      list.push({
+        key: 'day-pattern-action',
+        icon: 'solar:calendar-search-bold',
+        iconBg: 'rgba(30, 64, 175, 0.12)',
+        iconColor: 'var(--primary)',
+        title: `Replicate ${dayOfWeekInfo.value.bestDay} patterns`,
+        description: `${pm.label} is ${diff} points higher on ${dayOfWeekInfo.value.bestDay}s vs ${dayOfWeekInfo.value.worstDay}s. What do you do differently?`,
+      });
+    }
+
+    // ── NEW: Improve low-performing metrics ──
+    const lowMetric = numericMetrics.value.find(m => {
+      if (m.id === primaryMetricId.value) return false;
+      const vals = getNumericVals(m.id, filteredEntries.value);
+      if (vals.length < 5) return false;
+      const avg = vals.reduce((s, p) => s + p.v, 0) / vals.length;
+      const range = (m.type === 'slider' && 'max' in m) ? m.max : 10;
+      return avg < range * 0.5; // Below 50% of max
+    });
+    if (lowMetric && list.length < 20) {
+      const vals = getNumericVals(lowMetric.id, filteredEntries.value);
+      const avg = vals.reduce((s, p) => s + p.v, 0) / vals.length;
+      list.push({
+        key: `low-performing-${lowMetric.id}`,
+        icon: lowMetric.icon || 'solar:arrow-up-bold',
+        iconBg: 'rgba(245, 158, 11, 0.12)',
+        iconColor: 'var(--warning)',
+        title: `Boost your ${lowMetric.label}`,
+        description: `Currently averaging ${fmtNum(avg, lowMetric)}. Small improvements here could compound over time.`,
+      });
+    }
+
+    return list;
   });
 
   // ── Comparison ─────────────────────────────────────────────────────────────
