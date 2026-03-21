@@ -1,4 +1,4 @@
-import type { DailyEntry, MetricConfig, AppSettings, ApiResponse } from "~/types";
+import type { DailyEntry, MetricConfig, AppSettings, ApiResponse, WeatherData } from "~/types";
 
 const API_BASE = import.meta.env.DEV
   ? "http://localhost:3001"
@@ -59,6 +59,14 @@ export const moodlyBackendService = {
   // --- Location Search ---
   searchLocation: (query: string): Promise<unknown> =>
     apiGet<unknown>("/api/search-location", { q: query }),
+
+  // --- Weather ---
+  getWeather: (lat: number, lon: number, date?: string): Promise<WeatherData> =>
+    apiGet<WeatherData>("/api/get-weather", {
+      lat: String(lat),
+      lon: String(lon),
+      ...(date ? { date } : {}),
+    }),
 
   // --- Letters ---
   createLetter: (message: string, sendDate: string): Promise<{ id: number; message: string; sendDate: string; createdAt: string }> =>

@@ -78,6 +78,7 @@
               <MetricRenderer
                 :config="metric"
                 :modelValue="entryData[metric.id] ?? getDefaultValueForType(metric)"
+                :date="selectedDateString"
                 @update:modelValue="updateMetricValue(metric.id, $event)"
               />
             </div>

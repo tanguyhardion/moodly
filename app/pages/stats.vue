@@ -290,6 +290,36 @@
                 <span class="list-item-count">{{ loc.count }}×</span>
               </div>
             </div>
+
+            <!-- Weather Stats -->
+            <div v-if="stats.hasWeatherData" class="weather-stats-section">
+              <div class="weather-stats-header">
+                <Icon name="solar:cloud-sun-bold" size="14" />
+                <span>Weather Statistics</span>
+                <span class="weather-count">({{ stats.weatherEntryCount }} entries)</span>
+              </div>
+              <div class="stats-row">
+                <div class="stat-item">
+                  <span class="stat-label">Avg Temp</span>
+                  <span class="stat-value">{{ stats.avgTemp !== null ? Math.round(stats.avgTemp) + '°C' : '—' }}</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Min</span>
+                  <span class="stat-value">{{ stats.minTemp !== null ? Math.round(stats.minTemp) + '°C' : '—' }}</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Max</span>
+                  <span class="stat-value">{{ stats.maxTemp !== null ? Math.round(stats.maxTemp) + '°C' : '—' }}</span>
+                </div>
+              </div>
+              <div v-if="stats.topConditions.length" class="condition-list">
+                <div v-for="cond in stats.topConditions" :key="cond.condition" class="condition-item">
+                  <Icon :name="getConditionIcon(cond.condition)" size="13" class="condition-icon" />
+                  <span class="condition-name">{{ cond.condition }}</span>
+                  <span class="condition-count">{{ cond.count }}×</span>
+                </div>
+              </div>
+            </div>
           </template>
 
           <!-- Text -->
@@ -318,7 +348,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MetricConfig, DailyEntry, NumberMetricConfig, SliderMetricConfig, CalculatedMetricConfig } from '~/types';
+import type { MetricConfig, DailyEntry, NumberMetricConfig, SliderMetricConfig, CalculatedMetricConfig, LocationValue } from '~/types';
 
 const { entries, isLoading, isConfigLoading, metricConfigs } = useMoodly();
 
@@ -466,6 +496,19 @@ function minsToTime(mins: number): string {
   const h = Math.floor(mins / 60) % 24;
   const m = Math.round(mins % 60);
   return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+}
+
+function getConditionIcon(condition: string): string {
+  const conditionLower = condition.toLowerCase();
+  if (conditionLower.includes('clear') || conditionLower.includes('sunny')) return 'solar:sun-bold';
+  if (conditionLower.includes('partly')) return 'solar:cloud-sun-bold';
+  if (conditionLower.includes('overcast') || conditionLower.includes('cloudy')) return 'solar:cloud-bold';
+  if (conditionLower.includes('fog')) return 'solar:fog-bold';
+  if (conditionLower.includes('drizzle')) return 'solar:cloud-rain-bold';
+  if (conditionLower.includes('rain') || conditionLower.includes('shower')) return 'solar:cloud-storm-bold';
+  if (conditionLower.includes('snow')) return 'solar:snowflake-bold';
+  if (conditionLower.includes('thunder') || conditionLower.includes('storm')) return 'solar:cloud-bolt-bold';
+  return 'solar:cloud-bold';
 }
 
 function fmtNum(v: number, metric: MetricConfig): string {
@@ -625,8 +668,8 @@ function computeMetricStats(metric: MetricConfig, entries: DailyEntry[]): Metric
     const filled = entries
       .filter(e => e.data[metric.id] != null && typeof e.data[metric.id] === 'object')
       .map(e => {
-        const loc = e.data[metric.id] as { name: string };
-        return { date: e.date, name: loc.name };
+        const loc = e.data[metric.id] as LocationValue;
+        return { date: e.date, name: loc.name, weather: loc.weather };
       });
 
     const counts: Record<string, number> = {};
@@ -636,12 +679,44 @@ function computeMetricStats(metric: MetricConfig, entries: DailyEntry[]): Metric
       .slice(0, 6)
       .map(([name, count]) => ({ name, count }));
 
+    // Weather statistics
+    const temps: number[] = [];
+    const conditionCounts: Record<string, number> = {};
+    let hasWeatherData = false;
+
+    for (const f of filled) {
+      if (f.weather) {
+        hasWeatherData = true;
+        if (f.weather.temperature !== null) {
+          temps.push(f.weather.temperature);
+        }
+        const condition = f.weather.condition;
+        conditionCounts[condition] = (conditionCounts[condition] ?? 0) + 1;
+      }
+    }
+
+    const avgTemp = temps.length ? temps.reduce((a, b) => a + b, 0) / temps.length : null;
+    const minTemp = temps.length ? Math.min(...temps) : null;
+    const maxTemp = temps.length ? Math.max(...temps) : null;
+
+    const topConditions = Object.entries(conditionCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 4)
+      .map(([condition, count]) => ({ condition, count }));
+
     return {
       ...base,
       type: 'location',
       fillCount: filled.length,
       topLocations,
       recent: filled.slice(-5).reverse().map(f => ({ date: f.date, value: f.name })),
+      // Weather stats
+      hasWeatherData,
+      avgTemp,
+      minTemp,
+      maxTemp,
+      topConditions,
+      weatherEntryCount: temps.length,
     };
   }
 
@@ -1021,6 +1096,65 @@ const metricStatsCards = computed<MetricStats[]>(() =>
     color: var(--text-tertiary);
     font-weight: 600;
     font-size: 0.8125rem;
+  }
+}
+
+.weather-stats-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+
+  .weather-stats-header {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.75rem;
+
+    .weather-count {
+      color: var(--text-tertiary);
+      font-weight: 500;
+      text-transform: none;
+    }
+  }
+
+  .stats-row {
+    margin-bottom: 0.75rem;
+  }
+
+  .condition-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .condition-item {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.625rem;
+    background: var(--hover-bg);
+    border-radius: var(--radius-sm);
+    font-size: 0.8125rem;
+
+    .condition-icon {
+      color: var(--primary);
+    }
+
+    .condition-name {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .condition-count {
+      color: var(--text-tertiary);
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
   }
 }
 

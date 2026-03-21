@@ -132,6 +132,17 @@
             <label>Placeholder</label>
             <input v-model="formData.placeholder" type="text" placeholder="Search for a location..." class="form-input" />
           </div>
+          <label class="toggle-row compact">
+            <span>Enable weather tracking</span>
+            <div class="switch">
+              <input type="checkbox" v-model="formData.enableWeather" />
+              <span class="slider"></span>
+            </div>
+          </label>
+          <p v-if="formData.enableWeather" class="form-hint">
+            <Icon name="solar:cloud-sun-bold" size="14" />
+            Weather data will be fetched when a location is selected.
+          </p>
         </template>
 
         <template v-if="formData.type === 'text'">
@@ -289,6 +300,8 @@ interface FormState {
   placeholder: string;
   maxLength: number | undefined;
   multiline: boolean;
+  // Location metric fields
+  enableWeather: boolean;
   // Calculated metric fields
   formulaType: 'time_diff';
   calcFromMetricId: string;
@@ -311,6 +324,7 @@ const defaultForm = (): FormState => ({
   placeholder: '',
   maxLength: undefined,
   multiline: false,
+  enableWeather: false,
   formulaType: 'time_diff',
   calcFromMetricId: '',
   calcToMetricId: '',
@@ -339,6 +353,7 @@ watch(
         placeholder: (metric as any).placeholder ?? '',
         maxLength: (metric as any).maxLength ?? undefined,
         multiline: (metric as any).multiline ?? false,
+        enableWeather: (metric as any).enableWeather ?? false,
         formulaType: (metric as CalculatedMetricConfig).formula?.formulaType ?? 'time_diff',
         calcFromMetricId: (metric as CalculatedMetricConfig).formula?.fromMetricId ?? '',
         calcToMetricId: (metric as CalculatedMetricConfig).formula?.toMetricId ?? '',
@@ -410,7 +425,14 @@ function confirmForm() {
       config = { ...base, type: 'time', id, order, placeholder: f.placeholder || undefined } as MetricConfig;
       break;
     case 'location':
-      config = { ...base, type: 'location', id, order, placeholder: f.placeholder || undefined } as MetricConfig;
+      config = {
+        ...base,
+        type: 'location',
+        id,
+        order,
+        placeholder: f.placeholder || undefined,
+        enableWeather: f.enableWeather || undefined,
+      } as MetricConfig;
       break;
     case 'text':
       config = {
@@ -741,6 +763,19 @@ input:checked + .slider {
   font-size: 0.8125rem;
   font-weight: 500;
   margin-bottom: 1rem;
+}
+
+.form-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--primary-rgba-08);
+  border-radius: var(--radius-md);
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
 }
 
 .unit-toggle {

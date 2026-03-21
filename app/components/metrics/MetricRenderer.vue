@@ -3,6 +3,7 @@
     :is="widgetComponent"
     :config="config"
     :modelValue="modelValue"
+    :date="date"
     @update:modelValue="$emit('update:modelValue', $event)"
   />
 </template>
@@ -20,6 +21,8 @@ import MetricCalculated from './MetricCalculated.vue';
 const props = defineProps<{
   config: MetricConfig;
   modelValue: MetricValue;
+  /** Current entry date in YYYY-MM-DD format (used by location for weather) */
+  date?: string;
 }>();
 
 defineEmits<{

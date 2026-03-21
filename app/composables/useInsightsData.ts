@@ -1,4 +1,4 @@
-import type { DailyEntry, SliderMetricConfig } from '~/types';
+import type { DailyEntry, SliderMetricConfig, LocationValue } from '~/types';
 
 // ── Exported Types ─────────────────────────────────────────────────────────────
 
@@ -80,6 +80,22 @@ export interface LocationInsightItem {
   icon: string;
   color: string;
   places: { name: string; count: number; avgMood: number | null }[];
+}
+
+export interface WeatherInsightItem {
+  condition: string;
+  icon: string;
+  count: number;
+  avgMood: number | null;
+  avgTemp: number | null;
+}
+
+export interface WeatherMoodCorrelation {
+  hasData: boolean;
+  tempCorrelation: number | null;
+  bestWeather: { condition: string; avgMood: number } | null;
+  worstWeather: { condition: string; avgMood: number } | null;
+  summary: string | null;
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -762,11 +778,11 @@ export function useInsightsData() {
         const filled = filteredEntries.value
           .filter(e => e.data[m.id] != null && typeof e.data[m.id] === 'object')
           .map(e => {
-            const loc = e.data[m.id] as { name: string };
+            const loc = e.data[m.id] as LocationValue;
             const mood = primaryMetric.value
               ? (typeof e.data[primaryMetricId.value] === 'number' ? e.data[primaryMetricId.value] as number : null)
               : null;
-            return { name: loc.name, mood };
+            return { name: loc.name, mood, weather: loc.weather };
           });
 
         const counts: Record<string, { count: number; moods: number[] }> = {};
@@ -792,6 +808,124 @@ export function useInsightsData() {
       .filter(l => l.places.length > 0)
   );
 
+  // ── Weather Insights ──────────────────────────────────────────────────────
+
+  const weatherInsights = computed<WeatherInsightItem[]>(() => {
+    // Collect all weather data from location metrics
+    const weatherEntries: { condition: string; icon: string; temp: number | null; mood: number | null }[] = [];
+
+    for (const m of locationMetrics.value) {
+      for (const e of filteredEntries.value) {
+        const loc = e.data[m.id] as LocationValue | null;
+        if (loc?.weather) {
+          const mood = primaryMetric.value
+            ? (typeof e.data[primaryMetricId.value] === 'number' ? e.data[primaryMetricId.value] as number : null)
+            : null;
+          weatherEntries.push({
+            condition: loc.weather.condition,
+            icon: loc.weather.icon,
+            temp: loc.weather.temperature,
+            mood,
+          });
+        }
+      }
+    }
+
+    if (weatherEntries.length === 0) return [];
+
+    // Group by condition
+    const byCondition: Record<string, { icon: string; temps: number[]; moods: number[] }> = {};
+    for (const entry of weatherEntries) {
+      if (!byCondition[entry.condition]) {
+        byCondition[entry.condition] = { icon: entry.icon, temps: [], moods: [] };
+      }
+      if (entry.temp !== null) byCondition[entry.condition].temps.push(entry.temp);
+      if (entry.mood !== null) byCondition[entry.condition].moods.push(entry.mood);
+    }
+
+    return Object.entries(byCondition)
+      .map(([condition, data]) => ({
+        condition,
+        icon: data.icon,
+        count: data.temps.length || data.moods.length,
+        avgMood: data.moods.length
+          ? Math.round(data.moods.reduce((a, b) => a + b, 0) / data.moods.length * 10) / 10
+          : null,
+        avgTemp: data.temps.length
+          ? Math.round(data.temps.reduce((a, b) => a + b, 0) / data.temps.length)
+          : null,
+      }))
+      .sort((a, b) => b.count - a.count);
+  });
+
+  const weatherMoodCorrelation = computed<WeatherMoodCorrelation>(() => {
+    // Collect all weather-mood pairs
+    const pairs: { temp: number; mood: number; condition: string }[] = [];
+
+    for (const m of locationMetrics.value) {
+      for (const e of filteredEntries.value) {
+        const loc = e.data[m.id] as LocationValue | null;
+        if (loc?.weather && primaryMetric.value) {
+          const mood = typeof e.data[primaryMetricId.value] === 'number'
+            ? e.data[primaryMetricId.value] as number
+            : null;
+          if (mood !== null && loc.weather.temperature !== null) {
+            pairs.push({
+              temp: loc.weather.temperature,
+              mood,
+              condition: loc.weather.condition,
+            });
+          }
+        }
+      }
+    }
+
+    if (pairs.length < 3) {
+      return { hasData: false, tempCorrelation: null, bestWeather: null, worstWeather: null, summary: null };
+    }
+
+    // Temperature-mood correlation
+    const temps = pairs.map(p => p.temp);
+    const moods = pairs.map(p => p.mood);
+    const tempCorr = pearson(temps, moods);
+
+    // Best/worst weather by mood
+    const byCondition: Record<string, number[]> = {};
+    for (const p of pairs) {
+      if (!byCondition[p.condition]) byCondition[p.condition] = [];
+      byCondition[p.condition].push(p.mood);
+    }
+
+    const conditionAvgs = Object.entries(byCondition)
+      .filter(([_, moods]) => moods.length >= 2)
+      .map(([condition, moods]) => ({
+        condition,
+        avgMood: moods.reduce((a, b) => a + b, 0) / moods.length,
+      }))
+      .sort((a, b) => b.avgMood - a.avgMood);
+
+    const bestWeather = conditionAvgs.length > 0
+      ? { condition: conditionAvgs[0].condition, avgMood: Math.round(conditionAvgs[0].avgMood * 10) / 10 }
+      : null;
+    const worstWeather = conditionAvgs.length > 1
+      ? { condition: conditionAvgs[conditionAvgs.length - 1].condition, avgMood: Math.round(conditionAvgs[conditionAvgs.length - 1].avgMood * 10) / 10 }
+      : null;
+
+    // Generate summary
+    let summary: string | null = null;
+    if (Math.abs(tempCorr) >= 0.3) {
+      if (tempCorr > 0) {
+        summary = `Your mood tends to be higher on warmer days (correlation: ${Math.round(tempCorr * 100)}%)`;
+      } else {
+        summary = `Your mood tends to be higher on cooler days (correlation: ${Math.round(Math.abs(tempCorr) * 100)}%)`;
+      }
+    } else if (bestWeather && worstWeather && bestWeather.avgMood - worstWeather.avgMood > 0.5) {
+      summary = `You feel best during "${bestWeather.condition}" weather`;
+    }
+
+    return { hasData: true, tempCorrelation: tempCorr, bestWeather, worstWeather, summary };
+  });
+
   return {
     entries,
     isLoading,
@@ -812,5 +946,7 @@ export function useInsightsData() {
     recommendations,
     comparisonData,
     locationInsights,
+    weatherInsights,
+    weatherMoodCorrelation,
   };
 }

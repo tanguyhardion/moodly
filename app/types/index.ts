@@ -57,6 +57,8 @@ export interface TimeMetricConfig extends MetricConfigBase {
 export interface LocationMetricConfig extends MetricConfigBase {
   type: 'location';
   placeholder?: string;
+  /** Enable automatic weather fetching when location is selected */
+  enableWeather?: boolean;
 }
 
 export interface TextMetricConfig extends MetricConfigBase {
@@ -99,10 +101,33 @@ export type MetricConfig =
 
 // --- Metric Value Types ---
 
+export interface WeatherData {
+  /** Average temperature in Celsius */
+  temperature: number | null;
+  /** Max temperature in Celsius */
+  temperatureMax?: number | null;
+  /** Min temperature in Celsius */
+  temperatureMin?: number | null;
+  /** Weather condition string (e.g., "Sunny", "Rainy") */
+  condition: string;
+  /** WMO weather code */
+  conditionCode: number;
+  /** Icon identifier (sunny, cloudy, rainy, snowy, stormy, foggy, etc.) */
+  icon: string;
+  /** Relative humidity percentage */
+  humidity?: number | null;
+  /** Precipitation in mm */
+  precipitation?: number;
+  /** Wind speed in km/h */
+  windSpeed?: number | null;
+}
+
 export interface LocationValue {
   name: string;
   latitude: number;
   longitude: number;
+  /** Weather data at the time of entry (if weather tracking enabled) */
+  weather?: WeatherData;
 }
 
 /** All possible metric values */

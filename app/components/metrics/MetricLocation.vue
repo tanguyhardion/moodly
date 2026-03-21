@@ -3,6 +3,9 @@
     <div class="location-header">
       <Icon v-if="config.icon" :name="config.icon" size="20" class="metric-icon" :style="iconStyle" />
       <span class="metric-label">{{ config.label }}</span>
+      <span v-if="config.enableWeather" class="weather-badge" title="Weather tracking enabled">
+        <Icon name="solar:cloud-sun-bold" size="14" />
+      </span>
     </div>
 
     <div class="location-input-group">
@@ -43,17 +46,30 @@
         </div>
       </Transition>
 
-      <!-- Selected location -->
+      <!-- Selected location with weather -->
       <div v-if="currentLocation && typeof currentLocation === 'object'" class="selected-location">
-        <Icon name="solar:map-point-bold" size="16" class="selected-icon" />
-        <span>{{ (currentLocation as LocationValue).name }}</span>
+        <div class="selected-location-main">
+          <Icon name="solar:map-point-bold" size="16" class="selected-icon" />
+          <span>{{ (currentLocation as LocationValue).name }}</span>
+        </div>
+
+        <!-- Weather display -->
+        <div v-if="isLoadingWeather" class="weather-loading">
+          <Icon name="svg-spinners:ring-resize" size="14" />
+          <span>Fetching weather...</span>
+        </div>
+        <div v-else-if="(currentLocation as LocationValue).weather" class="weather-info">
+          <Icon :name="getWeatherIcon((currentLocation as LocationValue).weather!.icon)" size="16" class="weather-icon" />
+          <span class="weather-temp">{{ formatTemperature((currentLocation as LocationValue).weather!.temperature) }}</span>
+          <span class="weather-condition">{{ (currentLocation as LocationValue).weather!.condition }}</span>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { LocationMetricConfig, MetricValue, LocationValue } from '~/types';
+import type { LocationMetricConfig, MetricValue, LocationValue, WeatherData } from '~/types';
 import { moodlyBackendService } from '~/utils/moodly-backend';
 
 interface GeoapifyResult {
@@ -66,6 +82,8 @@ interface GeoapifyResult {
 const props = defineProps<{
   config: LocationMetricConfig;
   modelValue: MetricValue;
+  /** Current entry date in YYYY-MM-DD format */
+  date?: string;
 }>();
 
 const emit = defineEmits<{
@@ -76,6 +94,7 @@ const searchQuery = ref('');
 const results = ref<GeoapifyResult[]>([]);
 const showDropdown = ref(false);
 const searchTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
+const isLoadingWeather = ref(false);
 
 const currentLocation = computed(() => props.modelValue);
 
@@ -104,21 +123,65 @@ function debouncedSearch() {
   }, 350);
 }
 
-function selectLocation(result: GeoapifyResult) {
-  emit('update:modelValue', {
+async function selectLocation(result: GeoapifyResult) {
+  const locationValue: LocationValue = {
     name: result.formatted,
     latitude: result.lat,
     longitude: result.lon,
-  });
+  };
+
+  // Emit immediately without weather
+  emit('update:modelValue', locationValue);
   searchQuery.value = result.formatted;
   showDropdown.value = false;
   results.value = [];
+
+  // Fetch weather if enabled
+  if (props.config.enableWeather) {
+    isLoadingWeather.value = true;
+    try {
+      const weather = await moodlyBackendService.getWeather(
+        result.lat,
+        result.lon,
+        props.date
+      );
+      // Emit updated value with weather
+      emit('update:modelValue', {
+        ...locationValue,
+        weather,
+      });
+    } catch (error) {
+      console.error('Failed to fetch weather:', error);
+      // Keep the location without weather on error
+    } finally {
+      isLoadingWeather.value = false;
+    }
+  }
 }
 
 function clearLocation() {
   emit('update:modelValue', null);
   searchQuery.value = '';
   results.value = [];
+}
+
+function getWeatherIcon(icon: string): string {
+  const iconMap: Record<string, string> = {
+    'sunny': 'solar:sun-bold',
+    'partly-cloudy': 'solar:cloud-sun-bold',
+    'cloudy': 'solar:cloud-bold',
+    'foggy': 'solar:fog-bold',
+    'drizzle': 'solar:cloud-rain-bold',
+    'rainy': 'solar:cloud-storm-bold',
+    'snowy': 'solar:snowflake-bold',
+    'stormy': 'solar:cloud-bolt-bold',
+  };
+  return iconMap[icon] ?? 'solar:cloud-bold';
+}
+
+function formatTemperature(temp: number | null): string {
+  if (temp === null) return '—';
+  return `${Math.round(temp)}°C`;
 }
 
 // Close dropdown on outside click
@@ -148,6 +211,16 @@ if (import.meta.client) {
       font-weight: 600;
       font-size: 0.9375rem;
       color: var(--text-primary);
+    }
+
+    .weather-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.125rem 0.375rem;
+      background: var(--primary-rgba-12);
+      border-radius: var(--radius-sm);
+      color: var(--primary);
     }
   }
 
@@ -259,15 +332,54 @@ if (import.meta.client) {
 
     .selected-location {
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 0.375rem;
       margin-top: 0.5rem;
       font-size: 0.8125rem;
-      color: var(--success);
-      font-weight: 500;
 
-      .selected-icon {
-        flex-shrink: 0;
+      .selected-location-main {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        color: var(--success);
+        font-weight: 500;
+
+        .selected-icon {
+          flex-shrink: 0;
+        }
+      }
+
+      .weather-loading {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        color: var(--text-tertiary);
+        font-size: 0.75rem;
+        padding-left: 1.375rem;
+      }
+
+      .weather-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.375rem 0.5rem;
+        background: var(--hover-bg);
+        border-radius: var(--radius-sm);
+        margin-left: 1.375rem;
+        width: fit-content;
+
+        .weather-icon {
+          color: var(--primary);
+        }
+
+        .weather-temp {
+          font-weight: 600;
+          color: var(--text-primary);
+        }
+
+        .weather-condition {
+          color: var(--text-secondary);
+        }
       }
     }
   }

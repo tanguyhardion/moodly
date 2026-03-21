@@ -43,7 +43,22 @@
               <div v-if="groupName" class="history-group-title">{{ groupName }}</div>
               <div class="card-metrics">
                 <template v-for="config in groupMetrics" :key="config.id">
-                  <div v-if="isValidMetricValue(entry.data[config.id] ?? null, config)" class="metric-chip">
+                  <!-- Location with weather -->
+                  <div
+                    v-if="isValidMetricValue(entry.data[config.id] ?? null, config) && config.type === 'location'"
+                    class="metric-chip metric-chip-location"
+                  >
+                    <Icon v-if="config.icon" :name="config.icon" size="14" :style="{ color: config.color || 'var(--primary)' }" />
+                    <span class="chip-label">{{ config.label }}:</span>
+                    <span class="chip-value">{{ (entry.data[config.id] as LocationValue).name }}</span>
+                    <template v-if="(entry.data[config.id] as LocationValue).weather">
+                      <span class="chip-divider">|</span>
+                      <Icon :name="getWeatherIcon((entry.data[config.id] as LocationValue).weather!.icon)" size="13" class="weather-icon" />
+                      <span class="chip-weather">{{ formatTemperature((entry.data[config.id] as LocationValue).weather!.temperature) }}</span>
+                    </template>
+                  </div>
+                  <!-- Other metric types -->
+                  <div v-else-if="isValidMetricValue(entry.data[config.id] ?? null, config)" class="metric-chip">
                     <Icon v-if="config.icon" :name="config.icon" size="14" :style="{ color: config.color || 'var(--primary)' }" />
                     <span class="chip-label">{{ config.label }}{{ config.type !== 'checkbox' ? ':' : '' }}</span>
                     <span v-if="config.type !== 'checkbox'" class="chip-value">{{ formatMetricValue(entry.data[config.id] ?? null, config) }}</span>
@@ -133,6 +148,25 @@ function formatMetricValue(value: MetricValue, config: MetricConfig): string {
   if (config.type === 'slider') return `${value} / ${(config as any).max}`;
   if (config.type === 'number' && (config as any).unit) return `${value} ${(config as any).unit}`;
   return String(value);
+}
+
+function getWeatherIcon(icon: string): string {
+  const iconMap: Record<string, string> = {
+    'sunny': 'solar:sun-bold',
+    'partly-cloudy': 'solar:cloud-sun-bold',
+    'cloudy': 'solar:cloud-bold',
+    'foggy': 'solar:fog-bold',
+    'drizzle': 'solar:cloud-rain-bold',
+    'rainy': 'solar:cloud-storm-bold',
+    'snowy': 'solar:snowflake-bold',
+    'stormy': 'solar:cloud-bolt-bold',
+  };
+  return iconMap[icon] ?? 'solar:cloud-bold';
+}
+
+function formatTemperature(temp: number | null): string {
+  if (temp === null) return '—';
+  return `${Math.round(temp)}°C`;
 }
 
 async function handleDelete(id: string) {
@@ -252,6 +286,22 @@ async function handleDelete(id: string) {
       .chip-value {
         color: var(--text-primary);
         font-weight: 600;
+      }
+
+      &.metric-chip-location {
+        .chip-divider {
+          color: var(--text-tertiary);
+          margin: 0 0.125rem;
+        }
+
+        .weather-icon {
+          color: var(--primary);
+        }
+
+        .chip-weather {
+          color: var(--text-secondary);
+          font-weight: 500;
+        }
       }
     }
   }
