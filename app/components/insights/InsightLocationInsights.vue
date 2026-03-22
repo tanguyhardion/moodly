@@ -63,7 +63,7 @@
         <div v-if="weatherMoodCorrelation.bestWeather" class="weather-extreme-card best">
           <Icon name="solar:face-scan-circle-bold" size="18" class="extreme-icon" />
           <div class="extreme-content">
-            <span class="extreme-label">Best mood weather</span>
+            <span class="extreme-label">Best {{ primaryMetric?.label || 'mood' }} weather</span>
             <span class="extreme-value">{{ weatherMoodCorrelation.bestWeather.condition }}</span>
             <span v-if="primaryMetric" class="extreme-mood">
               avg {{ fmtNum(weatherMoodCorrelation.bestWeather.avgMood, primaryMetric) }}
@@ -73,7 +73,7 @@
         <div v-if="weatherMoodCorrelation.worstWeather" class="weather-extreme-card worst">
           <Icon name="solar:emoji-sad-bold" size="18" class="extreme-icon" />
           <div class="extreme-content">
-            <span class="extreme-label">Lowest mood weather</span>
+            <span class="extreme-label">Lowest {{ primaryMetric?.label || 'mood' }} weather</span>
             <span class="extreme-value">{{ weatherMoodCorrelation.worstWeather.condition }}</span>
             <span v-if="primaryMetric" class="extreme-mood">
               avg {{ fmtNum(weatherMoodCorrelation.worstWeather.avgMood, primaryMetric) }}
