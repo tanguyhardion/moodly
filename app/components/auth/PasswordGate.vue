@@ -11,6 +11,8 @@
           ref="passwordInput"
           v-model="password"
           type="password"
+          pattern="[0-9]*"
+          inputmode="numeric"
           placeholder="Master Password"
           class="password-input"
           :class="{ error: showError }"
