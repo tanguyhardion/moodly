@@ -164,6 +164,28 @@ export interface AppSettings {
   theme?: 'light' | 'dark' | 'system';
 }
 
+// --- Email Alerts ---
+
+export type AlertOperator = 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'is_true' | 'is_false';
+
+export interface AlertCondition {
+  metricId: string;
+  operator: AlertOperator;
+  value: number | string | boolean | null;
+}
+
+export interface EmailAlert {
+  id?: number;
+  name: string;
+  enabled: boolean;
+  conditions: AlertCondition[];
+  conditionLogic: 'all' | 'any';
+  emailSubject: string;
+  emailMessage: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 // --- API Response Types ---
 
 export interface ApiResponse<T> {

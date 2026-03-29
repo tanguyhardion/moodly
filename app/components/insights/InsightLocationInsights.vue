@@ -71,7 +71,7 @@
           </div>
         </div>
         <div v-if="weatherMoodCorrelation.worstWeather" class="weather-extreme-card worst">
-          <Icon name="solar:emoji-sad-bold" size="18" class="extreme-icon" />
+          <Icon name="solar:sad-circle-bold" size="18" class="extreme-icon" />
           <div class="extreme-content">
             <span class="extreme-label">Lowest {{ primaryMetric?.label || 'mood' }} weather</span>
             <span class="extreme-value">{{ weatherMoodCorrelation.worstWeather.condition }}</span>

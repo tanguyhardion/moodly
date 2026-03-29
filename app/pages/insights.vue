@@ -29,6 +29,9 @@
             <div class="sticky-period">
               <PeriodSelector v-model="period" :periods="PERIODS" />
             </div>
+            <div class="sticky-metric-selector">
+              <InsightPrimaryMetricSelector />
+            </div>
           </div>
         </div>
       </Transition>
@@ -109,6 +112,19 @@ onMounted(() => {
 
   :deep(.period-selector) {
     margin-bottom: 0;
+  }
+}
+
+.sticky-metric-selector {
+  padding: 0.625rem 0.75rem;
+  border-top: 1px solid var(--border);
+
+  :deep(.primary-metric-section) {
+    margin-bottom: 0;
+  }
+
+  :deep(.section-label) {
+    margin-bottom: 0.5rem;
   }
 }
 </style>

@@ -405,7 +405,7 @@ watch(
   (metrics) => {
     if (selectedMetricIds.value.length === 0 && metrics.length > 0) {
       selectedMetricIds.value = metrics
-        .filter(m => ['slider', 'number', 'checkbox', 'time', 'calculated'].includes(m.type))
+        .filter(m => ['slider', 'number', 'checkbox', 'time', 'calculated', 'location', 'text'].includes(m.type))
         .map(m => m.id);
     }
   },

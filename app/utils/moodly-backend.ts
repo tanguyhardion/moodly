@@ -1,4 +1,4 @@
-import type { DailyEntry, MetricConfig, AppSettings, ApiResponse, WeatherData } from "~/types";
+import type { DailyEntry, MetricConfig, AppSettings, ApiResponse, WeatherData, EmailAlert } from "~/types";
 
 const API_BASE = import.meta.env.DEV
   ? "http://localhost:3001"
@@ -71,4 +71,14 @@ export const moodlyBackendService = {
   // --- Letters ---
   createLetter: (message: string, sendDate: string): Promise<{ id: number; message: string; sendDate: string; createdAt: string }> =>
     apiPost<{ id: number; message: string; sendDate: string; createdAt: string }>("/api/letters", { message, sendDate }),
+
+  // --- Email Alerts ---
+  getEmailAlerts: (): Promise<EmailAlert[]> =>
+    apiGet<EmailAlert[]>("/api/email-alerts"),
+
+  saveEmailAlert: (alert: EmailAlert): Promise<EmailAlert> =>
+    apiPost<EmailAlert>("/api/save-email-alert", alert),
+
+  deleteEmailAlert: (id: number): Promise<{ id: number }> =>
+    apiPost<{ id: number }>("/api/delete-email-alert", { id }),
 };

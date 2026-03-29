@@ -192,7 +192,7 @@ export function useInsightsData() {
   // ── Metric groups ──────────────────────────────────────────────────────────
 
   const numericMetrics = computed(() =>
-    metricConfigs.value.filter(m => m.type === 'slider' || m.type === 'number')
+    metricConfigs.value.filter(m => m.type === 'slider' || m.type === 'number' || m.type === 'calculated')
   );
 
   const checkboxMetrics = computed(() =>
@@ -712,7 +712,7 @@ export function useInsightsData() {
       const diff = (dayOfWeekInfo.value.bestVal - dayOfWeekInfo.value.worstVal).toFixed(1);
       list.push({
         key: 'day-pattern-action',
-        icon: 'solar:calendar-search-bold',
+        icon: 'solar:calendar-minimalistic-bold',
         iconBg: 'rgba(30, 64, 175, 0.12)',
         iconColor: 'var(--primary)',
         title: `Replicate ${dayOfWeekInfo.value.bestDay} patterns`,
