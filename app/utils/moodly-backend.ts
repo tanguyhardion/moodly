@@ -31,16 +31,27 @@ async function apiPost<T>(path: string, body: unknown): Promise<T> {
   return json.data as T;
 }
 
+async function apiDelete<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...body as Record<string, unknown>, masterPassword: getMasterPassword() }),
+  });
+  const json: ApiResponse<T> = await res.json();
+  if (!json.success) throw new Error(json.error ?? "Request failed");
+  return json.data as T;
+}
+
 export const moodlyBackendService = {
   // --- Entries ---
   getEntries: (params?: { from?: string; to?: string; date?: string }): Promise<DailyEntry[]> =>
-    apiGet<DailyEntry[]>("/api/get-entries", params as Record<string, string>),
+    apiGet<DailyEntry[]>("/api/entries", params as Record<string, string>),
 
   saveEntry: (entry: { id?: string; date: string; data: Record<string, unknown> }): Promise<DailyEntry> =>
-    apiPost<DailyEntry>("/api/save-entry", entry),
+    apiPost<DailyEntry>("/api/entries", entry),
 
   deleteEntry: (id: string): Promise<{ id: string }> =>
-    apiPost<{ id: string }>("/api/delete-entry", { id }),
+    apiDelete<{ id: string }>("/api/entries", { id }),
 
   // --- Metric Configuration ---
   getMetricConfig: (): Promise<{ metrics: MetricConfig[]; updatedAt: string | null }> =>
@@ -77,8 +88,8 @@ export const moodlyBackendService = {
     apiGet<EmailAlert[]>("/api/email-alerts"),
 
   saveEmailAlert: (alert: EmailAlert): Promise<EmailAlert> =>
-    apiPost<EmailAlert>("/api/save-email-alert", alert),
+    apiPost<EmailAlert>("/api/email-alerts", alert),
 
   deleteEmailAlert: (id: number): Promise<{ id: number }> =>
-    apiPost<{ id: number }>("/api/delete-email-alert", { id }),
+    apiDelete<{ id: number }>("/api/email-alerts", { id }),
 };

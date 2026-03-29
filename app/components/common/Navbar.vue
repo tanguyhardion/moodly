@@ -316,14 +316,14 @@ defineEmits<{
         &:hover {
           background: var(--border-hover);
           box-shadow: 0 4px 12px rgba(var(--color-shadow-primary), 0.2);
+
+          .nav-button-icon {
+            transform: rotate(40deg) scale(1.05);
+          }
         }
 
         .nav-button-icon {
           transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-          &:hover {
-            transform: rotate(40deg) scale(1.05);
-          }
         }
       }
     }
