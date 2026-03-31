@@ -315,6 +315,7 @@ watch(isOpen, (val) => {
   justify-content: center;
   z-index: 1000;
   backdrop-filter: blur(4px);
+  pointer-events: none;
 }
 
 .settings-card {
@@ -330,6 +331,7 @@ watch(isOpen, (val) => {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  pointer-events: auto;
 
   &.editor-open {
     max-width: 600px;
@@ -373,6 +375,7 @@ watch(isOpen, (val) => {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
+  pointer-events: auto;
 }
 
 .section {
@@ -632,7 +635,11 @@ input:checked + .slider {
   bottom: 0;
   background: var(--card-bg);
   z-index: 10;
-  overflow-y: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+  cursor: auto;
 }
 
 .actions {
@@ -640,6 +647,7 @@ input:checked + .slider {
   justify-content: flex-end;
   margin-top: var(--spacing-lg);
   flex-shrink: 0;
+  pointer-events: auto;
 }
 
 .save-btn {

@@ -275,9 +275,14 @@ function save() {
 <style scoped lang="scss">
 .alert-editor {
   background: var(--card-bg);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
+  border-radius: 0;
+  border: none;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  pointer-events: auto;
+  cursor: auto;
 }
 
 .editor-header {
@@ -287,6 +292,7 @@ function save() {
   padding: var(--spacing-md) var(--spacing-lg);
   border-bottom: 1px solid var(--border);
   background: var(--hover-bg);
+  flex-shrink: 0;
 
   h3 {
     margin: 0;
@@ -316,8 +322,9 @@ function save() {
 
 .editor-content {
   padding: var(--spacing-lg);
-  max-height: 60vh;
+  flex: 1;
   overflow-y: auto;
+  min-height: 0;
 }
 
 .form-group {
@@ -373,22 +380,79 @@ function save() {
 
 .condition-logic {
   display: flex;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-xl);
   margin-bottom: var(--spacing-md);
 }
 
 .radio-label {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: 0.75rem;
   cursor: pointer;
   font-size: 0.875rem;
   color: var(--text-secondary);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  position: relative;
+
+  &:hover {
+    background: var(--hover-bg);
+    color: var(--text-primary);
+  }
+
+  &:focus-within {
+    outline: 2px solid var(--primary);
+    outline-offset: 0px;
+  }
 
   input[type="radio"] {
-    width: 16px;
-    height: 16px;
-    accent-color: var(--primary);
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    cursor: pointer;
+    background: var(--card-bg);
+    transition: all 0.2s ease;
+    display: inline-block;
+    position: relative;
+    flex-shrink: 0;
+    padding: 0;
+    margin: 0 0.5rem 0 0;
+    vertical-align: middle;
+
+    &:hover {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    &:checked {
+      border-color: var(--primary);
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      box-shadow: 0 2px 4px rgba(var(--color-shadow-primary), 0.2);
+
+      &::after {
+        content: "";
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: white;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  span {
+    vertical-align: middle;
   }
 }
 
@@ -473,6 +537,7 @@ function save() {
   padding: var(--spacing-md) var(--spacing-lg);
   border-top: 1px solid var(--border);
   background: var(--hover-bg);
+  flex-shrink: 0;
 }
 
 .btn-secondary {
@@ -484,6 +549,8 @@ function save() {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  flex-shrink: 0;
+  white-space: nowrap;
 
   &:hover {
     background: var(--border);
@@ -503,6 +570,7 @@ function save() {
   &:disabled {
     opacity: 0.7;
     cursor: not-allowed;
+    pointer-events: none;
   }
 
   &:hover:not(:disabled) {
