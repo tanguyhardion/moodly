@@ -92,4 +92,7 @@ export const moodlyBackendService = {
 
   deleteEmailAlert: (id: number): Promise<{ id: number }> =>
     apiDelete<{ id: number }>("/api/email-alerts", { id }),
+
+  checkEntryAlerts: (date: string): Promise<{ results: string[] }> =>
+    apiPost<{ results: string[] }>("/api/check-entry-alerts", { date }),
 };

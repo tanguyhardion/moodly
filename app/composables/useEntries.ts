@@ -41,6 +41,15 @@ export function useEntries() {
       } else {
         entries.value.unshift(saved);
       }
+
+      // Check and send email alerts for this entry
+      try {
+        await moodlyBackendService.checkEntryAlerts(date);
+      } catch (alertError) {
+        console.error("Failed to check entry alerts:", alertError);
+        // Don't throw - alerts checking shouldn't block entry save
+      }
+
       return saved;
     } catch (error) {
       console.error("Failed to save entry:", error);
