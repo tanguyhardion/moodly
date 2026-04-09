@@ -10,8 +10,9 @@ const ALERTS_SENT_SESSION_KEY = "moodly-entry-alerts-sent";
 
 function shouldCheckEntryAlerts(date: string): boolean {
   if (typeof window === "undefined") return false;
-  if (date !== getCurrentDateString()) return false;
-  if (new Date().getHours() < ALERT_CHECK_HOUR_THRESHOLD) return false;
+  const now = new Date();
+  if (date !== getCurrentDateString(now)) return false;
+  if (now.getHours() < ALERT_CHECK_HOUR_THRESHOLD) return false;
   return !sessionStorage.getItem(ALERTS_SENT_SESSION_KEY);
 }
 
