@@ -1,24 +1,18 @@
 import type { DailyEntry, MetricDataMap } from "~/types";
 import { moodlyBackendService } from "~/utils/moodly-backend";
-import { generateId } from "~/utils/helpers";
+import { generateId, getCurrentDateString } from "~/utils/helpers";
 
 const entries = ref<DailyEntry[]>([]);
 const isLoading = ref(false);
 const isInitialized = ref(false);
+const ALERT_CHECK_HOUR_THRESHOLD = 17;
 const ALERTS_SENT_SESSION_KEY = "moodly-entry-alerts-sent";
-
-function getTodayDateString(): string {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
+const ALERTS_SENT_SESSION_VALUE = "true";
 
 function shouldCheckEntryAlerts(date: string): boolean {
   if (typeof window === "undefined") return false;
-  if (date !== getTodayDateString()) return false;
-  if (new Date().getHours() < 17) return false;
+  if (date !== getCurrentDateString()) return false;
+  if (new Date().getHours() < ALERT_CHECK_HOUR_THRESHOLD) return false;
   return !sessionStorage.getItem(ALERTS_SENT_SESSION_KEY);
 }
 
@@ -62,7 +56,7 @@ export function useEntries() {
       if (shouldCheckEntryAlerts(date)) {
         moodlyBackendService.checkEntryAlerts(date)
           .then(() => {
-            sessionStorage.setItem(ALERTS_SENT_SESSION_KEY, "1");
+            sessionStorage.setItem(ALERTS_SENT_SESSION_KEY, ALERTS_SENT_SESSION_VALUE);
           })
           .catch(alertError => {
             console.error("Failed to check entry alerts:", alertError);
