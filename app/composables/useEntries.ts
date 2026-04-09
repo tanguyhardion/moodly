@@ -1,10 +1,20 @@
 import type { DailyEntry, MetricDataMap } from "~/types";
 import { moodlyBackendService } from "~/utils/moodly-backend";
-import { generateId } from "~/utils/helpers";
+import { generateId, getCurrentDateString } from "~/utils/helpers";
 
 const entries = ref<DailyEntry[]>([]);
 const isLoading = ref(false);
 const isInitialized = ref(false);
+const ALERT_CHECK_HOUR_THRESHOLD = 17;
+const ALERTS_SENT_SESSION_KEY = "moodly-entry-alerts-sent";
+
+function shouldCheckEntryAlerts(date: string): boolean {
+  if (typeof window === "undefined") return false;
+  const now = new Date();
+  if (date !== getCurrentDateString(now)) return false;
+  if (now.getHours() < ALERT_CHECK_HOUR_THRESHOLD) return false;
+  return !sessionStorage.getItem(ALERTS_SENT_SESSION_KEY);
+}
 
 export function useEntries() {
   const getEntryByDate = (date: string): DailyEntry | undefined => {
@@ -43,9 +53,15 @@ export function useEntries() {
       }
 
       // Check and send email alerts for this entry (non-blocking)
-      moodlyBackendService.checkEntryAlerts(date).catch(alertError => {
-        console.error("Failed to check entry alerts:", alertError);
-      });
+      if (shouldCheckEntryAlerts(date)) {
+        moodlyBackendService.checkEntryAlerts(date)
+          .then(() => {
+            sessionStorage.setItem(ALERTS_SENT_SESSION_KEY, "true");
+          })
+          .catch(alertError => {
+            console.error("Failed to check entry alerts:", alertError);
+          });
+      }
 
       return saved;
     } catch (error) {
