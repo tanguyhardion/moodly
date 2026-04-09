@@ -7,7 +7,6 @@ const isLoading = ref(false);
 const isInitialized = ref(false);
 const ALERT_CHECK_HOUR_THRESHOLD = 17;
 const ALERTS_SENT_SESSION_KEY = "moodly-entry-alerts-sent";
-const ALERTS_SENT_SESSION_VALUE = "true";
 
 function shouldCheckEntryAlerts(date: string): boolean {
   if (typeof window === "undefined") return false;
@@ -56,7 +55,7 @@ export function useEntries() {
       if (shouldCheckEntryAlerts(date)) {
         moodlyBackendService.checkEntryAlerts(date)
           .then(() => {
-            sessionStorage.setItem(ALERTS_SENT_SESSION_KEY, ALERTS_SENT_SESSION_VALUE);
+            sessionStorage.setItem(ALERTS_SENT_SESSION_KEY, "true");
           })
           .catch(alertError => {
             console.error("Failed to check entry alerts:", alertError);
