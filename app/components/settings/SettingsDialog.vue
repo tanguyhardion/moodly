@@ -700,7 +700,7 @@ input:checked + .slider {
   display: flex;
   align-items: center;
   gap: 0.625rem;
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
   background: var(--gradient-success);
   color: white;
   border-radius: var(--radius-md);
@@ -710,6 +710,9 @@ input:checked + .slider {
   z-index: 1100;
   backdrop-filter: blur(10px);
   white-space: nowrap;
+  height: max-content;
+  width: max-content;
+  flex-shrink: 0;
 }
 
 .toast-enter-active,
