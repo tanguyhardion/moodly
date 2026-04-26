@@ -98,6 +98,26 @@ export interface WeatherMoodCorrelation {
   summary: string | null;
 }
 
+export interface HabitEffectItem {
+  habitId: string;
+  habitLabel: string;
+  habitIcon: string;
+  habitColor: string;
+  metricId: string;
+  metricLabel: string;
+  metricIcon: string;
+  metricColor: string;
+  day1Avg: number;
+  day2Avg: number;
+  day3Avg: number;
+  baselineAvg: number;
+  day1Delta: number;
+  day2Delta: number;
+  day3Delta: number;
+  strongestDay: 1 | 2 | 3;
+  strongestEffect: number;
+}
+
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 export const PERIODS = [
@@ -926,6 +946,122 @@ export function useInsightsData() {
     return { hasData: true, tempCorrelation: tempCorr, bestWeather, worstWeather, summary };
   });
 
+  // ── Habit Effects on Next Days ─────────────────────────────────────────────
+
+  const habitEffects = computed<HabitEffectItem[]>(() => {
+    const effects: HabitEffectItem[] = [];
+    if (!primaryMetric.value || checkboxMetrics.value.length === 0) return effects;
+
+    const sorted = [...filteredEntries.value].sort((a, b) => a.date.localeCompare(b.date));
+    const dateMap = new Map(sorted.map((e, i) => [e.date, i]));
+
+    for (const habit of checkboxMetrics.value) {
+      // Find days when habit was checked vs not checked
+      const checkedDays: number[] = [];
+      const uncheckedDays: number[] = [];
+
+      for (const entry of sorted) {
+        if (entry.data[habit.id] === true) {
+          checkedDays.push(dateMap.get(entry.date) ?? -1);
+        }
+      }
+
+      // Collect unchecked dates (where entry exists but habit not checked)
+      for (const entry of sorted) {
+        if (entry.data[habit.id] === false || entry.data[habit.id] == null) {
+          uncheckedDays.push(dateMap.get(entry.date) ?? -1);
+        }
+      }
+
+      if (checkedDays.length < 3 || uncheckedDays.length < 3) continue;
+
+      // For each numeric metric, calculate next-day effects
+      for (const metric of numericMetrics.value) {
+        if (metric.id === habit.id || metric.id !== primaryMetricId.value) continue;
+
+        // Values on days +1, +2, +3 after checked habit day
+        const day1AfterChecked: number[] = [];
+        const day2AfterChecked: number[] = [];
+        const day3AfterChecked: number[] = [];
+
+        for (const dayIdx of checkedDays) {
+          if (dayIdx < 0) continue;
+          if (dayIdx + 1 < sorted.length) {
+            const v = sorted[dayIdx + 1].data[metric.id];
+            if (typeof v === 'number') day1AfterChecked.push(v as number);
+          }
+          if (dayIdx + 2 < sorted.length) {
+            const v = sorted[dayIdx + 2].data[metric.id];
+            if (typeof v === 'number') day2AfterChecked.push(v as number);
+          }
+          if (dayIdx + 3 < sorted.length) {
+            const v = sorted[dayIdx + 3].data[metric.id];
+            if (typeof v === 'number') day3AfterChecked.push(v as number);
+          }
+        }
+
+        // Baseline: values on all days
+        const allMetricVals: number[] = [];
+        for (const entry of sorted) {
+          const v = entry.data[metric.id];
+          if (typeof v === 'number') allMetricVals.push(v as number);
+        }
+
+        if (allMetricVals.length < 5 || (day1AfterChecked.length < 2 && day2AfterChecked.length < 2)) continue;
+
+        const day1Avg = day1AfterChecked.length > 0
+          ? Math.round(day1AfterChecked.reduce((a, b) => a + b, 0) / day1AfterChecked.length * 10) / 10
+          : 0;
+        const day2Avg = day2AfterChecked.length > 0
+          ? Math.round(day2AfterChecked.reduce((a, b) => a + b, 0) / day2AfterChecked.length * 10) / 10
+          : 0;
+        const day3Avg = day3AfterChecked.length > 0
+          ? Math.round(day3AfterChecked.reduce((a, b) => a + b, 0) / day3AfterChecked.length * 10) / 10
+          : 0;
+        const baselineAvg = Math.round(allMetricVals.reduce((a, b) => a + b, 0) / allMetricVals.length * 10) / 10;
+
+        const day1Delta = day1Avg ? Math.round((day1Avg - baselineAvg) * 10) / 10 : 0;
+        const day2Delta = day2Avg ? Math.round((day2Avg - baselineAvg) * 10) / 10 : 0;
+        const day3Delta = day3Avg ? Math.round((day3Avg - baselineAvg) * 10) / 10 : 0;
+
+        const deltas = [
+          { day: 1 as const, delta: day1Delta },
+          { day: 2 as const, delta: day2Delta },
+          { day: 3 as const, delta: day3Delta },
+        ];
+        const strongestDayInfo = deltas.reduce((a, b) => Math.abs(b.delta) > Math.abs(a.delta) ? b : a);
+
+        // Only include if there's a meaningful effect on at least one day
+        if (Math.abs(strongestDayInfo.delta) >= 0.3) {
+          effects.push({
+            habitId: habit.id,
+            habitLabel: habit.label,
+            habitIcon: habit.icon ?? '',
+            habitColor: habit.color ?? 'var(--primary)',
+            metricId: metric.id,
+            metricLabel: metric.label,
+            metricIcon: metric.icon ?? '',
+            metricColor: metric.color ?? 'var(--primary)',
+            day1Avg,
+            day2Avg,
+            day3Avg,
+            baselineAvg,
+            day1Delta,
+            day2Delta,
+            day3Delta,
+            strongestDay: strongestDayInfo.day,
+            strongestEffect: strongestDayInfo.delta,
+          });
+        }
+      }
+    }
+
+    // Sort by absolute effect size, limit to top effects
+    return effects
+      .sort((a, b) => Math.abs(b.strongestEffect) - Math.abs(a.strongestEffect))
+      .slice(0, 8);
+  });
+
   return {
     entries,
     isLoading,
@@ -948,5 +1084,6 @@ export function useInsightsData() {
     locationInsights,
     weatherInsights,
     weatherMoodCorrelation,
+    habitEffects,
   };
 }

@@ -40,6 +40,7 @@
 
       <InsightPatternDiscovery v-if="primaryMetric" />
       <InsightMostImpactful v-if="impactMetrics.length" />
+      <InsightHabitEffect v-if="habitEffects.length" />
       <InsightAchievements v-if="achievements.length" />
       <InsightPrediction v-if="prediction && primaryMetric" />
       <InsightRecommendations v-if="recommendations.length" />
@@ -62,6 +63,7 @@ const {
   recommendations,
   comparisonData,
   locationInsights,
+  habitEffects,
 } = useInsightsData();
 
 const PERIODS = [
