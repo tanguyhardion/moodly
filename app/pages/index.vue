@@ -1,5 +1,9 @@
 <template>
-  <div class="page-container">
+  <div
+    class="page-container"
+    @touchstart="handleTouchStart"
+    @touchend="handleSwipeEnd"
+  >
     <!-- Header -->
     <div class="dashboard-header">
       <div class="header-top">
@@ -42,65 +46,73 @@
     <!-- Loading -->
     <LoadingState v-if="isLoading || isConfigLoading" message="Loading your dashboard..." />
 
-    <!-- Empty State: No Metrics Configured -->
-    <div v-else-if="!hasMetrics" class="get-started-card">
-      <div class="get-started-content">
-        <div class="get-started-icon">
-          <Icon name="solar:clipboard-add-bold" size="56" />
+    <!-- Content with Slide Animation -->
+    <Transition
+      v-else
+      :name="swipeDirection === 'left' ? 'slide-left' : 'slide-right'"
+      mode="out-in"
+      @enter="swipeDirection = null"
+    >
+      <!-- Empty State: No Metrics Configured -->
+      <div v-if="!hasMetrics" :key="`empty-${selectedDateString}`" class="get-started-card">
+        <div class="get-started-content">
+          <div class="get-started-icon">
+            <Icon name="solar:clipboard-add-bold" size="56" />
+          </div>
+          <h2>Design Your Tracking Routine</h2>
+          <p>
+            Add metrics to start tracking your daily habits, moods, and goals.
+            You decide what to track — sliders, checkboxes, numbers, times, locations, or notes.
+          </p>
+          <button class="btn btn-primary" @click="showBuilder = true" type="button">
+            <Icon name="solar:add-circle-bold" size="20" />
+            Get Started
+          </button>
         </div>
-        <h2>Design Your Tracking Routine</h2>
-        <p>
-          Add metrics to start tracking your daily habits, moods, and goals.
-          You decide what to track — sliders, checkboxes, numbers, times, locations, or notes.
-        </p>
-        <button class="btn btn-primary" @click="showBuilder = true" type="button">
-          <Icon name="solar:add-circle-bold" size="20" />
-          Get Started
-        </button>
       </div>
-    </div>
 
-    <!-- Metric Entry Form -->
-    <div v-else class="metric-entry-form">
-      <!-- Grouped metrics -->
-      <template v-for="[groupName, groupMetrics] in groupedMetrics" :key="groupName">
-        <div class="metric-group" v-if="groupMetrics.length > 0">
-          <h3 v-if="groupName" class="group-title">
-            {{ groupName }}
-          </h3>
-          <div class="metrics-grid">
-            <div
-              v-for="metric in groupMetrics"
-              :key="metric.id"
-              class="metric-card"
-              :class="`metric-type-${metric.type}`"
-            >
-              <MetricRenderer
-                :config="metric"
-                :modelValue="entryData[metric.id] ?? getDefaultValueForType(metric)"
-                :date="selectedDateString"
-                @update:modelValue="updateMetricValue(metric.id, $event)"
-              />
+      <!-- Metric Entry Form -->
+      <div v-else :key="`entry-${selectedDateString}`" class="metric-entry-form">
+        <!-- Grouped metrics -->
+        <template v-for="[groupName, groupMetrics] in groupedMetrics" :key="groupName">
+          <div class="metric-group" v-if="groupMetrics.length > 0">
+            <h3 v-if="groupName" class="group-title">
+              {{ groupName }}
+            </h3>
+            <div class="metrics-grid">
+              <div
+                v-for="metric in groupMetrics"
+                :key="metric.id"
+                class="metric-card"
+                :class="`metric-type-${metric.type}`"
+              >
+                <MetricRenderer
+                  :config="metric"
+                  :modelValue="entryData[metric.id] ?? getDefaultValueForType(metric)"
+                  :date="selectedDateString"
+                  @update:modelValue="updateMetricValue(metric.id, $event)"
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </template>
+        </template>
 
-      <!-- Save Button -->
-      <div class="save-section">
-        <button
-          ref="saveBtnRef"
-          class="btn btn-primary save-btn"
-          @click="handleSave"
-          :disabled="isSaving"
-          type="button"
-        >
-          <Icon v-if="isSaving" name="svg-spinners:ring-resize" size="20" />
-          <Icon v-else name="solar:diskette-bold" size="20" />
-          {{ isSaving ? 'Saving...' : 'Save Entry' }}
-        </button>
+        <!-- Save Button -->
+        <div class="save-section">
+          <button
+            ref="saveBtnRef"
+            class="btn btn-primary save-btn"
+            @click="handleSave"
+            :disabled="isSaving"
+            type="button"
+          >
+            <Icon v-if="isSaving" name="svg-spinners:ring-resize" size="20" />
+            <Icon v-else name="solar:diskette-bold" size="20" />
+            {{ isSaving ? 'Saving...' : 'Save Entry' }}
+          </button>
+        </div>
       </div>
-    </div>
+    </Transition>
 
     <!-- Floating Action Button -->
     <Transition name="fab">
@@ -153,6 +165,40 @@ const {
   darkMode,
   isInitialized,
 } = useMoodly();
+
+// --- Swipe Gestures ---
+const touchStartX = ref(0);
+const swipeThreshold = 50;
+const swipeDirection = ref<'left' | 'right' | null>(null);
+
+function handleTouchStart(e: TouchEvent) {
+  touchStartX.value = e.changedTouches[0].screenX;
+}
+
+function handleSwipeEnd(e: TouchEvent) {
+  const touchEndX = e.changedTouches[0].screenX;
+  const diff = touchStartX.value - touchEndX;
+  const absDiff = Math.abs(diff);
+
+  if (absDiff < swipeThreshold) return;
+
+  const direction = diff > 0 ? 'left' : 'right';
+  swipeDirection.value = direction;
+
+  if (direction === 'left') {
+    // Swipe left = next day
+    const nextDate = new Date(selectedDate.value);
+    nextDate.setDate(nextDate.getDate() + 1);
+    if (nextDate <= maxDate.value) {
+      selectedDate.value = nextDate;
+    }
+  } else if (direction === 'right') {
+    // Swipe right = previous day
+    const prevDate = new Date(selectedDate.value);
+    prevDate.setDate(prevDate.getDate() - 1);
+    selectedDate.value = prevDate;
+  }
+}
 
 // --- Date ---
 const maxDate = computed(() => {
@@ -360,7 +406,7 @@ function showToastNotification(message: string) {
   border-radius: var(--radius-xl);
   padding: 3rem 2rem;
   text-align: center;
-  animation: fadeIn 0.5s ease;
+  animation: fadeIn 0.05s ease;
 
   .get-started-content {
     max-width: 400px;
@@ -400,7 +446,7 @@ function showToastNotification(message: string) {
 
 /* Metric Entry Form */
 .metric-entry-form {
-  animation: fadeIn 0.4s ease;
+  animation: fadeIn 0.05s ease;
 
   .metric-group {
     margin-bottom: 1.5rem;
@@ -522,5 +568,36 @@ function showToastNotification(message: string) {
 .fab-leave-to {
   opacity: 0;
   transform: scale(0) rotate(-90deg);
+}
+
+/* Swipe animations */
+.slide-left-enter-active,
+.slide-left-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-left-enter-from {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.slide-left-leave-to {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-right-enter-from {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+
+.slide-right-leave-to {
+  opacity: 0;
+  transform: translateX(100%);
 }
 </style>
