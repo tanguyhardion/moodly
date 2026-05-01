@@ -168,21 +168,26 @@ const {
 
 // --- Swipe Gestures ---
 const touchStartX = ref(0);
+const touchStartY = ref(0);
 const swipeThreshold = 50;
 const swipeDirection = ref<'left' | 'right' | null>(null);
 
 function handleTouchStart(e: TouchEvent) {
   touchStartX.value = e.changedTouches[0].screenX;
+  touchStartY.value = e.changedTouches[0].screenY;
 }
 
 function handleSwipeEnd(e: TouchEvent) {
   const touchEndX = e.changedTouches[0].screenX;
-  const diff = touchStartX.value - touchEndX;
-  const absDiff = Math.abs(diff);
+  const touchEndY = e.changedTouches[0].screenY;
+  const diffX = touchStartX.value - touchEndX;
+  const diffY = Math.abs(touchStartY.value - touchEndY);
+  const absDiffX = Math.abs(diffX);
 
-  if (absDiff < swipeThreshold) return;
+  // Only trigger if horizontal distance exceeds threshold and is more than 2x the vertical distance
+  if (absDiffX < swipeThreshold || absDiffX <= diffY * 2) return;
 
-  const direction = diff > 0 ? 'left' : 'right';
+  const direction = diffX > 0 ? 'left' : 'right';
   swipeDirection.value = direction;
 
   if (direction === 'left') {
