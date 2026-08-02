@@ -95,4 +95,7 @@ export const moodlyBackendService = {
 
   checkEntryAlerts: (date: string): Promise<{ results: string[] }> =>
     apiPost<{ results: string[] }>("/api/check-entry-alerts", { date }),
+
+  checkLonginesAvailability: (): Promise<unknown> =>
+    apiGet<unknown>("/api/cron/check-longines-availability"),
 };
