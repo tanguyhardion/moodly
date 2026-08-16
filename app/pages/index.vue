@@ -73,6 +73,20 @@
 
       <!-- Metric Entry Form -->
       <div v-else :key="`entry-${selectedDateString}`" class="metric-entry-form">
+        <!-- Draft Restored Banner -->
+        <Transition name="fade">
+          <div v-if="isRestoredDraft" class="draft-banner">
+            <div class="draft-banner-content">
+              <Icon name="solar:document-medicine-bold" size="20" class="draft-banner-icon" />
+              <span>Restored unsaved draft for this day</span>
+            </div>
+            <button class="btn btn-ghost btn-sm discard-btn" @click="handleDiscardDraft" type="button">
+              <Icon name="solar:trash-bin-trash-bold" size="16" />
+              Discard draft
+            </button>
+          </div>
+        </Transition>
+
         <!-- Grouped metrics -->
         <template v-for="[groupName, groupMetrics] in groupedMetrics" :key="groupName">
           <div class="metric-group" v-if="groupMetrics.length > 0">
@@ -219,6 +233,11 @@ const selectedDateString = computed(() =>
   getCurrentDateString(selectedDate.value)
 );
 
+// --- Draft management ---
+const { getDraft, saveDraft, clearDraft, cleanupOldDrafts } = useDraftEntry();
+const isRestoredDraft = ref(false);
+const isInitializingEntry = ref(false);
+
 // --- Entry data ---
 const entryData = ref<MetricDataMap>({});
 const isSaving = ref(false);
@@ -235,6 +254,8 @@ const saveBtnRef = ref<HTMLElement | null>(null);
 const showFab = ref(false);
 
 onMounted(() => {
+  cleanupOldDrafts();
+
   const observer = new IntersectionObserver(
     (entries) => {
       const entry = entries[0];
@@ -283,46 +304,64 @@ watch([isInitialized, metricConfigs], ([ready]) => {
   if (ready) loadEntryForDate(selectedDateString.value);
 });
 
-// Auto-recompute calculated metric values when source metrics change.
-// Self-limiting: the 2nd trigger after assignment finds no changes and exits.
+// Auto-recompute calculated metric values when source metrics change
+// and auto-save draft to localStorage when user makes changes.
 watch(
   entryData,
   (data) => {
     const calcMetrics = metricConfigs.value.filter(
       (m): m is CalculatedMetricConfig => m.type === 'calculated'
     );
-    if (calcMetrics.length === 0) return;
+    if (calcMetrics.length > 0) {
+      let hasChange = false;
+      const next = { ...data };
 
-    let hasChange = false;
-    const next = { ...data };
+      for (const metric of calcMetrics) {
+        const result = evaluateFormula(metric.formula, data);
+        if (next[metric.id] !== result) {
+          next[metric.id] = result;
+          hasChange = true;
+        }
+      }
 
-    for (const metric of calcMetrics) {
-      const result = evaluateFormula(metric.formula, data);
-      if (next[metric.id] !== result) {
-        next[metric.id] = result;
-        hasChange = true;
+      if (hasChange) {
+        entryData.value = next;
+        return;
       }
     }
 
-    if (hasChange) {
-      entryData.value = next;
+    if (!isInitializingEntry.value && isInitialized.value) {
+      saveDraft(selectedDateString.value, data);
     }
   },
   { deep: true },
 );
 
-function loadEntryForDate(dateStr: string) {
+function loadEntryForDate(dateStr: string, options: { ignoreDraft?: boolean } = {}) {
+  isInitializingEntry.value = true;
+  const draft = !options.ignoreDraft ? getDraft(dateStr) : null;
   const existing = getEntryByDate(dateStr);
-  if (existing) {
-    entryData.value = { ...existing.data };
-  } else {
-    // Initialize with defaults
-    const defaults: MetricDataMap = {};
-    for (const m of metricConfigs.value) {
-      defaults[m.id] = getDefaultValueForType(m);
-    }
-    entryData.value = defaults;
+
+  const defaults: MetricDataMap = {};
+  for (const m of metricConfigs.value) {
+    defaults[m.id] = getDefaultValueForType(m);
   }
+
+  if (draft) {
+    entryData.value = { ...defaults, ...(existing?.data ?? {}), ...draft };
+    isRestoredDraft.value = true;
+  } else {
+    isRestoredDraft.value = false;
+    if (existing) {
+      entryData.value = { ...defaults, ...existing.data };
+    } else {
+      entryData.value = defaults;
+    }
+  }
+
+  nextTick(() => {
+    isInitializingEntry.value = false;
+  });
 }
 
 function updateMetricValue(metricId: string, value: MetricValue) {
@@ -333,12 +372,21 @@ async function handleSave() {
   isSaving.value = true;
   try {
     await saveEntry(selectedDateString.value, entryData.value);
+    clearDraft(selectedDateString.value);
+    isRestoredDraft.value = false;
     showToastNotification('Entry saved successfully!');
   } catch {
     showToastNotification('Failed to save entry');
   } finally {
     isSaving.value = false;
   }
+}
+
+function handleDiscardDraft() {
+  clearDraft(selectedDateString.value);
+  isRestoredDraft.value = false;
+  loadEntryForDate(selectedDateString.value, { ignoreDraft: true });
+  showToastNotification('Draft discarded');
 }
 
 async function handleSaveConfig(metrics: MetricConfig[]) {
@@ -604,5 +652,64 @@ function showToastNotification(message: string) {
 .slide-right-leave-to {
   opacity: 0;
   transform: translateX(100%);
+}
+
+.draft-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  background: var(--color-surface-hover, rgba(99, 102, 241, 0.08));
+  border: 1px solid var(--color-border, rgba(99, 102, 241, 0.2));
+  border-radius: 0.75rem;
+  color: var(--color-text-main, #e2e8f0);
+  font-size: 0.875rem;
+
+  .draft-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+  }
+
+  .draft-banner-icon {
+    color: var(--color-primary, #6366f1);
+  }
+
+  .discard-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.8125rem;
+    padding: 0.35rem 0.65rem;
+    opacity: 0.85;
+
+    &:hover {
+      opacity: 1;
+      color: #ef4444;
+    }
+  }
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+
+    .discard-btn {
+      align-self: flex-end;
+    }
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
