@@ -1,9 +1,26 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from "@tailwindcss/vite";
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   modules: ["@nuxt/fonts", "@nuxt/icon", "@nuxt/image", "nuxt-charts"],
   ssr: false,
+
+  // Backend URL for the API client; `$development` points it at `vercel dev` locally.
+  runtimeConfig: {
+    public: {
+      apiBase: "https://moodly-backend.vercel.app",
+    },
+  },
+
+  $development: {
+    runtimeConfig: {
+      public: {
+        apiBase: "http://localhost:3001",
+      },
+    },
+  },
 
   app: {
     baseURL: "/moodly/",
@@ -35,5 +52,9 @@ export default defineNuxtConfig({
     },
   },
 
-  css: ["~/assets/css/main.scss"],
+  css: ["~/assets/css/main.css"],
+
+  vite: {
+    plugins: [tailwindcss()],
+  },
 });

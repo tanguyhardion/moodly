@@ -23,8 +23,9 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.10.1",
     "@types/uuid": "^9.0.1",
-    "sass": "^1.97.1"
+    "tailwindcss": "^4.3.3"
   }
 }

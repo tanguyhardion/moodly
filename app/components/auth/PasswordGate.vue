@@ -1,39 +1,34 @@
 <template>
-  <div v-if="!isAuthenticated" class="password-gate">
-    <div class="password-card">
-      <div class="lock-icon">
-        <Icon name="solar:lock-password-bold" size="48" />
-      </div>
-      <h1 class="title">Welcome to Moodly</h1>
+  <div v-if="!isAuthenticated" class="fixed inset-0 z-[9999] grid place-items-center overflow-y-auto bg-bg px-4 py-10">
+    <div class="w-full max-w-sm text-center">
+      <MoodlyLogo class="mx-auto size-16" />
+      <h1 class="mt-5 text-4xl font-extrabold">moodly</h1>
+      <p class="mt-1 text-muted">Enter your password to open your journal.</p>
 
-      <form @submit.prevent="handleSubmit" class="password-form">
+      <form class="mt-8 flex flex-col gap-3" @submit.prevent="handleSubmit">
         <input
           ref="passwordInput"
           v-model="password"
           type="password"
           pattern="[0-9]*"
           inputmode="numeric"
-          placeholder="Master Password"
-          class="password-input"
-          :class="{ error: showError }"
-          @input="showError = false"
+          placeholder="Password"
+          aria-label="Password"
+          class="input h-14 bg-surface text-center text-xl tracking-[0.3em] shadow-card dark:shadow-none"
+          :class="{ 'ring-2 ring-danger': showError }"
           autofocus
+          @input="showError = false"
         />
-        <button
-          type="submit"
-          class="submit-btn"
-          :disabled="!password || isValidating"
-        >
-          <Icon v-if="!isValidating" name="solar:login-3-bold" size="20" />
-          <Icon v-else name="svg-spinners:ring-resize" size="20" />
-          {{ isValidating ? "Validating..." : "Unlock" }}
+        <button type="submit" class="btn btn-primary h-14 text-base" :disabled="!password || isValidating">
+          <Icon :name="isValidating ? 'svg-spinners:ring-resize' : 'solar:login-3-bold'" size="20" />
+          {{ isValidating ? "Checking…" : "Unlock" }}
         </button>
       </form>
 
       <Transition name="error">
-        <p v-if="showError" class="error-message">
+        <p v-if="showError" class="mt-4 flex items-center justify-center gap-1.5 text-sm font-medium text-danger">
           <Icon name="solar:danger-circle-bold" size="18" />
-          Incorrect password. Please try again.
+          That password didn't work. Try again.
         </p>
       </Transition>
     </div>
@@ -43,51 +38,15 @@
 <script setup lang="ts">
 const password = ref("");
 const showError = ref(false);
-const isAuthenticated = ref(false);
 const isValidating = ref(false);
 const passwordInput = ref<HTMLInputElement | null>(null);
 
-onMounted(() => {
-  // Check if already authenticated
-  const storedPassword = sessionStorage.getItem("moodly-master-password");
-  if (storedPassword) {
-    isAuthenticated.value = true;
-  }
-});
+const { isAuthenticated, login } = useAuth();
 
 const handleSubmit = async () => {
   isValidating.value = true;
   try {
-    // Verify password by making a test call to the backend
-    const response = await fetch(
-      `${
-        process.env.NODE_ENV === "development"
-          ? "http://localhost:3001"
-          : "https://moodly-backend.vercel.app"
-      }/api/verify-password`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ masterPassword: password.value }),
-      },
-    );
-
-    const data = await response.json();
-
-    if (data.success) {
-      // Store password in session storage
-      sessionStorage.setItem("moodly-master-password", password.value);
-      isAuthenticated.value = true;
-    } else {
-      showError.value = true;
-      password.value = "";
-      // Refocus the input field
-      nextTick(() => {
-        passwordInput.value?.focus();
-      });
-    }
+    await login(password.value);
   } catch (error) {
     console.error("Authentication error:", error);
     showError.value = true;
@@ -101,173 +60,19 @@ const handleSubmit = async () => {
   }
 };
 
-// Watch authentication status and emit to parent
+// Emit to parent on login, and immediately when a stored session was restored
 const emit = defineEmits<{
   authenticated: [];
 }>();
 
-watch(isAuthenticated, (value) => {
-  if (value) {
-    emit("authenticated");
-  }
-});
+watch(
+  isAuthenticated,
+  (value) => {
+    if (value) {
+      password.value = "";
+      emit("authenticated");
+    }
+  },
+  { immediate: true },
+);
 </script>
-
-<style scoped>
-.password-gate {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(
-    135deg,
-    rgba(var(--color-shadow-primary), 0.1) 0%,
-    rgba(var(--color-primary-gradient-end), 0.1) 100%
-  );
-  backdrop-filter: blur(10px);
-  z-index: 9999;
-}
-
-@media (max-width: 768px) {
-  .password-gate {
-    align-items: flex-start;
-    padding-top: 2rem;
-  }
-
-  .password-card {
-    padding: var(--spacing-xl) !important;
-    width: 85% !important;
-  }
-}
-
-.password-card {
-  background: var(--card-bg);
-  padding: var(--spacing-2xl);
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-2xl);
-  max-width: 400px;
-  width: 90%;
-  text-align: center;
-}
-
-.lock-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 80px;
-  height: 80px;
-  background: var(--gradient-primary);
-  border-radius: var(--radius-xl);
-  color: white;
-  margin-bottom: var(--spacing-lg);
-}
-
-.title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 2rem;
-}
-
-.password-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.password-input {
-  padding: var(--spacing-md);
-  border: 2px solid var(--border);
-  border-radius: var(--radius-md);
-  font-size: 1rem;
-  color: var(--text-primary);
-  background: var(--card-bg);
-  transition: all 0.3s ease;
-}
-
-.password-input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--focus-ring);
-}
-
-.password-input.error {
-  border-color: var(--error);
-  animation: shake 0.3s ease;
-}
-
-.submit-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-md) var(--spacing-xl);
-  border: none;
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  background: var(--gradient-primary);
-  color: white;
-  box-shadow: var(--shadow-colored);
-  transition: all 0.3s ease;
-}
-
-.submit-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-primary);
-}
-
-.submit-btn:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.submit-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.error-message {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  color: var(--error);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.error-enter-active,
-.error-leave-active {
-  transition: all 0.3s ease;
-}
-
-.error-enter-from,
-.error-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-@keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  10%,
-  30%,
-  50%,
-  70%,
-  90% {
-    transform: translateX(-5px);
-  }
-  20%,
-  40%,
-  60%,
-  80% {
-    transform: translateX(5px);
-  }
-}
-</style>

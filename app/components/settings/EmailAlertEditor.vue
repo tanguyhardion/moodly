@@ -1,134 +1,103 @@
 <template>
-  <div class="alert-editor">
-    <div class="editor-header">
-      <h3>{{ isEditing ? "Edit Alert" : "New Email Alert" }}</h3>
-      <button class="close-btn" @click="$emit('close')">
-        <Icon name="solar:close-circle-bold" size="24" />
+  <div class="flex min-h-0 flex-1 flex-col">
+    <div class="flex items-center gap-2 px-4 pt-5 pb-2 sm:px-6">
+      <button class="icon-btn" type="button" title="Back to settings" @click="$emit('close')">
+        <Icon name="solar:alt-arrow-left-bold" size="22" />
       </button>
+      <h3 class="text-2xl font-extrabold">{{ isEditing ? "Edit alert" : "New alert" }}</h3>
     </div>
 
-    <div class="editor-content">
-      <div class="form-group">
-        <label>Alert Name</label>
-        <input
-          v-model="localAlert.name"
-          type="text"
-          placeholder="e.g., Low mood alert"
-          class="input"
-        />
+    <div class="flex flex-1 flex-col gap-6 overflow-y-auto px-6 pt-3 pb-6">
+      <div>
+        <label for="alert-name" class="field-label">Name</label>
+        <input id="alert-name" v-model="localAlert.name" type="text" placeholder="e.g. Low mood" class="input" />
       </div>
 
-      <div class="form-group">
-        <label>Conditions</label>
-        <p class="hint">Send email when these conditions are met</p>
-
-        <div class="condition-logic">
-          <label class="radio-label">
-            <input
-              type="radio"
-              v-model="localAlert.conditionLogic"
-              value="all"
-            />
-            <span>All conditions must match (AND)</span>
-          </label>
-          <label class="radio-label">
-            <input
-              type="radio"
-              v-model="localAlert.conditionLogic"
-              value="any"
-            />
-            <span>Any condition matches (OR)</span>
-          </label>
+      <div class="flex flex-col gap-3">
+        <div>
+          <span class="field-label mb-0">Send the email when</span>
+        </div>
+        <div class="segmented self-start shadow-none ring-1 ring-line" role="radiogroup" aria-label="Match">
+          <button type="button" role="radio" :aria-checked="localAlert.conditionLogic === 'all'" :class="{ 'is-active': localAlert.conditionLogic === 'all' }" @click="localAlert.conditionLogic = 'all'">
+            All match
+          </button>
+          <button type="button" role="radio" :aria-checked="localAlert.conditionLogic === 'any'" :class="{ 'is-active': localAlert.conditionLogic === 'any' }" @click="localAlert.conditionLogic = 'any'">
+            Any matches
+          </button>
         </div>
 
-        <div class="conditions-list">
+        <div class="flex flex-col gap-2">
           <div
             v-for="(condition, index) in localAlert.conditions"
             :key="index"
-            class="condition-row"
+            class="grid grid-cols-[minmax(0,1fr)_2.25rem] gap-2 rounded-2xl bg-surface-2 p-2 sm:grid-cols-[minmax(0,1.3fr)_minmax(0,1.2fr)_minmax(0,0.8fr)_2.25rem]"
           >
-            <select v-model="condition.metricId" class="select metric-select">
-              <option value="" disabled>Select metric</option>
-              <option
-                v-for="metric in availableMetrics"
-                :key="metric.id"
-                :value="metric.id"
-              >
-                {{ metric.label }}
-              </option>
+            <select v-model="condition.metricId" class="input h-10 bg-surface" aria-label="Metric">
+              <option value="" disabled>Metric…</option>
+              <option v-for="metric in availableMetrics" :key="metric.id" :value="metric.id">{{ metric.label }}</option>
             </select>
-
-            <select
-              v-model="condition.operator"
-              class="select operator-select"
+            <button
+              class="icon-btn size-9 self-center hover:bg-danger/15 hover:text-danger sm:order-last"
+              type="button"
+              title="Remove condition"
+              :disabled="localAlert.conditions.length <= 1"
+              @click="removeCondition(index)"
             >
-              <option
-                v-for="op in getOperatorsForMetric(condition.metricId)"
-                :key="op.value"
-                :value="op.value"
-              >
-                {{ op.label }}
-              </option>
+              <Icon name="solar:trash-bin-trash-bold" size="16" />
+            </button>
+            <select v-model="condition.operator" class="input h-10 bg-surface" aria-label="Comparison">
+              <option v-for="op in getOperatorsForMetric(condition.metricId)" :key="op.value" :value="op.value">{{ op.label }}</option>
             </select>
-
             <input
               v-if="showValueInput(condition)"
               v-model="condition.value"
               :type="getValueInputType(condition.metricId)"
               :step="getValueInputStep(condition.metricId)"
-              class="input value-input"
+              class="input h-10 bg-surface tabular-nums"
               placeholder="Value"
+              aria-label="Value"
             />
-
-            <button
-              class="remove-btn"
-              @click="removeCondition(index)"
-              :disabled="localAlert.conditions.length <= 1"
-            >
-              <Icon name="solar:trash-bin-trash-bold" size="18" />
-            </button>
           </div>
         </div>
 
-        <button class="add-condition-btn" @click="addCondition">
+        <button
+          class="flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-line py-2.5 text-sm font-semibold text-muted transition hover:border-mood hover:text-ink"
+          type="button"
+          @click="addCondition"
+        >
           <Icon name="solar:add-circle-bold" size="18" />
-          Add Condition
+          Add condition
         </button>
       </div>
 
-      <div class="form-group">
-        <label>Email Subject</label>
-        <input
-          v-model="localAlert.emailSubject"
-          type="text"
-          placeholder="e.g., Moodly Alert: Low mood detected"
-          class="input"
-        />
+      <div>
+        <label for="alert-subject" class="field-label">Email subject</label>
+        <input id="alert-subject" v-model="localAlert.emailSubject" type="text" placeholder="e.g. Checking in on you" class="input" />
       </div>
 
-      <div class="form-group">
-        <label>Email Message</label>
-        <p class="hint">
-          Use <code v-text="placeholderExample"></code> to insert metric values
-        </p>
+      <div>
+        <label for="alert-message" class="field-label">Email message</label>
         <textarea
+          id="alert-message"
           v-model="localAlert.emailMessage"
-          placeholder="e.g., Your mood today was {{mood}}. Consider taking a break or talking to someone."
-          class="input textarea"
+          placeholder="e.g. Your mood today was {{mood}}. Maybe call a friend tonight."
+          class="input"
           rows="4"
         ></textarea>
+        <p class="mt-1.5 text-xs text-muted">
+          Insert a value with <code class="rounded bg-surface-2 px-1 py-0.5 font-mono" v-text="placeholderExample"></code>, using the metric's name.
+        </p>
       </div>
     </div>
 
-    <div class="editor-actions">
-      <button class="btn-secondary" @click="$emit('close')">Cancel</button>
-      <button class="btn-primary" @click="save" :disabled="!isValid || saving">
-        {{ saving ? "Saving..." : isEditing ? "Update Alert" : "Create Alert" }}
+    <div class="flex justify-end gap-2 border-t border-line px-6 py-4">
+      <button class="btn btn-secondary" type="button" @click="$emit('close')">Cancel</button>
+      <button class="btn btn-primary" type="button" :disabled="!isValid || saving" @click="save">
+        {{ saving ? "Saving…" : isEditing ? "Update alert" : "Create alert" }}
       </button>
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import type { EmailAlert, AlertCondition, AlertOperator, MetricConfig } from "~/types";
@@ -144,7 +113,7 @@ const emit = defineEmits<{
   (e: "save", alert: EmailAlert): void;
 }>();
 
-const placeholderExample = "{{metric_id}}";
+const placeholderExample = "{{Mood}}";
 
 const isEditing = computed(() => !!props.alert?.id);
 
@@ -271,311 +240,3 @@ function save() {
   emit("save", alertToSave);
 }
 </script>
-
-<style scoped lang="scss">
-.alert-editor {
-  background: var(--card-bg);
-  border-radius: 0;
-  border: none;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  pointer-events: auto;
-  cursor: auto;
-}
-
-.editor-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-md) var(--spacing-lg);
-  border-bottom: 1px solid var(--border);
-  background: var(--hover-bg);
-  flex-shrink: 0;
-
-  h3 {
-    margin: 0;
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: var(--spacing-xs);
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-
-  &:hover {
-    background: var(--border);
-    color: var(--text-primary);
-  }
-}
-
-.editor-content {
-  padding: var(--spacing-lg);
-  flex: 1;
-  overflow-y: auto;
-  min-height: 0;
-}
-
-.form-group {
-  margin-bottom: var(--spacing-lg);
-
-  label {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: var(--spacing-sm);
-  }
-}
-
-.hint {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  margin: 0 0 var(--spacing-sm) 0;
-
-  code {
-    background: var(--hover-bg);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-family: monospace;
-    font-size: 0.875em;
-    color: var(--primary);
-  }
-}
-
-.input,
-.select {
-  width: 100%;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--card-bg);
-  color: var(--text-primary);
-  font-size: 0.875rem;
-  transition: all 0.2s;
-
-  &:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px var(--focus-ring);
-  }
-}
-
-.textarea {
-  resize: vertical;
-  min-height: 80px;
-  font-family: inherit;
-}
-
-.condition-logic {
-  display: flex;
-  gap: var(--spacing-xl);
-  margin-bottom: var(--spacing-md);
-}
-
-.radio-label {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-md);
-  transition: all 0.2s ease;
-  position: relative;
-
-  &:hover {
-    background: var(--hover-bg);
-    color: var(--text-primary);
-  }
-
-  &:focus-within {
-    outline: 2px solid var(--primary);
-    outline-offset: 0px;
-  }
-
-  input[type="radio"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 2px solid var(--border);
-    border-radius: 50%;
-    cursor: pointer;
-    background: var(--card-bg);
-    transition: all 0.2s ease;
-    display: inline-block;
-    position: relative;
-    flex-shrink: 0;
-    padding: 0;
-    margin: 0 0.5rem 0 0;
-    vertical-align: middle;
-
-    &:hover {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--focus-ring);
-    }
-
-    &:checked {
-      border-color: var(--primary);
-      background: linear-gradient(135deg, var(--primary), var(--primary-light));
-      box-shadow: 0 2px 4px rgba(var(--color-shadow-primary), 0.2);
-
-      &::after {
-        content: "";
-        position: absolute;
-        width: 6px;
-        height: 6px;
-        background: white;
-        border-radius: 50%;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-    }
-
-    &:focus {
-      outline: none;
-    }
-  }
-
-  span {
-    vertical-align: middle;
-  }
-}
-
-.conditions-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-md);
-}
-
-.condition-row {
-  display: flex;
-  gap: var(--spacing-sm);
-  align-items: center;
-}
-
-.metric-select {
-  flex: 2;
-  min-width: 0;
-}
-
-.operator-select {
-  flex: 1.5;
-  min-width: 0;
-}
-
-.value-input {
-  flex: 1;
-  min-width: 60px;
-}
-
-.remove-btn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: var(--spacing-sm);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  flex-shrink: 0;
-
-  &:hover:not(:disabled) {
-    background: var(--error);
-    color: white;
-  }
-
-  &:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
-}
-
-.add-condition-btn {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  background: none;
-  border: 1px dashed var(--border);
-  color: var(--text-secondary);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  font-size: 0.875rem;
-  transition: all 0.2s;
-  width: 100%;
-  justify-content: center;
-
-  &:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-    background: var(--hover-bg);
-  }
-}
-
-.editor-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md) var(--spacing-lg);
-  border-top: 1px solid var(--border);
-  background: var(--hover-bg);
-  flex-shrink: 0;
-}
-
-.btn-secondary {
-  background: var(--hover-bg);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex-shrink: 0;
-  white-space: nowrap;
-
-  &:hover {
-    background: var(--border);
-  }
-}
-
-.btn-primary {
-  background: var(--gradient-primary);
-  color: white;
-  border: none;
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    pointer-events: none;
-  }
-
-  &:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-colored);
-  }
-}
-</style>

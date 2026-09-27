@@ -1,29 +1,17 @@
 <template>
-  <div class="metric-calculated">
-    <div class="calc-header">
-      <Icon v-if="config.icon" :name="config.icon" size="20" class="metric-icon" :style="iconStyle" />
-      <span class="metric-label">{{ config.label }}</span>
-      <span class="calc-badge">
-        <Icon name="solar:calculator-bold" size="11" />
-        auto
+  <div class="flex flex-col gap-1">
+    <MetricHeader :config="config">
+      <span class="flex items-baseline gap-1 rounded-full bg-mood-soft px-3 py-1">
+        <span class="font-display text-lg font-bold tabular-nums">{{ displayValue }}</span>
+        <span v-if="numericValue !== null" class="text-xs font-semibold text-muted">{{ unitLabel }}</span>
       </span>
-    </div>
-
-    <div class="calc-value-row">
-      <span v-if="numericValue !== null" class="calc-value" :style="valueStyle">
-        {{ displayValue }}
-      </span>
-      <span v-else class="calc-empty">—</span>
-      <span v-if="numericValue !== null" class="calc-unit">{{ unitLabel }}</span>
-    </div>
-
-    <div class="calc-source">
-      <Icon name="solar:link-bold" size="12" />
-      <span>{{ sourceDescription }}</span>
-    </div>
+    </MetricHeader>
+    <p class="flex items-center gap-1 pl-[2.625rem] text-xs text-muted" :class="{ 'pl-0': !config.icon }">
+      <Icon name="solar:calculator-bold" size="12" />
+      Calculated from {{ sourceDescription }}
+    </p>
   </div>
 </template>
-
 <script setup lang="ts">
 import type { CalculatedMetricConfig, MetricValue } from '~/types';
 
@@ -51,10 +39,6 @@ const unitLabel = computed((): string => {
   return '';
 });
 
-const accentColor = computed(() => props.config.color ?? 'var(--primary)');
-const iconStyle = computed(() => ({ color: accentColor.value }));
-const valueStyle = computed(() => ({ color: accentColor.value }));
-
 const sourceDescription = computed((): string => {
   const f = props.config.formula;
   if (f.formulaType === 'time_diff') {
@@ -65,69 +49,3 @@ const sourceDescription = computed((): string => {
   return '';
 });
 </script>
-
-<style scoped lang="scss">
-.metric-calculated {
-  .calc-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
-
-    .metric-label {
-      font-weight: 600;
-      font-size: 0.9375rem;
-      color: var(--text-primary);
-    }
-
-    .calc-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      padding: 0.125rem 0.5rem;
-      border-radius: var(--radius-full);
-      background: var(--hover-bg);
-      color: var(--text-tertiary);
-      font-size: 0.6875rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
-  }
-
-  .calc-value-row {
-    display: flex;
-    align-items: baseline;
-    gap: 0.375rem;
-    margin-bottom: 0.5rem;
-
-    .calc-value {
-      font-size: 2rem;
-      font-weight: 800;
-      font-variant-numeric: tabular-nums;
-      line-height: 1;
-    }
-
-    .calc-empty {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text-tertiary);
-      line-height: 1;
-    }
-
-    .calc-unit {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-    }
-  }
-
-  .calc-source {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.75rem;
-    color: var(--text-tertiary);
-  }
-}
-</style>

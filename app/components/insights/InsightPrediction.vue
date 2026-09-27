@@ -1,135 +1,25 @@
 <template>
-  <section class="insight-section">
-    <div class="insight-section-header">
-      <Icon name="solar:magic-stick-3-bold" size="20" style="color: var(--secondary)" />
-      <h2 class="insight-section-title">Prediction</h2>
-    </div>
-    <div class="insight-card prediction-card">
-      <div class="prediction-main">
-        <div class="prediction-left">
-          <span class="prediction-label">Predicted next {{ primaryMetric!.label }}</span>
-          <span class="prediction-value" :style="{ color: primaryMetric!.color || 'var(--primary)' }">
-            {{ fmtNum(prediction!.value, primaryMetric) }}
-          </span>
-          <div class="prediction-direction" :class="prediction!.direction">
-            <Icon
-              :name="prediction!.direction === 'up' ? 'solar:arrow-up-bold' : prediction!.direction === 'down' ? 'solar:arrow-down-bold' : 'solar:minus-circle-bold'"
-              size="13"
-            />
-            {{ prediction!.direction === 'up' ? 'Trending up' : prediction!.direction === 'down' ? 'Trending down' : 'Stable' }}
-          </div>
-        </div>
-        <div class="prediction-right">
-          <span class="prediction-meta">Based on last {{ prediction!.basedOn }} entries</span>
-          <span class="prediction-range">Range: {{ fmtNum(prediction!.low, primaryMetric) }} – {{ fmtNum(prediction!.high, primaryMetric) }}</span>
-        </div>
+  <InsightSection title="Next entry forecast" icon="solar:magic-stick-3-bold">
+    <div class="flex flex-wrap items-end justify-between gap-4 rounded-card bg-mood-soft p-5">
+      <div>
+        <p class="eyebrow">Predicted {{ primaryMetric!.label }}</p>
+        <p class="font-display text-5xl font-extrabold tabular-nums">{{ fmtNum(prediction!.value, primaryMetric) }}</p>
+        <p class="mt-1 flex items-center gap-1 text-sm font-semibold" :class="toneClass(directionSign)">
+          <Icon :name="toneIcon(directionSign)" size="14" />
+          {{ directionSign > 0 ? 'Trending up' : directionSign < 0 ? 'Trending down' : 'Holding steady' }}
+        </p>
+      </div>
+      <div class="text-right text-sm text-muted">
+        <p class="tabular-nums">Likely {{ fmtNum(prediction!.low, primaryMetric) }} – {{ fmtNum(prediction!.high, primaryMetric) }}</p>
+        <p>From your last {{ prediction!.basedOn }} entries</p>
       </div>
     </div>
-  </section>
+  </InsightSection>
 </template>
-
 <script setup lang="ts">
 const { prediction, primaryMetric } = useInsightsData();
+
+const directionSign = computed(() =>
+  prediction.value?.direction === 'up' ? 1 : prediction.value?.direction === 'down' ? -1 : 0,
+);
 </script>
-
-<style scoped lang="scss">
-.insight-section {
-  margin-bottom: 2rem;
-}
-
-.insight-section-header {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  margin-bottom: 1rem;
-}
-
-.insight-section-title {
-  font-size: 1.0625rem;
-  font-weight: 800;
-  color: var(--text-primary);
-  letter-spacing: -0.02em;
-}
-
-.insight-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 1.25rem 1.5rem;
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.2s ease;
-
-  &:hover { box-shadow: var(--shadow-md); }
-}
-
-.prediction-card {
-  background: linear-gradient(135deg, var(--card-bg) 0%, var(--hover-bg) 100%);
-}
-
-.prediction-main {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-
-  @media (max-width: 500px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-}
-
-.prediction-left {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.prediction-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-tertiary);
-}
-
-.prediction-value {
-  font-size: 2.25rem;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 1;
-}
-
-.prediction-direction {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  margin-top: 0.25rem;
-
-  &.up { color: var(--success); }
-  &.down { color: var(--error); }
-  &.flat { color: var(--text-tertiary); }
-}
-
-.prediction-right {
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-  text-align: right;
-
-  @media (max-width: 500px) { text-align: left; }
-}
-
-.prediction-meta {
-  font-size: 0.8125rem;
-  color: var(--text-tertiary);
-}
-
-.prediction-range {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-</style>

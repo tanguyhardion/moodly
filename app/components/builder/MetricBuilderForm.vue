@@ -1,226 +1,186 @@
 <template>
   <Transition name="fade">
-    <div v-if="modelValue" class="form-overlay" @click.self="closeForm">
-      <div class="form-card">
-        <h3>{{ isEditing ? 'Edit Metric' : 'Add Metric' }}</h3>
+    <div v-if="modelValue" class="overlay z-[210]" @click.self="closeForm">
+      <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="metric-form-title">
+        <div class="flex-1 overflow-y-auto px-6 pt-6 pb-2">
+          <h3 id="metric-form-title" class="text-2xl font-extrabold">{{ isEditing ? 'Edit metric' : 'New metric' }}</h3>
 
-        <!-- Type selector (only for new) -->
-        <div v-if="!isEditing" class="form-group">
-          <label>Type</label>
-          <div class="type-grid">
-            <button
-              v-for="opt in METRIC_TYPE_OPTIONS"
-              :key="opt.type"
-              class="type-option"
-              :class="{ selected: formData.type === opt.type }"
-              @click="formData.type = opt.type"
-              type="button"
-            >
-              <Icon :name="opt.icon" size="22" />
-              <span class="type-label">{{ opt.label }}</span>
-              <span class="type-desc">{{ opt.description }}</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Common fields -->
-        <div class="form-group">
-          <label>Label <span class="required">*</span></label>
-          <input v-model="formData.label" type="text" placeholder="e.g. Mood, Water Intake" class="form-input" />
-        </div>
-
-        <div class="form-group">
-          <label>Icon (optional)</label>
-          <div class="icon-input-row">
-            <input v-model="formData.icon" type="text" placeholder="solar:heart-bold" class="form-input icon-input" />
-            <div v-if="formData.icon" class="icon-preview-inline">
-              <Icon :name="formData.icon" size="18" />
-            </div>
-          </div>
-          <div class="icon-picker">
-            <button
-              v-for="ic in PRESET_ICONS"
-              :key="ic"
-              type="button"
-              class="icon-chip"
-              :class="{ active: formData.icon === ic }"
-              :title="ic"
-              @click="formData.icon = formData.icon === ic ? '' : ic"
-            >
-              <Icon :name="ic" size="16" />
-            </button>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Color (optional)</label>
-          <div class="color-picker-row">
-            <input v-model="formData.color" type="color" class="color-swatch" />
-            <input v-model="formData.color" type="text" placeholder="#1e40af" class="form-input color-text" />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Group (optional)</label>
-          <input v-model="formData.group" type="text" placeholder="e.g. Health, Habits" class="form-input" />
-        </div>
-
-        <!-- Type-specific fields -->
-        <template v-if="formData.type === 'slider'">
-          <div class="form-row">
-            <div class="form-group">
-              <label>Min</label>
-              <input v-model.number="formData.min" type="number" class="form-input" />
-            </div>
-            <div class="form-group">
-              <label>Max</label>
-              <input v-model.number="formData.max" type="number" class="form-input" />
-            </div>
-            <div class="form-group">
-              <label>Step</label>
-              <input v-model.number="formData.step" type="number" class="form-input" />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Min Label</label>
-              <input v-model="formData.labelMin" type="text" placeholder="Terrible" class="form-input" />
-            </div>
-            <div class="form-group">
-              <label>Max Label</label>
-              <input v-model="formData.labelMax" type="text" placeholder="Amazing" class="form-input" />
-            </div>
-          </div>
-        </template>
-
-        <template v-if="formData.type === 'number'">
-          <div class="form-row">
-            <div class="form-group">
-              <label>Min</label>
-              <input v-model.number="formData.min" type="number" class="form-input" />
-            </div>
-            <div class="form-group">
-              <label>Max</label>
-              <input v-model.number="formData.max" type="number" class="form-input" />
-            </div>
-            <div class="form-group">
-              <label>Step</label>
-              <input v-model.number="formData.step" type="number" class="form-input" />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Unit</label>
-              <input v-model="formData.unit" type="text" placeholder="glasses, pages" class="form-input" />
-            </div>
-            <div class="form-group">
-              <label>Placeholder</label>
-              <input v-model="formData.placeholder" type="text" placeholder="0" class="form-input" />
-            </div>
-          </div>
-        </template>
-
-        <template v-if="formData.type === 'time'">
-          <div class="form-group">
-            <label>Placeholder</label>
-            <input v-model="formData.placeholder" type="text" placeholder="HH:MM" class="form-input" />
-          </div>
-        </template>
-
-        <template v-if="formData.type === 'location'">
-          <div class="form-group">
-            <label>Placeholder</label>
-            <input v-model="formData.placeholder" type="text" placeholder="Search for a location..." class="form-input" />
-          </div>
-          <label class="toggle-row compact">
-            <span>Enable weather tracking</span>
-            <div class="switch">
-              <input type="checkbox" v-model="formData.enableWeather" />
-              <span class="slider"></span>
-            </div>
-          </label>
-          <p v-if="formData.enableWeather" class="form-hint">
-            <Icon name="solar:cloud-sun-bold" size="14" />
-            Weather data will be fetched when a location is selected.
-          </p>
-        </template>
-
-        <template v-if="formData.type === 'text'">
-          <div class="form-row">
-            <div class="form-group">
-              <label>Placeholder</label>
-              <input v-model="formData.placeholder" type="text" placeholder="Write something..." class="form-input" />
-            </div>
-            <div class="form-group">
-              <label>Max Length</label>
-              <input v-model.number="formData.maxLength" type="number" class="form-input" />
-            </div>
-          </div>
-          <label class="toggle-row compact">
-            <span>Multiline (textarea)</span>
-            <div class="switch">
-              <input type="checkbox" v-model="formData.multiline" />
-              <span class="slider"></span>
-            </div>
-          </label>
-        </template>
-
-        <template v-if="formData.type === 'calculated'">
-          <div v-if="timeMetrics.length < 2" class="form-hint-warning">
-            <Icon name="solar:danger-triangle-bold" size="14" />
-            You need at least 2 "Time" metrics before adding a calculated field.
-          </div>
-          <template v-else>
-            <div class="form-row">
-              <div class="form-group">
-                <label>From (start) <span class="required">*</span></label>
-                <select v-model="formData.calcFromMetricId" class="form-input">
-                  <option value="" disabled>Select time metric…</option>
-                  <option
-                    v-for="m in timeMetrics"
-                    :key="m.id"
-                    :value="m.id"
-                    :disabled="m.id === formData.calcToMetricId"
-                  >{{ m.label }}</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>To (end) <span class="required">*</span></label>
-                <select v-model="formData.calcToMetricId" class="form-input">
-                  <option value="" disabled>Select time metric…</option>
-                  <option
-                    v-for="m in timeMetrics"
-                    :key="m.id"
-                    :value="m.id"
-                    :disabled="m.id === formData.calcFromMetricId"
-                  >{{ m.label }}</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Result unit</label>
-              <div class="unit-toggle">
+          <div class="mt-5 flex flex-col gap-5">
+            <!-- Type selector (only for new) -->
+            <div v-if="!isEditing">
+              <span class="field-label">Type</span>
+              <div class="grid grid-cols-2 gap-2">
                 <button
+                  v-for="opt in METRIC_TYPE_OPTIONS"
+                  :key="opt.type"
                   type="button"
-                  class="unit-btn"
-                  :class="{ active: formData.calcUnit === 'hours' }"
-                  @click="formData.calcUnit = 'hours'"
-                >Hours</button>
-                <button
-                  type="button"
-                  class="unit-btn"
-                  :class="{ active: formData.calcUnit === 'minutes' }"
-                  @click="formData.calcUnit = 'minutes'"
-                >Minutes</button>
+                  class="flex flex-col items-start gap-1 rounded-2xl bg-surface-2 p-3 text-left transition hover:brightness-95 dark:hover:brightness-125"
+                  :class="{ 'bg-mood-soft ring-2 ring-mood': formData.type === opt.type }"
+                  :aria-pressed="formData.type === opt.type"
+                  @click="formData.type = opt.type"
+                >
+                  <Icon :name="opt.icon" size="22" class="text-mood-strong" />
+                  <span class="text-sm font-semibold">{{ opt.label }}</span>
+                  <span class="text-xs leading-snug text-muted">{{ opt.description }}</span>
+                </button>
               </div>
             </div>
-          </template>
-        </template>
 
-        <div class="form-actions">
-          <button class="btn btn-secondary" @click="closeForm" type="button">Cancel</button>
-          <button class="btn btn-primary" @click="confirmForm" :disabled="!formData.label" type="button">
-            {{ isEditing ? 'Update' : 'Add' }}
+            <!-- Common fields -->
+            <div>
+              <label for="metric-label" class="field-label">Label <span class="text-danger">*</span></label>
+              <input id="metric-label" v-model="formData.label" type="text" placeholder="e.g. Mood, Water intake" class="input" />
+            </div>
+
+            <div>
+              <label for="metric-icon" class="field-label">Icon</label>
+              <div class="flex items-center gap-2">
+                <input id="metric-icon" v-model="formData.icon" type="text" placeholder="solar:heart-bold" class="input" />
+                <div v-if="formData.icon" class="grid size-11 shrink-0 place-items-center rounded-2xl bg-mood-soft text-mood-strong">
+                  <Icon :name="formData.icon" size="20" />
+                </div>
+              </div>
+              <div class="mt-2 flex flex-wrap gap-1.5">
+                <button
+                  v-for="ic in PRESET_ICONS"
+                  :key="ic"
+                  type="button"
+                  class="grid size-9 place-items-center rounded-xl bg-surface-2 text-muted transition hover:text-ink"
+                  :class="{ 'bg-mood text-mood-ink hover:text-mood-ink': formData.icon === ic }"
+                  :title="ic"
+                  :aria-pressed="formData.icon === ic"
+                  @click="formData.icon = formData.icon === ic ? '' : ic"
+                >
+                  <Icon :name="ic" size="17" />
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label for="metric-color" class="field-label">Color</label>
+                <div class="flex items-center gap-2">
+                  <input
+                    v-model="formData.color"
+                    type="color"
+                    aria-label="Pick a color"
+                    class="size-11 shrink-0 cursor-pointer rounded-2xl border-0 bg-surface-2 p-1.5"
+                  />
+                  <input id="metric-color" v-model="formData.color" type="text" placeholder="#f2a93b" class="input font-mono text-sm" />
+                </div>
+              </div>
+              <div>
+                <label for="metric-group" class="field-label">Group</label>
+                <input id="metric-group" v-model="formData.group" type="text" placeholder="e.g. Health" class="input" />
+              </div>
+            </div>
+
+            <!-- Type-specific fields -->
+            <div v-if="formData.type === 'slider' || formData.type === 'number'" class="grid grid-cols-3 gap-3">
+              <div>
+                <label for="metric-min" class="field-label">Min</label>
+                <input id="metric-min" v-model.number="formData.min" type="number" class="input" />
+              </div>
+              <div>
+                <label for="metric-max" class="field-label">Max</label>
+                <input id="metric-max" v-model.number="formData.max" type="number" class="input" />
+              </div>
+              <div>
+                <label for="metric-step" class="field-label">Step</label>
+                <input id="metric-step" v-model.number="formData.step" type="number" class="input" />
+              </div>
+            </div>
+
+            <div v-if="formData.type === 'slider'" class="grid grid-cols-2 gap-3">
+              <div>
+                <label for="metric-label-min" class="field-label">Low end label</label>
+                <input id="metric-label-min" v-model="formData.labelMin" type="text" placeholder="Terrible" class="input" />
+              </div>
+              <div>
+                <label for="metric-label-max" class="field-label">High end label</label>
+                <input id="metric-label-max" v-model="formData.labelMax" type="text" placeholder="Amazing" class="input" />
+              </div>
+            </div>
+
+            <div v-if="formData.type === 'number'" class="grid grid-cols-2 gap-3">
+              <div>
+                <label for="metric-unit" class="field-label">Unit</label>
+                <input id="metric-unit" v-model="formData.unit" type="text" placeholder="glasses, pages" class="input" />
+              </div>
+              <div>
+                <label for="metric-placeholder-n" class="field-label">Placeholder</label>
+                <input id="metric-placeholder-n" v-model="formData.placeholder" type="text" placeholder="0" class="input" />
+              </div>
+            </div>
+
+            <div v-if="formData.type === 'time'">
+              <label for="metric-placeholder-t" class="field-label">Placeholder</label>
+              <input id="metric-placeholder-t" v-model="formData.placeholder" type="text" placeholder="HH:MM" class="input" />
+            </div>
+
+            <template v-if="formData.type === 'location'">
+              <div>
+                <label for="metric-placeholder-l" class="field-label">Placeholder</label>
+                <input id="metric-placeholder-l" v-model="formData.placeholder" type="text" placeholder="Search for a place…" class="input" />
+              </div>
+              <ToggleSwitch v-model="formData.enableWeather">
+                Track weather
+                <template #description>Fetches the day's weather when you pick a place.</template>
+              </ToggleSwitch>
+            </template>
+
+            <template v-if="formData.type === 'text'">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label for="metric-placeholder-x" class="field-label">Placeholder</label>
+                  <input id="metric-placeholder-x" v-model="formData.placeholder" type="text" placeholder="Write something…" class="input" />
+                </div>
+                <div>
+                  <label for="metric-maxlength" class="field-label">Max length</label>
+                  <input id="metric-maxlength" v-model.number="formData.maxLength" type="number" class="input" />
+                </div>
+              </div>
+              <ToggleSwitch v-model="formData.multiline">Multiple lines</ToggleSwitch>
+            </template>
+
+            <template v-if="formData.type === 'calculated'">
+              <p v-if="timeMetrics.length < 2" class="flex items-start gap-2 rounded-2xl bg-warning/15 p-3 text-sm font-medium text-warning">
+                <Icon name="solar:danger-triangle-bold" size="18" class="mt-px shrink-0" />
+                Add at least two Time metrics first, for example bedtime and wake-up.
+              </p>
+              <template v-else>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label for="calc-from" class="field-label">From <span class="text-danger">*</span></label>
+                    <select id="calc-from" v-model="formData.calcFromMetricId" class="input">
+                      <option value="" disabled>Choose…</option>
+                      <option v-for="m in timeMetrics" :key="m.id" :value="m.id" :disabled="m.id === formData.calcToMetricId">{{ m.label }}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="calc-to" class="field-label">To <span class="text-danger">*</span></label>
+                    <select id="calc-to" v-model="formData.calcToMetricId" class="input">
+                      <option value="" disabled>Choose…</option>
+                      <option v-for="m in timeMetrics" :key="m.id" :value="m.id" :disabled="m.id === formData.calcFromMetricId">{{ m.label }}</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <span class="field-label">Result in</span>
+                  <div class="segmented shadow-none ring-1 ring-line">
+                    <button type="button" :class="{ 'is-active': formData.calcUnit === 'hours' }" @click="formData.calcUnit = 'hours'">Hours</button>
+                    <button type="button" :class="{ 'is-active': formData.calcUnit === 'minutes' }" @click="formData.calcUnit = 'minutes'">Minutes</button>
+                  </div>
+                </div>
+              </template>
+            </template>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 border-t border-line px-6 py-4">
+          <button class="btn btn-secondary" type="button" @click="closeForm">Cancel</button>
+          <button class="btn btn-primary" type="button" :disabled="!formData.label" @click="confirmForm">
+            {{ isEditing ? 'Update' : 'Add metric' }}
           </button>
         </div>
       </div>
@@ -313,7 +273,7 @@ const defaultForm = (): FormState => ({
   type: 'slider',
   label: '',
   icon: '',
-  color: '#1e40af',
+  color: '#f2a93b',
   group: '',
   min: 1,
   max: 5,
@@ -342,7 +302,7 @@ watch(
         type: metric.type,
         label: metric.label,
         icon: metric.icon ?? '',
-        color: metric.color ?? '#1e40af',
+        color: metric.color ?? '#f2a93b',
         group: metric.group ?? '',
         min: (metric as any).min ?? 1,
         max: (metric as any).max ?? 5,
@@ -465,353 +425,3 @@ function confirmForm() {
   closeForm();
 }
 </script>
-
-<style scoped lang="scss">
-.form-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1010;
-}
-
-.form-card {
-  background: var(--card-bg);
-  border-radius: var(--radius-xl);
-  padding: 1.5rem;
-  width: 95%;
-  max-width: 520px;
-  max-height: 85vh;
-  overflow-y: auto;
-  box-shadow: var(--shadow-2xl);
-  border: 1px solid var(--border);
-
-  &::-webkit-scrollbar-track {
-    margin-top: 20px;
-    margin-bottom: 20px;
-  }
-
-  h3 {
-    margin: 0 0 1.25rem;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--text-primary);
-  }
-}
-
-.type-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-
-  .type-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.75rem 0.5rem;
-    border: 2px solid var(--border);
-    border-radius: var(--radius-md);
-    background: transparent;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    color: var(--text-secondary);
-    font-family: inherit;
-
-    &:hover {
-      border-color: var(--primary-rgba-40);
-      background: var(--primary-rgba-08);
-    }
-
-    &.selected {
-      border-color: var(--primary);
-      background: var(--primary-rgba-12);
-      color: var(--primary);
-    }
-
-    .type-label {
-      font-weight: 600;
-      font-size: 0.8125rem;
-      color: var(--text-primary);
-    }
-
-    .type-desc {
-      font-size: 0.6875rem;
-      text-align: center;
-      line-height: 1.3;
-    }
-  }
-}
-
-.form-group {
-  margin-bottom: 1rem;
-
-  label {
-    display: block;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 0.375rem;
-
-    .required {
-      color: var(--error);
-    }
-  }
-}
-
-.form-row {
-  display: flex;
-  gap: 0.75rem;
-
-  .form-group {
-    flex: 1;
-    min-width: 0;
-  }
-}
-
-.form-input {
-  width: 100%;
-  padding: 0.625rem 0.75rem;
-  border: 2px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--card-bg);
-  color: var(--text-primary);
-  font-size: 0.875rem;
-  font-family: inherit;
-  transition: border-color 0.2s;
-
-  &::placeholder {
-    color: var(--text-tertiary);
-  }
-
-  &:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px var(--focus-ring);
-  }
-}
-
-.icon-input-row {
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
-
-  .icon-input {
-    padding-right: 2.75rem;
-  }
-
-  .icon-preview-inline {
-    position: absolute;
-    right: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-primary);
-    pointer-events: none;
-
-    .dim {
-      color: var(--text-tertiary);
-    }
-  }
-}
-
-.icon-picker {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-}
-
-.icon-chip {
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  padding: 0;
-
-  &:hover {
-    border-color: var(--primary-rgba-40);
-    background: var(--primary-rgba-08);
-    color: var(--primary);
-  }
-
-  &.active {
-    border-color: var(--primary);
-    background: var(--primary-rgba-12);
-    color: var(--primary);
-  }
-}
-
-.color-picker-row {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-
-  .color-swatch {
-    width: 36px;
-    height: 36px;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    background: none;
-    flex-shrink: 0;
-
-    &::-webkit-color-swatch-wrapper {
-      padding: 2px;
-    }
-
-    &::-webkit-color-swatch {
-      border: none;
-      border-radius: 4px;
-    }
-  }
-
-  .color-text {
-    flex: 1;
-    min-width: 0;
-  }
-}
-
-.toggle-row.compact {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.625rem 0.75rem;
-  background: var(--hover-bg);
-  border-radius: var(--radius-md);
-  margin-bottom: 1rem;
-
-  span {
-    font-weight: 600;
-    font-size: 0.875rem;
-    color: var(--text-primary);
-  }
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 2.75rem;
-  height: 1.5rem;
-
-  input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--border);
-  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: var(--radius-xl);
-
-  &::before {
-    position: absolute;
-    content: "";
-    height: 1.125rem;
-    width: 1.125rem;
-    left: 0.1875rem;
-    bottom: 0.1875rem;
-    background-color: white;
-    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: var(--radius-full);
-    box-shadow: var(--shadow-sm);
-  }
-}
-
-input:checked + .slider {
-  background-color: var(--primary);
-
-  &::before {
-    transform: translateX(1.25rem);
-  }
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  margin-top: 1.25rem;
-}
-
-.form-hint-warning {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 0.75rem;
-  background: color-mix(in srgb, var(--warning) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--warning) 30%, transparent);
-  border-radius: var(--radius-md);
-  color: var(--warning);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  margin-bottom: 1rem;
-}
-
-.form-hint {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background: var(--primary-rgba-08);
-  border-radius: var(--radius-md);
-  color: var(--primary);
-  font-size: 0.75rem;
-  font-weight: 500;
-  margin-top: 0.5rem;
-}
-
-.unit-toggle {
-  display: flex;
-  gap: 0.375rem;
-
-  .unit-btn {
-    flex: 1;
-    padding: 0.5rem 0.75rem;
-    border: 2px solid var(--border);
-    border-radius: var(--radius-md);
-    background: transparent;
-    color: var(--text-secondary);
-    font-size: 0.875rem;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    transition: all 0.2s ease;
-
-    &:hover {
-      border-color: var(--primary-rgba-40);
-      background: var(--primary-rgba-08);
-    }
-
-    &.active {
-      border-color: var(--primary);
-      background: var(--primary-rgba-12);
-      color: var(--primary);
-    }
-  }
-}
-
-@media (max-width: 640px) {
-  .form-row {
-    flex-direction: column;
-    gap: 0;
-  }
-}
-</style>

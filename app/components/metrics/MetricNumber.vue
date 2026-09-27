@@ -1,33 +1,29 @@
 <template>
-  <div class="metric-number">
-    <div class="number-header">
-      <Icon v-if="config.icon" :name="config.icon" size="20" class="metric-icon" :style="iconStyle" />
-      <span class="metric-label">{{ config.label }}</span>
-    </div>
-    <div class="number-input-row">
-      <button class="step-btn" @click="decrement" :disabled="atMin" type="button">
-        <Icon name="solar:minus-circle-bold" size="22" />
+  <MetricHeader :config="config">
+    <div class="flex items-center gap-1 rounded-full bg-surface-2 p-1">
+      <button class="icon-btn size-9 bg-surface" type="button" :disabled="atMin" :aria-label="`Decrease ${config.label}`" @click="decrement">
+        <Icon name="mdi:minus" size="18" />
       </button>
-      <div class="value-display">
+      <label class="flex items-baseline gap-1 px-1">
         <input
           type="number"
           :value="currentValue"
-          @input="handleInput"
           :min="config.min"
           :max="config.max"
           :step="config.step ?? 1"
           :placeholder="config.placeholder ?? '0'"
-          class="number-field"
+          :aria-label="config.label"
+          class="w-12 appearance-none bg-transparent text-center font-display text-lg font-bold tabular-nums outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          @input="handleInput"
         />
-        <span v-if="config.unit" class="unit">{{ config.unit }}</span>
-      </div>
-      <button class="step-btn" @click="increment" :disabled="atMax" type="button">
-        <Icon name="solar:add-circle-bold" size="22" />
+        <span v-if="config.unit" class="text-xs font-medium text-muted">{{ config.unit }}</span>
+      </label>
+      <button class="icon-btn size-9 bg-surface" type="button" :disabled="atMax" :aria-label="`Increase ${config.label}`" @click="increment">
+        <Icon name="mdi:plus" size="18" />
       </button>
     </div>
-  </div>
+  </MetricHeader>
 </template>
-
 <script setup lang="ts">
 import type { NumberMetricConfig, MetricValue } from '~/types';
 
@@ -48,9 +44,6 @@ const currentValue = computed(() => {
 const step = computed(() => props.config.step ?? 1);
 const atMin = computed(() => props.config.min != null && currentValue.value <= props.config.min);
 const atMax = computed(() => props.config.max != null && currentValue.value >= props.config.max);
-
-const accentColor = computed(() => props.config.color ?? 'var(--primary)');
-const iconStyle = computed(() => ({ color: accentColor.value }));
 
 function increment() {
   let next = currentValue.value + step.value;
@@ -73,94 +66,3 @@ function handleInput(e: Event) {
   emit('update:modelValue', val);
 }
 </script>
-
-<style scoped lang="scss">
-.metric-number {
-  .number-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
-
-    .metric-label {
-      font-weight: 600;
-      font-size: 0.9375rem;
-      color: var(--text-primary);
-    }
-  }
-
-  .number-input-row {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-
-    .step-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border: none;
-      border-radius: var(--radius-md);
-      background: var(--hover-bg);
-      color: var(--text-primary);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-
-      &:hover:not(:disabled) {
-        background: var(--primary-rgba-12);
-        color: var(--primary);
-      }
-
-      &:disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
-      }
-    }
-
-    .value-display {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 0.375rem;
-      justify-content: center;
-
-      .number-field {
-        width: 80px;
-        text-align: center;
-        padding: 0.5rem;
-        border: 2px solid var(--border);
-        border-radius: var(--radius-md);
-        background: var(--card-bg);
-        color: var(--text-primary);
-        font-size: 1.125rem;
-        font-weight: 700;
-        font-variant-numeric: tabular-nums;
-        transition: border-color 0.2s ease;
-
-        &:focus {
-          outline: none;
-          border-color: var(--primary);
-          box-shadow: 0 0 0 3px var(--focus-ring);
-        }
-
-        /* Hide arrows */
-        -moz-appearance: textfield;
-        appearance: textfield;
-        &::-webkit-outer-spin-button,
-        &::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
-      }
-
-      .unit {
-        font-size: 0.8125rem;
-        font-weight: 500;
-        color: var(--text-tertiary);
-      }
-    }
-  }
-}
-</style>

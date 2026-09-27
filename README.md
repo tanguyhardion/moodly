@@ -1,21 +1,16 @@
 # Moodly
 
-A daily mood tracking journal. Track your mood, energy, sleep, focus, and stress with beautiful visualizations and advanced analytics.
+A daily mood tracking journal with configurable metrics, visualizations and insights.
 
 ## Features
 
-- Track mood, energy, sleep, focus, and stress on a 1-5 scale
-- Log daily habits and activities (healthy food, caffeine, gym, hard work, day off, alcohol, misc)
-- Add location data to your entries
-- Record personal notes for each day
-- View detailed history with interactive entry cards
-- Advanced analytics and insights to discover patterns in your data
-- Statistics dashboard with customizable time periods
-- Streak tracking to maintain consistency
-- Export your data to JSON or CSV formats
+- Build your own daily check-in from metric types: sliders, checkboxes, numbers, times, locations (with weather), text notes, and calculated metrics (e.g. sleep hours from bedtime and wake-up)
+- Drafts are autosaved locally until you save the entry
+- History, per-metric statistics, and insights (trends, correlations, habit effects, predictions)
+- Letters to your future self, email alerts, daily reminders and weekly/monthly reports
+- Export your data to JSON
 - Dark mode support
-- Secure cloud storage with master password protection
-- Automated email reports
+- Password-protected: the master password is exchanged for a 7-day session token
 
 ## Getting Started
 
@@ -23,13 +18,23 @@ A daily mood tracking journal. Track your mood, energy, sleep, focus, and stress
 # Install dependencies
 npm install
 
-# Run dev server
+# Run dev server (expects the backend on http://localhost:3001)
 npm run dev
 
 # Build for production
 npm run build
 ```
 
+## Configuration
+
+The backend URL is `runtimeConfig.public.apiBase` in `nuxt.config.ts`; the `$development` override points it at a local `vercel dev`.
+
+## Project Layout
+
+- `app/types/shared.ts` - Domain types, kept identical to `moodly-backend/types/shared.ts`
+- `app/utils/moodly-backend.ts` - API client (configured by `app/plugins/api.client.ts`)
+- `app/utils/statsMath.ts`, `metricStats.ts`, `insights.ts` - Pure calculations behind the stats and insights pages
+
 ## Tech Stack
 
-Built with Nuxt 4, Vue 3, and TypeScript. Uses a custom backend API for data storage and analytics.
+Built with Nuxt 4, Vue 3, and TypeScript, backed by the `moodly-backend` Vercel API and Supabase.

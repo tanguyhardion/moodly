@@ -1,87 +1,109 @@
 <template>
-  <div class="page-container">
-    <div class="page-header">
-      <h1 class="page-title">
-        <Icon name="solar:history-bold" size="28" class="icon-primary" />
-        History
-      </h1>
-      <p class="page-subtitle">Browse your past entries</p>
-    </div>
+  <div class="page">
+    <header class="mb-6">
+      <h1 class="page-title">History</h1>
+      <p class="page-subtitle">Every day you've logged, newest first.</p>
+    </header>
 
-    <LoadingState v-if="isLoading" message="Loading history..." />
+    <LoadingState v-if="isLoading" message="Loading your history…" />
 
     <div v-else-if="entries.length === 0" class="empty-state">
-      <div class="empty-state-icon">
-        <Icon name="solar:clipboard-list-bold" size="48" />
-      </div>
-      <p class="empty-state-title">No entries yet</p>
-      <p class="empty-state-description">
-        Start logging from the dashboard to see your history here.
-      </p>
+      <Icon name="solar:clipboard-list-bold" size="44" class="text-faint" />
+      <p class="text-lg font-bold text-ink">No entries yet</p>
+      <p class="max-w-xs text-sm">Check in on the Today tab and your days will show up here.</p>
     </div>
 
-    <div v-else class="history-list">
-      <div
+    <div v-else class="flex flex-col gap-3">
+      <article
         v-for="entry in displayedEntries"
         :key="entry.id"
-        class="history-card"
+        class="card relative overflow-hidden p-4 pl-5"
       >
-        <div class="card-header">
-          <span class="card-date">{{ formatDate(entry.date) }}</span>
+        <span
+          class="absolute inset-y-0 left-0 w-1.5"
+          :style="{ background: entryMood(entry)?.color ?? 'var(--line)' }"
+          aria-hidden="true"
+        />
+
+        <div class="flex items-center gap-3">
+          <div class="min-w-0 flex-1">
+            <h2 class="text-lg font-extrabold">{{ formatDate(entry.date) }}</h2>
+          </div>
+          <span
+            v-if="entryMood(entry)"
+            class="rounded-full px-3 py-1 font-display text-sm font-bold tabular-nums"
+            :style="{ background: entryMood(entry)!.color, color: entryMood(entry)!.ink }"
+          >
+            {{ moodMetric?.label }} {{ entryMood(entry)!.value }}
+          </span>
           <button
-            class="delete-btn"
-            @click="handleDelete(entry.id)"
-            title="Delete entry"
+            v-if="pendingDeleteId !== entry.id"
+            class="icon-btn size-9 hover:bg-danger/15 hover:text-danger"
             type="button"
+            title="Delete entry"
+            @click="pendingDeleteId = entry.id"
           >
             <Icon name="solar:trash-bin-trash-bold" size="16" />
           </button>
+          <span v-else class="flex items-center gap-1">
+            <button class="btn btn-ghost btn-sm" type="button" @click="pendingDeleteId = null">Keep</button>
+            <button class="btn btn-danger btn-sm" type="button" @click="handleDelete(entry.id)">Delete</button>
+          </span>
         </div>
-        <div class="card-grouped-metrics">
+
+        <div class="mt-3 flex flex-col gap-3">
           <template v-for="[groupName, groupMetrics] in groupedMetrics" :key="groupName">
-            <div v-if="hasDataInGroup(entry, groupMetrics)" class="history-metric-group">
-              <div v-if="groupName" class="history-group-title">{{ groupName }}</div>
-              <div class="card-metrics">
+            <div v-if="hasDataInGroup(entry, groupMetrics)" class="flex flex-col gap-1.5">
+              <p v-if="groupName" class="eyebrow">{{ groupName }}</p>
+              <div class="flex flex-wrap gap-1.5">
                 <template v-for="config in groupMetrics" :key="config.id">
-                  <!-- Location with weather -->
-                  <div
-                    v-if="isValidMetricValue(entry.data[config.id] ?? null, config) && config.type === 'location'"
-                    class="metric-chip metric-chip-location"
+                  <span
+                    v-if="config.id !== moodMetric?.id && isValidMetricValue(entry.data[config.id] ?? null, config)"
+                    class="inline-flex max-w-full items-center gap-1.5 rounded-full bg-surface-2 px-3 py-1 text-sm"
                   >
-                    <Icon v-if="config.icon" :name="config.icon" size="14" :style="{ color: config.color || 'var(--primary)' }" />
-                    <span class="chip-label">{{ config.label }}:</span>
-                    <span class="chip-value">{{ (entry.data[config.id] as LocationValue).name }}</span>
-                    <template v-if="(entry.data[config.id] as LocationValue).weather">
-                      <span class="chip-divider">|</span>
-                      <Icon :name="getWeatherIcon((entry.data[config.id] as LocationValue).weather!.icon)" size="13" class="weather-icon" />
-                      <span class="chip-weather">{{ formatTemperature((entry.data[config.id] as LocationValue).weather!.temperature) }}</span>
+                    <Icon v-if="config.icon" :name="config.icon" size="14" class="shrink-0" :style="{ color: config.color || 'var(--mood-strong)' }" />
+                    <span class="text-muted">{{ config.label }}</span>
+                    <template v-if="config.type === 'location'">
+                      <span class="truncate font-semibold">{{ (entry.data[config.id] as LocationValue).name }}</span>
+                      <template v-if="(entry.data[config.id] as LocationValue).weather">
+                        <Icon :name="getWeatherIcon((entry.data[config.id] as LocationValue).weather!.icon)" size="14" class="shrink-0 text-muted" />
+                        <span class="font-semibold tabular-nums">{{ formatTemperature((entry.data[config.id] as LocationValue).weather!.temperature) }}</span>
+                      </template>
                     </template>
-                  </div>
-                  <!-- Other metric types -->
-                  <div v-else-if="isValidMetricValue(entry.data[config.id] ?? null, config)" class="metric-chip">
-                    <Icon v-if="config.icon" :name="config.icon" size="14" :style="{ color: config.color || 'var(--primary)' }" />
-                    <span class="chip-label">{{ config.label }}{{ config.type !== 'checkbox' ? ':' : '' }}</span>
-                    <span v-if="config.type !== 'checkbox'" class="chip-value">{{ formatMetricValue(entry.data[config.id] ?? null, config) }}</span>
-                  </div>
+                    <span v-else-if="config.type !== 'checkbox'" class="truncate font-semibold tabular-nums">
+                      {{ formatMetricValue(entry.data[config.id] ?? null, config) }}
+                    </span>
+                  </span>
                 </template>
               </div>
             </div>
           </template>
         </div>
-      </div>
-      
-      <div v-if="displayedCount < sortedEntries.length" ref="loadMoreSentinel" class="load-more-sentinel">
+      </article>
+
+      <div v-if="displayedCount < sortedEntries.length" ref="loadMoreSentinel" class="grid place-items-center py-6 text-muted">
         <Icon name="svg-spinners:ring-resize" size="24" />
       </div>
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import type { MetricConfig, MetricValue, LocationValue, DailyEntry } from '~/types';
+import { MOOD_COLORS, moodLevel } from '~/utils/moodColors';
 
 const { entries, isLoading, deleteEntry, groupedMetrics } = useMoodly();
+const { moodMetric } = useMoodTheme();
+
+const pendingDeleteId = ref<string | null>(null);
+
+/** The entry's mood value with its mood color, or null when it has none. */
+function entryMood(entry: DailyEntry) {
+  const metric = moodMetric.value;
+  const value = metric ? entry.data[metric.id] : null;
+  if (!metric || typeof value !== 'number') return null;
+  return { value, ...MOOD_COLORS[moodLevel(value, metric)] };
+}
 
 const sortedEntries = computed(() =>
   [...entries.value].sort((a, b) => b.date.localeCompare(a.date))
@@ -109,7 +131,7 @@ let observer: IntersectionObserver | null = null;
 
 onMounted(() => {
   observer = new IntersectionObserver((intersectEntries) => {
-    if (intersectEntries[0].isIntersecting) {
+    if (intersectEntries[0]?.isIntersecting) {
       if (displayedCount.value < sortedEntries.value.length) {
         displayedCount.value += 10;
       }
@@ -134,10 +156,10 @@ onUnmounted(() => {
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr + 'T00:00:00');
   return d.toLocaleDateString('en-US', {
-    weekday: 'short',
-    year: 'numeric',
-    month: 'short',
+    weekday: 'long',
+    month: 'long',
     day: 'numeric',
+    year: d.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined,
   });
 }
 
@@ -170,148 +192,7 @@ function formatTemperature(temp: number | null): string {
 }
 
 async function handleDelete(id: string) {
-  if (confirm('Delete this entry?')) {
-    await deleteEntry(id);
-  }
+  pendingDeleteId.value = null;
+  await deleteEntry(id);
 }
 </script>
-
-<style scoped lang="scss">
-.page-container {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  position: relative;
-  z-index: 1;
-
-  @media (max-width: 768px) {
-    padding: 1.5rem 1rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 1.5rem 0.75rem;
-  }
-}
-
-.history-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.history-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.2s ease;
-
-  &:hover {
-    box-shadow: var(--shadow-md);
-    border-color: var(--border-hover);
-  }
-
-  .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.75rem;
-
-    .card-date {
-      font-weight: 700;
-      font-size: 1rem;
-      color: var(--text-primary);
-    }
-
-    .delete-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 30px;
-      height: 30px;
-      border: none;
-      background: transparent;
-      color: var(--text-tertiary);
-      cursor: pointer;
-      border-radius: var(--radius-sm);
-      transition: all 0.15s ease;
-
-      &:hover {
-        background: rgba(239, 68, 68, 0.1);
-        color: var(--error);
-      }
-    }
-  }
-
-  .card-grouped-metrics {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .history-metric-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .history-group-title {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .card-metrics {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-
-    .metric-chip {
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-      padding: 0.375rem 0.625rem;
-      background: var(--hover-bg);
-      border-radius: var(--radius-sm);
-      font-size: 0.8125rem;
-
-      .chip-label {
-        color: var(--text-secondary);
-        font-weight: 500;
-      }
-
-      .chip-value {
-        color: var(--text-primary);
-        font-weight: 600;
-      }
-
-      &.metric-chip-location {
-        .chip-divider {
-          color: var(--text-tertiary);
-          margin: 0 0.125rem;
-        }
-
-        .weather-icon {
-          color: var(--primary);
-        }
-
-        .chip-weather {
-          color: var(--text-secondary);
-          font-weight: 500;
-        }
-      }
-    }
-  }
-}
-
-.load-more-sentinel {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1.5rem;
-  color: var(--primary);
-}
-</style>

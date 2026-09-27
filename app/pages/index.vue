@@ -1,166 +1,125 @@
 <template>
-  <div
-    class="page-container"
-    @touchstart="handleTouchStart"
-    @touchend="handleSwipeEnd"
-  >
-    <!-- Header -->
-    <div class="dashboard-header">
-      <div class="header-top">
-        <h1 class="page-title">
-          <Icon name="solar:home-2-bold" size="28" class="icon-primary" />
-          Dashboard
-        </h1>
-        <div class="header-actions">
-          <button class="btn btn-ghost" @click="showBuilder = true" title="Configure metrics" type="button">
-            <Icon name="solar:widget-add-bold" size="20" />
-            <span class="btn-label">Configure</span>
-          </button>
-        </div>
+  <div class="page" @touchstart="handleTouchStart" @touchend="handleSwipeEnd">
+    <!-- Date + configure -->
+    <div class="mb-6 flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <p class="eyebrow">Check-in</p>
+        <button class="btn btn-ghost btn-sm" type="button" title="Edit your metrics" @click="showBuilder = true">
+          <Icon name="solar:widget-add-bold" size="18" />
+          Metrics
+        </button>
+      </div>
+      <div ref="dateSelectorRef">
+        <DateSelector v-model="selectedDate" :maxDate="maxDate" :darkMode="darkMode" />
       </div>
     </div>
 
-    <!-- Date Selector -->
-    <div ref="dateSelectorRef">
-      <DateSelector
-        v-model="selectedDate"
-        :maxDate="maxDate"
-        :darkMode="darkMode"
-      />
-    </div>
-
-    <!-- Sticky Date Selector -->
+    <!-- Sticky date selector -->
     <Transition name="slide-down">
-      <div v-if="showStickyHeader" class="sticky-header">
-        <div class="sticky-content">
-          <DateSelector
-            v-model="selectedDate"
-            :maxDate="maxDate"
-            :darkMode="darkMode"
-            :simple="true"
-          />
+      <div v-if="showStickyHeader" class="sticky-bar">
+        <div class="px-2 py-1.5">
+          <DateSelector v-model="selectedDate" :maxDate="maxDate" :darkMode="darkMode" :simple="true" />
         </div>
       </div>
     </Transition>
 
-    <!-- Loading -->
-    <LoadingState v-if="isLoading || isConfigLoading" message="Loading your dashboard..." />
+    <LoadingState v-if="isLoading || isConfigLoading" message="Loading your day…" />
 
-    <!-- Content with Slide Animation -->
     <Transition
       v-else
       :name="swipeDirection === 'left' ? 'slide-left' : 'slide-right'"
       mode="out-in"
       @enter="swipeDirection = null"
     >
-      <!-- Empty State: No Metrics Configured -->
-      <div v-if="!hasMetrics" :key="`empty-${selectedDateString}`" class="get-started-card">
-        <div class="get-started-content">
-          <div class="get-started-icon">
-            <Icon name="solar:clipboard-add-bold" size="56" />
-          </div>
-          <h2>Design Your Tracking Routine</h2>
-          <p>
-            Add metrics to start tracking your daily habits, moods, and goals.
-            You decide what to track — sliders, checkboxes, numbers, times, locations, or notes.
-          </p>
-          <button class="btn btn-primary" @click="showBuilder = true" type="button">
-            <Icon name="solar:add-circle-bold" size="20" />
-            Get Started
-          </button>
-        </div>
+      <!-- No metrics configured -->
+      <div v-if="!hasMetrics" :key="`empty-${selectedDateString}`" class="card flex flex-col items-center gap-3 px-6 py-12 text-center">
+        <span class="grid size-16 place-items-center rounded-full bg-mood-soft text-mood-strong">
+          <Icon name="solar:clipboard-add-bold" size="32" />
+        </span>
+        <h2 class="text-2xl font-extrabold">Build your daily check-in</h2>
+        <p class="max-w-sm text-muted">
+          Pick what to track each day: a mood scale, habits to tick, sleep times, where you were, a note.
+        </p>
+        <button class="btn btn-primary mt-2" type="button" @click="showBuilder = true">
+          <Icon name="solar:add-circle-bold" size="20" />
+          Add your first metric
+        </button>
       </div>
 
-      <!-- Metric Entry Form -->
-      <div v-else :key="`entry-${selectedDateString}`" class="metric-entry-form">
-        <!-- Draft Restored Banner -->
+      <!-- Entry form -->
+      <div v-else :key="`entry-${selectedDateString}`" class="flex flex-col gap-4">
         <Transition name="fade">
-          <div v-if="isRestoredDraft" class="draft-banner">
-            <div class="draft-banner-content">
-              <Icon name="solar:document-medicine-bold" size="20" class="draft-banner-icon" />
-              <span>Restored unsaved draft for this day</span>
-            </div>
-            <button class="btn btn-ghost btn-sm discard-btn" @click="handleDiscardDraft" type="button">
-              <Icon name="solar:trash-bin-trash-bold" size="16" />
-              Discard draft
-            </button>
+          <div v-if="isRestoredDraft" class="flex flex-wrap items-center justify-between gap-2 rounded-card bg-surface/70 py-2 pr-2 pl-4 text-sm">
+            <span class="flex items-center gap-2 font-medium">
+              <Icon name="solar:document-text-bold" size="18" class="text-mood-strong" />
+              Unsaved changes restored
+            </span>
+            <button class="btn btn-ghost btn-sm" type="button" @click="handleDiscardDraft">Discard</button>
           </div>
         </Transition>
 
-        <!-- Grouped metrics -->
         <template v-for="[groupName, groupMetrics] in groupedMetrics" :key="groupName">
-          <div class="metric-group" v-if="groupMetrics.length > 0">
-            <h3 v-if="groupName" class="group-title">
-              {{ groupName }}
-            </h3>
-            <div class="metrics-grid">
-              <div
-                v-for="metric in groupMetrics"
-                :key="metric.id"
-                class="metric-card"
-                :class="`metric-type-${metric.type}`"
-              >
+          <section v-if="groupMetrics.length > 0" class="card flex flex-col gap-5">
+            <h3 v-if="groupName" class="eyebrow -mb-1">{{ groupName }}</h3>
+            <template v-for="run in metricRuns(groupMetrics)" :key="run.key">
+              <div v-if="run.chips" class="flex flex-wrap gap-2">
                 <MetricRenderer
+                  v-for="metric in run.items"
+                  :key="metric.id"
                   :config="metric"
                   :modelValue="entryData[metric.id] ?? getDefaultValueForType(metric)"
                   :date="selectedDateString"
                   @update:modelValue="updateMetricValue(metric.id, $event)"
                 />
               </div>
-            </div>
-          </div>
+              <MetricRenderer
+                v-else
+                :config="run.items[0]!"
+                :modelValue="entryData[run.items[0]!.id] ?? getDefaultValueForType(run.items[0]!)"
+                :date="selectedDateString"
+                @update:modelValue="updateMetricValue(run.items[0]!.id, $event)"
+              />
+            </template>
+          </section>
         </template>
 
-        <!-- Save Button -->
-        <div class="save-section">
-          <button
-            ref="saveBtnRef"
-            class="btn btn-primary save-btn"
-            @click="handleSave"
-            :disabled="isSaving"
-            type="button"
-          >
-            <Icon v-if="isSaving" name="svg-spinners:ring-resize" size="20" />
-            <Icon v-else name="solar:diskette-bold" size="20" />
-            {{ isSaving ? 'Saving...' : 'Save Entry' }}
-          </button>
-        </div>
+        <button
+          ref="saveBtnRef"
+          class="btn btn-primary mt-2 h-14 w-full text-base"
+          type="button"
+          :disabled="isSaving"
+          @click="handleSave"
+        >
+          <Icon :name="isSaving ? 'svg-spinners:ring-resize' : 'solar:check-circle-bold'" size="22" />
+          {{ isSaving ? 'Saving…' : 'Save entry' }}
+        </button>
       </div>
     </Transition>
 
-    <!-- Floating Action Button -->
+    <!-- Floating save, shown once the main button scrolls away -->
     <Transition name="fab">
       <button
-        v-if="showFab"
-        @click="handleSave"
-        class="fab-btn"
-        :class="{ 'is-loading': isSaving }"
-        title="Save Entry"
-        :disabled="isSaving"
+        v-if="showFab && hasMetrics"
+        class="fixed right-5 bottom-28 z-[90] grid size-14 place-items-center rounded-full bg-mood text-mood-ink shadow-pop transition hover:brightness-105 active:scale-95 disabled:opacity-60 sm:bottom-8"
+        title="Save entry"
         type="button"
+        :disabled="isSaving"
+        @click="handleSave"
       >
-        <Icon v-if="!isSaving" name="solar:check-circle-bold" size="28" />
-        <Icon v-else name="svg-spinners:ring-resize" size="28" />
+        <Icon :name="isSaving ? 'svg-spinners:ring-resize' : 'solar:check-circle-bold'" size="28" />
       </button>
     </Transition>
 
-    <!-- Metric Builder Dialog -->
-    <MetricBuilder
-      v-model="showBuilder"
-      :metrics="metricConfigs"
-      @save="handleSaveConfig"
-    />
+    <MetricBuilder v-model="showBuilder" :metrics="metricConfigs" @save="handleSaveConfig" />
 
-    <!-- Toast -->
     <Transition name="toast">
-      <div v-if="showToast" class="toast">
+      <div v-if="showToast" class="toast" role="status">
         <Icon name="solar:check-circle-bold" size="20" />
-        <span>{{ toastMessage }}</span>
+        {{ toastMessage }}
       </div>
     </Transition>
   </div>
 </template>
-
 <script setup lang="ts">
 import type { MetricValue, MetricConfig, MetricDataMap, CalculatedMetricConfig } from '~/types';
 import { getDefaultValueForType } from '~/types';
@@ -180,6 +139,18 @@ const {
   isInitialized,
 } = useMoodly();
 
+/** Splits a group into runs so consecutive checkboxes sit together as chips. */
+function metricRuns(metrics: MetricConfig[]) {
+  const runs: { key: string; chips: boolean; items: MetricConfig[] }[] = [];
+  for (const m of metrics) {
+    const chips = m.type === 'checkbox';
+    const last = runs[runs.length - 1];
+    if (chips && last?.chips) last.items.push(m);
+    else runs.push({ key: m.id, chips, items: [m] });
+  }
+  return runs;
+}
+
 // --- Swipe Gestures ---
 const touchStartX = ref(0);
 const touchStartY = ref(0);
@@ -187,13 +158,13 @@ const swipeThreshold = 50;
 const swipeDirection = ref<'left' | 'right' | null>(null);
 
 function handleTouchStart(e: TouchEvent) {
-  touchStartX.value = e.changedTouches[0].screenX;
-  touchStartY.value = e.changedTouches[0].screenY;
+  touchStartX.value = e.changedTouches[0]!.screenX;
+  touchStartY.value = e.changedTouches[0]!.screenY;
 }
 
 function handleSwipeEnd(e: TouchEvent) {
-  const touchEndX = e.changedTouches[0].screenX;
-  const touchEndY = e.changedTouches[0].screenY;
+  const touchEndX = e.changedTouches[0]!.screenX;
+  const touchEndY = e.changedTouches[0]!.screenY;
   const diffX = touchStartX.value - touchEndX;
   const diffY = Math.abs(touchStartY.value - touchEndY);
   const absDiffX = Math.abs(diffX);
@@ -240,6 +211,20 @@ const isInitializingEntry = ref(false);
 
 // --- Entry data ---
 const entryData = ref<MetricDataMap>({});
+
+// --- Mood tint follows the entry being edited ---
+const { moodMetric, setLiveMoodValue } = useMoodTheme();
+// Sliders default to their minimum, so only tint once the mood value is real
+// (saved, restored from a draft, or touched), not on a blank day.
+const hasMoodValue = ref(false);
+
+watchEffect(() => {
+  const id = moodMetric.value?.id;
+  const value = id ? entryData.value[id] : null;
+  setLiveMoodValue(hasMoodValue.value && typeof value === 'number' ? value : null);
+});
+
+onUnmounted(() => setLiveMoodValue(null));
 const isSaving = ref(false);
 const showBuilder = ref(false);
 const showToast = ref(false);
@@ -291,6 +276,11 @@ onMounted(() => {
 
   watch(saveBtnRef, (el) => {
     if (el) fabObserver.observe(el);
+  });
+
+  onUnmounted(() => {
+    observer.disconnect();
+    fabObserver.disconnect();
   });
 });
 
@@ -347,6 +337,11 @@ function loadEntryForDate(dateStr: string, options: { ignoreDraft?: boolean } = 
     defaults[m.id] = getDefaultValueForType(m);
   }
 
+  const moodId = moodMetric.value?.id;
+  hasMoodValue.value = !!moodId && (
+    typeof draft?.[moodId] === 'number' || typeof existing?.data[moodId] === 'number'
+  );
+
   if (draft) {
     entryData.value = { ...defaults, ...(existing?.data ?? {}), ...draft };
     isRestoredDraft.value = true;
@@ -365,6 +360,7 @@ function loadEntryForDate(dateStr: string, options: { ignoreDraft?: boolean } = 
 }
 
 function updateMetricValue(metricId: string, value: MetricValue) {
+  if (metricId === moodMetric.value?.id) hasMoodValue.value = true;
   entryData.value = { ...entryData.value, [metricId]: value };
 }
 
@@ -406,310 +402,3 @@ function showToastNotification(message: string) {
   setTimeout(() => { showToast.value = false; }, 2500);
 }
 </script>
-
-<style scoped lang="scss">
-.page-container {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 1.5rem;
-
-  @media (max-width: 768px) {
-    padding: 1.5rem 1rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 1.5rem 0.75rem;
-  }
-}
-
-.dashboard-header {
-  margin-bottom: 1.5rem;
-
-  .header-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-
-    .page-title {
-      display: flex;
-      align-items: center;
-      gap: 0.625rem;
-      font-size: 1.75rem;
-      margin: 0;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 0.5rem;
-
-      .btn-label {
-        @media (max-width: 480px) {
-          display: none;
-        }
-      }
-    }
-  }
-}
-
-/* Get Started Card */
-.get-started-card {
-  background: var(--card-bg);
-  border: 2px dashed var(--border);
-  border-radius: var(--radius-xl);
-  padding: 3rem 2rem;
-  text-align: center;
-  animation: fadeIn 0.05s ease;
-
-  .get-started-content {
-    max-width: 400px;
-    margin: 0 auto;
-
-    .get-started-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 96px;
-      height: 96px;
-      border-radius: var(--radius-xl);
-      background: var(--primary-rgba-08);
-      color: var(--primary);
-      margin-bottom: 1.5rem;
-    }
-
-    h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin: 0 0 0.75rem;
-    }
-
-    p {
-      color: var(--text-secondary);
-      font-size: 0.9375rem;
-      line-height: 1.6;
-      margin: 0 0 1.5rem;
-    }
-
-    button {
-      margin: 0 auto;
-    }
-  }
-}
-
-/* Metric Entry Form */
-.metric-entry-form {
-  animation: fadeIn 0.05s ease;
-
-  .metric-group {
-    margin-bottom: 1.5rem;
-
-    .group-title {
-      font-size: 0.8125rem;
-      font-weight: 700;
-      color: var(--text-tertiary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin: 0 0 0.75rem;
-      padding-left: 0.25rem;
-    }
-  }
-
-  .metrics-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-
-    .metric-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 1.25rem;
-      transition: all 0.2s ease;
-      box-shadow: var(--shadow-sm);
-
-      &:hover {
-        box-shadow: var(--shadow-md);
-        border-color: var(--border-hover);
-      }
-
-      /* Checkbox type gets compact styling */
-      &.metric-type-checkbox {
-        padding: 0;
-        background: transparent;
-        border: none;
-        box-shadow: none;
-
-        &:hover {
-          box-shadow: none;
-        }
-      }
-    }
-  }
-
-  .save-section {
-    margin-top: 2rem;
-    display: flex;
-    justify-content: center;
-
-    .save-btn {
-      min-width: 200px;
-      padding: 1rem 2rem;
-      font-size: 1rem;
-    }
-  }
-}
-
-/* Floating Action Button */
-.fab-btn {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  
-  background: var(--gradient-primary);
-  overflow: hidden; 
-  
-  color: white;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 15px rgba(var(--color-shadow-primary), 0.4);
-  cursor: pointer;
-  z-index: 99;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  -webkit-tap-highlight-color: transparent;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: var(--gradient-primary-dark);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
-  }
-
-  &:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 25px rgba(var(--color-shadow-primary), 0.6);
-    
-    &::before {
-      opacity: 1;
-    }
-  }
-
-  &:active {
-    transform: scale(0.9);
-  }
-
-  &.is-loading {
-    cursor: wait;
-    opacity: 0.8;
-  }
-}
-
-.fab-enter-active,
-.fab-leave-active {
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.fab-enter-from,
-.fab-leave-to {
-  opacity: 0;
-  transform: scale(0) rotate(-90deg);
-}
-
-/* Swipe animations */
-.slide-left-enter-active,
-.slide-left-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.slide-left-enter-from {
-  opacity: 0;
-  transform: translateX(100%);
-}
-
-.slide-left-leave-to {
-  opacity: 0;
-  transform: translateX(-100%);
-}
-
-.slide-right-enter-active,
-.slide-right-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.slide-right-enter-from {
-  opacity: 0;
-  transform: translateX(-100%);
-}
-
-.slide-right-leave-to {
-  opacity: 0;
-  transform: translateX(100%);
-}
-
-.draft-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.75rem 1rem;
-  margin-bottom: 1.25rem;
-  background: var(--color-surface-hover, rgba(99, 102, 241, 0.08));
-  border: 1px solid var(--color-border, rgba(99, 102, 241, 0.2));
-  border-radius: 0.75rem;
-  color: var(--color-text-main, #e2e8f0);
-  font-size: 0.875rem;
-
-  .draft-banner-content {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 500;
-  }
-
-  .draft-banner-icon {
-    color: var(--color-primary, #6366f1);
-  }
-
-  .discard-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.375rem;
-    font-size: 0.8125rem;
-    padding: 0.35rem 0.65rem;
-    opacity: 0.85;
-
-    &:hover {
-      opacity: 1;
-      color: #ef4444;
-    }
-  }
-
-  @media (max-width: 480px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-
-    .discard-btn {
-      align-self: flex-end;
-    }
-  }
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.25s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>

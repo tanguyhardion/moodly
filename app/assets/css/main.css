@@ -1,0 +1,336 @@
+@import "tailwindcss";
+
+/* Dark mode follows the `.dark` class that useDarkMode puts on <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================
+   Tokens
+   `--mood` / `--mood-ink` are set at runtime by useMoodTheme from the latest mood,
+   so the whole app tints with how the day is going.
+   ============================================ */
+:root {
+  --mood: #f2a93b;
+  --mood-ink: #2a1a05;
+
+  --base: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f5f3f7;
+  --line: rgb(27 22 34 / 0.09);
+  --ink: #1b1622;
+  --muted: #6f6878;
+  --faint: #a39cad;
+
+  --success: #2f9e6b;
+  --danger: #e5484d;
+  --warning: #c77d00;
+
+  /* Named accents used by insight data (utils/insights.ts sets these per item). */
+  --primary: var(--mood-strong);
+  --error: var(--danger);
+  --gold: #d49a0a;
+  --orange: #ef8a2c;
+  --fire: #ec5a6f;
+  --pink: #e0569a;
+
+  --bg: color-mix(in oklab, var(--mood) 14%, var(--base));
+  --mood-soft: color-mix(in oklab, var(--mood) 20%, var(--surface));
+  --mood-strong: color-mix(in oklab, var(--mood) 75%, var(--ink));
+
+  color-scheme: light;
+}
+
+:root.dark {
+  --base: #141219;
+  --surface: #1f1c26;
+  --surface-2: #28242f;
+  --line: rgb(255 255 255 / 0.08);
+  --ink: #f6f2f8;
+  --muted: #a59eb0;
+  --faint: #756e80;
+
+  --success: #4cc38a;
+  --danger: #ff6b6f;
+  --warning: #f5b544;
+
+  --bg: color-mix(in oklab, var(--mood) 16%, var(--base));
+  --mood-soft: color-mix(in oklab, var(--mood) 22%, var(--surface));
+  --mood-strong: color-mix(in oklab, var(--mood) 80%, var(--ink));
+
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-mood: var(--mood);
+  --color-mood-ink: var(--mood-ink);
+  --color-mood-soft: var(--mood-soft);
+  --color-mood-strong: var(--mood-strong);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+}
+
+@theme {
+  /* Mood scale, low to high. Also used for charts and the history calendar. */
+  --color-mood-1: #5b6cd6;
+  --color-mood-2: #3fa7c9;
+  --color-mood-3: #8cbf4a;
+  --color-mood-4: #f2a93b;
+  --color-mood-5: #f2677a;
+
+  --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Bricolage Grotesque", "Figtree", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 1.5rem;
+  --shadow-card: 0 1px 2px rgb(27 22 34 / 0.05), 0 8px 24px -12px rgb(27 22 34 / 0.12);
+  --shadow-pop: 0 24px 48px -16px rgb(27 22 34 / 0.35);
+}
+
+/* ============================================
+   Base
+   ============================================ */
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-bg font-sans text-ink antialiased;
+    transition: background-color 0.4s ease;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight text-balance;
+  }
+
+  ::selection {
+    background: var(--mood);
+    color: var(--mood-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--mood-strong);
+    outline-offset: 2px;
+  }
+
+  button:not(:disabled), [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/* ============================================
+   Shared components
+   Kept to the few patterns repeated across many screens.
+   ============================================ */
+@layer components {
+  .page {
+    @apply mx-auto w-full max-w-2xl px-4 pt-6 pb-16 sm:pt-8;
+  }
+
+  .page-title {
+    @apply font-display text-3xl font-extrabold text-ink sm:text-4xl;
+  }
+
+  .page-subtitle {
+    @apply mt-1 text-[15px] text-muted;
+  }
+
+  .card {
+    @apply rounded-card bg-surface p-5 shadow-card dark:shadow-none;
+  }
+
+  .eyebrow {
+    @apply text-[11px] font-semibold tracking-[0.08em] text-muted uppercase;
+  }
+
+  .btn {
+    @apply inline-flex h-11 items-center justify-center gap-2 rounded-full px-5 text-[15px] font-semibold whitespace-nowrap transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply bg-mood text-mood-ink hover:brightness-105;
+  }
+
+  .btn-secondary {
+    @apply bg-surface text-ink ring-1 ring-line hover:bg-surface-2;
+  }
+
+  .btn-ghost {
+    @apply text-muted hover:bg-mood-soft hover:text-ink;
+  }
+
+  .btn-danger {
+    @apply bg-danger text-white hover:brightness-110;
+  }
+
+  .btn-sm {
+    @apply h-9 px-4 text-sm;
+  }
+
+  .icon-btn {
+    @apply inline-grid size-10 shrink-0 place-items-center rounded-full text-muted transition hover:bg-mood-soft hover:text-ink disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .input {
+    @apply h-11 w-full rounded-2xl bg-surface-2 px-4 text-[15px] text-ink ring-1 ring-transparent transition outline-none placeholder:text-faint focus:ring-2 focus:ring-mood;
+  }
+
+  textarea.input {
+    @apply h-auto py-3 leading-relaxed;
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-[13px] font-semibold text-muted;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-2 rounded-full bg-surface-2 px-3.5 py-2 text-sm font-medium text-ink transition hover:brightness-95 dark:hover:brightness-125;
+  }
+
+  .chip-on {
+    @apply bg-mood-soft ring-2 ring-mood;
+  }
+
+  .segmented {
+    @apply inline-flex rounded-full bg-surface p-1 shadow-card dark:shadow-none;
+  }
+
+  .segmented > button {
+    @apply rounded-full px-4 py-1.5 text-sm font-semibold text-muted transition hover:text-ink;
+  }
+
+  .segmented > button.is-active {
+    @apply bg-mood text-mood-ink hover:text-mood-ink;
+  }
+
+  .overlay {
+    @apply fixed inset-0 z-[200] flex items-end justify-center bg-black/40 p-0 backdrop-blur-sm sm:items-center sm:p-4;
+  }
+
+  .sheet {
+    @apply flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-card bg-surface shadow-pop sm:max-w-lg sm:rounded-card;
+  }
+
+  .toast {
+    @apply fixed top-5 left-1/2 z-[1000] flex -translate-x-1/2 items-center gap-2 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-surface shadow-pop;
+  }
+
+  .sticky-bar {
+    @apply pointer-events-none fixed inset-x-0 top-[4.25rem] z-[90] flex justify-center px-4;
+  }
+
+  .sticky-bar > * {
+    @apply pointer-events-auto w-full max-w-xl rounded-card bg-surface/90 shadow-pop backdrop-blur-md;
+  }
+
+  .empty-state {
+    @apply flex flex-col items-center gap-2 px-6 py-14 text-center text-muted;
+  }
+}
+
+/* ============================================
+   Range input for long slider scales. Set `--p` (fill %) and `--accent` inline.
+   ============================================ */
+.range {
+  appearance: none;
+  width: 100%;
+  height: 0.625rem;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--accent, var(--mood)) var(--p, 0%), var(--surface-2) var(--p, 0%));
+  cursor: pointer;
+}
+.range::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.625rem;
+  height: 1.625rem;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 5px solid var(--accent, var(--mood));
+  box-shadow: var(--shadow-card);
+}
+.range::-moz-range-thumb {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 5px solid var(--accent, var(--mood));
+  box-shadow: var(--shadow-card);
+}
+
+/* ============================================
+   Date picker (@vuepic/vue-datepicker) themed from the tokens.
+   `:root` raises specificity above the library's own stylesheet.
+   ============================================ */
+:root .dp__theme_light,
+:root .dp__theme_dark {
+  --dp-font-family: inherit;
+  --dp-border-radius: 1rem;
+  --dp-cell-border-radius: 999px;
+  --dp-background-color: var(--surface);
+  --dp-text-color: var(--ink);
+  --dp-hover-color: var(--mood-soft);
+  --dp-hover-text-color: var(--ink);
+  --dp-hover-icon-color: var(--ink);
+  --dp-primary-color: var(--mood);
+  --dp-primary-text-color: var(--mood-ink);
+  --dp-border-color: var(--line);
+  --dp-menu-border-color: transparent;
+  --dp-secondary-color: var(--faint);
+  --dp-icon-color: var(--muted);
+}
+
+:root .dp__menu {
+  box-shadow: var(--shadow-pop);
+}
+
+/* ============================================
+   Vue <Transition> names used across components
+   ============================================ */
+.fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+.slide-down-enter-active, .slide-down-leave-active,
+.dropdown-enter-active, .dropdown-leave-active,
+.menu-enter-active, .menu-leave-active,
+.toast-enter-active, .toast-leave-active,
+.error-enter-active, .error-leave-active,
+.slide-enter-active, .slide-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.slide-down-enter-from, .slide-down-leave-to,
+.dropdown-enter-from, .dropdown-leave-to,
+.menu-enter-from, .menu-leave-to,
+.error-enter-from, .error-leave-to,
+.slide-enter-from, .slide-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+.toast-enter-from, .toast-leave-to { opacity: 0; transform: translate(-50%, -12px); }
+
+/* Day-to-day swipe on the Today screen */
+.slide-left-enter-active, .slide-left-leave-active,
+.slide-right-enter-active, .slide-right-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+.slide-left-enter-from, .slide-right-leave-to { opacity: 0; transform: translateX(32px); }
+.slide-left-leave-to, .slide-right-enter-from { opacity: 0; transform: translateX(-32px); }
+
+.fab-enter-active, .fab-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+.fab-enter-from, .fab-leave-to { opacity: 0; transform: translateY(12px) scale(0.95); }
+
+.list-move, .list-enter-active, .list-leave-active { transition: all 0.25s ease; }
+.list-enter-from, .list-leave-to { opacity: 0; transform: translateX(-12px); }
+.list-leave-active { position: absolute; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

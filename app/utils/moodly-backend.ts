@@ -1,48 +1,71 @@
-import type { DailyEntry, MetricConfig, AppSettings, ApiResponse, WeatherData, EmailAlert } from "~/types";
+import type { DailyEntry, MetricConfig, AppSettings, ApiResponse, WeatherData, EmailAlert, ScheduledLetter, SessionToken } from "~/types";
 
-const API_BASE = import.meta.env.DEV
-  ? "http://localhost:3001"
-  : "https://moodly-backend.vercel.app";
+const SESSION_TOKEN_KEY = "moodly-session-token";
 
-function getMasterPassword(): string {
-  return sessionStorage.getItem("moodly-master-password") ?? "";
+let apiBase = "";
+let onUnauthorized: () => void = () => {};
+
+/** Called once by the `api` plugin with values from runtime config. */
+export function configureApi(options: { baseUrl: string; onUnauthorized: () => void }) {
+  apiBase = options.baseUrl.replace(/\/$/, "");
+  onUnauthorized = options.onUnauthorized;
 }
 
-function authParams(): string {
-  return `masterPassword=${encodeURIComponent(getMasterPassword())}`;
+export function getSessionToken(): string | null {
+  return sessionStorage.getItem(SESSION_TOKEN_KEY);
 }
 
-async function apiGet<T>(path: string, params: Record<string, string> = {}): Promise<T> {
-  const qs = new URLSearchParams({ ...params, masterPassword: getMasterPassword() });
-  const res = await fetch(`${API_BASE}${path}?${qs.toString()}`);
-  const json: ApiResponse<T> = await res.json();
-  if (!json.success) throw new Error(json.error ?? "Request failed");
-  return json.data as T;
+export function clearSessionToken() {
+  sessionStorage.removeItem(SESSION_TOKEN_KEY);
 }
 
-async function apiPost<T>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ...body as Record<string, unknown>, masterPassword: getMasterPassword() }),
+async function request<T>(
+  method: "GET" | "POST" | "DELETE",
+  path: string,
+  options: { params?: Record<string, string>; body?: unknown } = {},
+): Promise<T> {
+  const qs = options.params ? `?${new URLSearchParams(options.params)}` : "";
+  const headers: Record<string, string> = {};
+  const token = getSessionToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+  if (options.body !== undefined) headers["Content-Type"] = "application/json";
+
+  const res = await fetch(`${apiBase}${path}${qs}`, {
+    method,
+    headers,
+    body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
   });
-  const json: ApiResponse<T> = await res.json();
-  if (!json.success) throw new Error(json.error ?? "Request failed");
+
+  let json: ApiResponse<T> | null = null;
+  try {
+    json = await res.json();
+  } catch {
+    // Non-JSON body (e.g. a platform error page); handled below.
+  }
+
+  if (res.status === 401 && token) {
+    clearSessionToken();
+    onUnauthorized();
+  }
+
+  if (!res.ok || !json?.success) {
+    throw new Error(json?.error ?? `Request failed (${res.status})`);
+  }
   return json.data as T;
 }
 
-async function apiDelete<T>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ...body as Record<string, unknown>, masterPassword: getMasterPassword() }),
-  });
-  const json: ApiResponse<T> = await res.json();
-  if (!json.success) throw new Error(json.error ?? "Request failed");
-  return json.data as T;
-}
+const apiGet = <T>(path: string, params?: Record<string, string>) => request<T>("GET", path, { params });
+const apiPost = <T>(path: string, body: unknown) => request<T>("POST", path, { body });
+const apiDelete = <T>(path: string, body: unknown) => request<T>("DELETE", path, { body });
 
 export const moodlyBackendService = {
+  // --- Auth ---
+  /** Exchanges the master password for a session token and stores it. */
+  login: async (password: string): Promise<void> => {
+    const session = await apiPost<SessionToken>("/api/verify-password", { password });
+    sessionStorage.setItem(SESSION_TOKEN_KEY, session.token);
+  },
+
   // --- Entries ---
   getEntries: (params?: { from?: string; to?: string; date?: string }): Promise<DailyEntry[]> =>
     apiGet<DailyEntry[]>("/api/entries", params as Record<string, string>),
@@ -80,8 +103,8 @@ export const moodlyBackendService = {
     }),
 
   // --- Letters ---
-  createLetter: (message: string, sendDate: string): Promise<{ id: number; message: string; sendDate: string; createdAt: string }> =>
-    apiPost<{ id: number; message: string; sendDate: string; createdAt: string }>("/api/letters", { message, sendDate }),
+  createLetter: (message: string, sendDate: string): Promise<ScheduledLetter> =>
+    apiPost<ScheduledLetter>("/api/letters", { message, sendDate }),
 
   // --- Email Alerts ---
   getEmailAlerts: (): Promise<EmailAlert[]> =>
@@ -95,7 +118,4 @@ export const moodlyBackendService = {
 
   checkEntryAlerts: (date: string): Promise<{ results: string[] }> =>
     apiPost<{ results: string[] }>("/api/check-entry-alerts", { date }),
-
-  checkLonginesAvailability: (): Promise<unknown> =>
-    apiGet<unknown>("/api/cron/check-longines-availability"),
 };

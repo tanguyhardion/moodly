@@ -7,7 +7,6 @@
     @update:modelValue="$emit('update:modelValue', $event)"
   />
 </template>
-
 <script setup lang="ts">
 import type { MetricConfig, MetricValue } from '~/types';
 import MetricSlider from './MetricSlider.vue';

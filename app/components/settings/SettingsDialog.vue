@@ -1,148 +1,111 @@
 <template>
   <Transition name="fade">
-    <div v-if="isOpen" class="settings-overlay" @click.self="close">
-      <div class="settings-card" :class="{ 'editor-open': showAlertEditor }">
-        <div class="header">
-          <h2>Settings</h2>
-          <button class="close-btn" @click="close">
-            <Icon name="solar:close-circle-bold" size="24" />
-          </button>
-        </div>
+    <div v-if="isOpen" class="overlay" @click.self="close">
+      <div class="sheet" role="dialog" aria-modal="true" :aria-label="showAlertEditor ? 'Email alert' : 'Settings'">
+        <EmailAlertEditor
+          v-if="showAlertEditor"
+          :alert="editingAlert"
+          :metrics="metrics"
+          :saving="savingAlert"
+          @close="closeAlertEditor"
+          @save="saveAlert"
+        />
 
-        <div class="content">
-          <LoadingState v-if="loading" />
-          <template v-else>
-            <div class="section">
-              <h3>Email Summaries</h3>
-              <p class="description">
-                Receive automated summaries of your mood and insights.
-              </p>
+        <template v-else>
+          <div class="flex items-center justify-between gap-3 px-6 pt-6 pb-2">
+            <h2 class="text-2xl font-extrabold">Settings</h2>
+            <button class="icon-btn" type="button" title="Close" @click="close">
+              <Icon name="solar:close-circle-bold" size="24" />
+            </button>
+          </div>
 
-              <div class="form-group">
-                <label>Email Address</label>
-                <input
-                  v-model="settings.email"
-                  type="email"
-                  placeholder="your@email.com"
-                  class="input"
-                />
-              </div>
-
-              <div class="toggles">
-                <label class="toggle-row">
-                  <span>Daily Reminder</span>
-                  <div class="switch">
-                    <input type="checkbox" v-model="settings.dailyReminders" />
-                    <span class="slider"></span>
-                  </div>
-                </label>
-                <label class="toggle-row">
-                  <span>Weekly Report</span>
-                  <div class="switch">
-                    <input type="checkbox" v-model="settings.weeklyReports" />
-                    <span class="slider"></span>
-                  </div>
-                </label>
-                <label class="toggle-row">
-                  <span>Monthly Report</span>
-                  <div class="switch">
-                    <input type="checkbox" v-model="settings.monthlyReports" />
-                    <span class="slider"></span>
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            <div class="section">
-              <div class="section-header">
+          <div class="flex-1 overflow-y-auto px-6 pb-6">
+            <LoadingState v-if="loading" />
+            <div v-else class="flex flex-col gap-8 pt-2">
+              <section class="flex flex-col gap-3">
                 <div>
-                  <h3>Email Alerts</h3>
-                  <p class="description">
-                    Get notified when your check-in values meet specific conditions.
-                  </p>
+                  <h3 class="text-lg font-bold">Emails</h3>
+                  <p class="text-sm text-muted">Reminders and summaries of how you've been.</p>
                 </div>
-                <button
-                  class="add-alert-btn"
-                  @click="openAlertEditor()"
-                  :disabled="!hasMetrics"
-                >
-                  <Icon name="solar:add-circle-bold" size="18" />
-                  Add
-                </button>
-              </div>
+                <div>
+                  <label for="settings-email" class="field-label">Send to</label>
+                  <input id="settings-email" v-model="settings.email" type="email" placeholder="you@example.com" class="input" />
+                </div>
+                <ToggleSwitch v-model="settings.dailyReminders">
+                  Daily reminder
+                  <template #description>In the evening, if you haven't checked in</template>
+                </ToggleSwitch>
+                <ToggleSwitch v-model="settings.weeklyReports">
+                  Weekly report
+                  <template #description>Every Sunday</template>
+                </ToggleSwitch>
+                <ToggleSwitch v-model="settings.monthlyReports">
+                  Monthly report
+                  <template #description>On the last day of the month</template>
+                </ToggleSwitch>
+              </section>
 
-              <div v-if="!hasMetrics" class="empty-alerts">
-                <p>Configure metrics first to create email alerts.</p>
-              </div>
-              <div v-else-if="alerts.length === 0" class="empty-alerts">
-                <p>No email alerts configured yet.</p>
-              </div>
-              <div v-else class="alerts-list">
-                <div
-                  v-for="alert in alerts"
-                  :key="alert.id"
-                  class="alert-item"
-                >
-                  <div class="alert-info" @click="openAlertEditor(alert)">
-                    <span class="alert-name">{{ alert.name }}</span>
-                    <span class="alert-conditions">
-                      {{ alert.conditions.length }} condition{{
-                        alert.conditions.length !== 1 ? "s" : ""
-                      }}
-                      ({{ alert.conditionLogic === "all" ? "AND" : "OR" }})
-                    </span>
+              <section class="flex flex-col gap-3">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 class="text-lg font-bold">Alerts</h3>
+                    <p class="text-sm text-muted">Get an email when a check-in matches your conditions.</p>
                   </div>
-                  <div class="alert-actions">
-                    <div class="switch small">
-                      <input
-                        type="checkbox"
-                        :checked="alert.enabled"
-                        @change="toggleAlert(alert)"
-                      />
-                      <span class="slider"></span>
-                    </div>
+                  <button class="btn btn-secondary btn-sm shrink-0" type="button" :disabled="!hasMetrics" @click="openAlertEditor()">
+                    <Icon name="solar:add-circle-bold" size="18" />
+                    New
+                  </button>
+                </div>
+
+                <p v-if="!hasMetrics" class="rounded-2xl bg-surface-2 p-4 text-sm text-muted">Set up your metrics first, then add alerts.</p>
+                <p v-else-if="alerts.length === 0" class="rounded-2xl bg-surface-2 p-4 text-sm text-muted">No alerts yet.</p>
+                <div v-else class="flex flex-col gap-2">
+                  <div v-for="alert in alerts" :key="alert.id" class="flex items-center gap-2 rounded-2xl bg-surface-2 py-2 pr-2 pl-4">
+                    <button type="button" class="min-w-0 flex-1 py-1 text-left" @click="openAlertEditor(alert)">
+                      <span class="block truncate font-semibold">{{ alert.name }}</span>
+                      <span class="block text-[13px] text-muted">
+                        {{ alert.conditions.length }} condition{{ alert.conditions.length !== 1 ? "s" : "" }},
+                        {{ alert.conditionLogic === "all" ? "all must match" : "any can match" }}
+                      </span>
+                    </button>
+                    <label class="relative inline-flex cursor-pointer" :title="alert.enabled ? 'Turn off' : 'Turn on'">
+                      <input type="checkbox" class="peer sr-only" :checked="alert.enabled" :aria-label="`${alert.name} enabled`" @change="toggleAlert(alert)" />
+                      <span class="relative h-6 w-10 rounded-full bg-line transition peer-checked:bg-mood peer-focus-visible:ring-2 peer-focus-visible:ring-mood-strong after:absolute after:top-0.5 after:left-0.5 after:size-5 after:rounded-full after:bg-white after:shadow after:transition peer-checked:after:translate-x-4" />
+                    </label>
                     <button
-                      class="delete-alert-btn"
-                      @click.stop="deleteAlert(alert)"
+                      v-if="pendingDeleteId !== alert.id"
+                      class="icon-btn size-9 hover:bg-danger/15 hover:text-danger"
+                      type="button"
+                      :title="`Delete ${alert.name}`"
+                      @click.stop="pendingDeleteId = alert.id ?? null"
                     >
                       <Icon name="solar:trash-bin-trash-bold" size="16" />
                     </button>
+                    <button v-else class="btn btn-danger btn-sm" type="button" @click.stop="deleteAlert(alert)">Delete?</button>
                   </div>
                 </div>
-              </div>
+              </section>
             </div>
-          </template>
-        </div>
-
-        <div class="actions">
-          <button class="save-btn" @click="save" :disabled="saving">
-            {{ saving ? "Saving..." : "Save Changes" }}
-          </button>
-        </div>
-
-        <Transition name="slide">
-          <div v-if="showAlertEditor" class="alert-editor-panel">
-            <EmailAlertEditor
-              :alert="editingAlert"
-              :metrics="metrics"
-              :saving="savingAlert"
-              @close="closeAlertEditor"
-              @save="saveAlert"
-            />
           </div>
-        </Transition>
+
+          <div class="flex justify-end gap-2 border-t border-line px-6 py-4">
+            <button class="btn btn-secondary" type="button" @click="close">Close</button>
+            <button class="btn btn-primary" type="button" :disabled="saving || loading" @click="save">
+              {{ saving ? "Saving…" : "Save settings" }}
+            </button>
+          </div>
+        </template>
       </div>
 
       <Transition name="toast">
-        <div v-if="showToast" class="toast">
-          <Icon name="solar:check-circle-bold" size="20" />
-          <span>{{ toastMessage }}</span>
+        <div v-if="showToast" class="toast" :class="{ 'bg-danger text-white': toastTone === 'error' }" role="status">
+          <Icon :name="toastTone === 'error' ? 'solar:danger-circle-bold' : 'solar:check-circle-bold'" size="20" />
+          {{ toastMessage }}
         </div>
       </Transition>
     </div>
   </Transition>
 </template>
-
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
 import { moodlyBackendService } from "~/utils/moodly-backend";
@@ -173,7 +136,19 @@ const loading = ref(false);
 const saving = ref(false);
 const savingAlert = ref(false);
 const showToast = ref(false);
-const toastMessage = ref("Settings saved successfully!");
+const toastMessage = ref("");
+const toastTone = ref<"success" | "error">("success");
+const pendingDeleteId = ref<number | null>(null);
+
+function notify(message: string, tone: "success" | "error" = "success", onHide?: () => void) {
+  toastMessage.value = message;
+  toastTone.value = tone;
+  showToast.value = true;
+  setTimeout(() => {
+    showToast.value = false;
+    onHide?.();
+  }, 2200);
+}
 
 const showAlertEditor = ref(false);
 const editingAlert = ref<EmailAlert | undefined>(undefined);
@@ -210,15 +185,10 @@ const save = async () => {
   saving.value = true;
   try {
     await moodlyBackendService.saveSettings(settings.value);
-    toastMessage.value = "Settings saved successfully!";
-    showToast.value = true;
-    setTimeout(() => {
-      showToast.value = false;
-      close();
-    }, 2000);
+    notify("Settings saved", "success", close);
   } catch (error) {
     console.error("Failed to save settings", error);
-    alert("Failed to save settings");
+    notify("Couldn't save settings. Check your connection and try again.", "error");
   } finally {
     saving.value = false;
   }
@@ -249,14 +219,10 @@ const saveAlert = async (alert: EmailAlert) => {
     }
 
     closeAlertEditor();
-    toastMessage.value = "Alert saved successfully!";
-    showToast.value = true;
-    setTimeout(() => {
-      showToast.value = false;
-    }, 2000);
+    notify("Alert saved");
   } catch (error) {
     console.error("Failed to save alert", error);
-    alert("Failed to save alert");
+    notify("Couldn't save the alert. Try again.", "error");
   } finally {
     savingAlert.value = false;
   }
@@ -274,24 +240,21 @@ const toggleAlert = async (alertItem: EmailAlert) => {
     }
   } catch (error) {
     console.error("Failed to toggle alert", error);
+    notify("Couldn't update the alert. Try again.", "error");
   }
 };
 
 const deleteAlert = async (alertItem: EmailAlert) => {
   if (!alertItem.id) return;
-  if (!confirm(`Delete alert "${alertItem.name}"?`)) return;
+  pendingDeleteId.value = null;
 
   try {
     await moodlyBackendService.deleteEmailAlert(alertItem.id);
     alerts.value = alerts.value.filter((a) => a.id !== alertItem.id);
-    toastMessage.value = "Alert deleted!";
-    showToast.value = true;
-    setTimeout(() => {
-      showToast.value = false;
-    }, 2000);
+    notify("Alert deleted");
   } catch (error) {
     console.error("Failed to delete alert", error);
-    alert("Failed to delete alert");
+    notify("Couldn't delete the alert. Try again.", "error");
   }
 };
 
@@ -301,428 +264,3 @@ watch(isOpen, (val) => {
   }
 });
 </script>
-
-<style scoped lang="scss">
-.settings-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  backdrop-filter: blur(4px);
-  pointer-events: none;
-}
-
-.settings-card {
-  background: var(--card-bg);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-lg);
-  width: 90%;
-  max-width: 500px;
-  max-height: 85vh;
-  box-shadow: var(--shadow-2xl);
-  border: 1px solid var(--border);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  pointer-events: auto;
-
-  &.editor-open {
-    max-width: 600px;
-  }
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-lg);
-  flex-shrink: 0;
-
-  h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin: 0;
-  }
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: var(--spacing-xs);
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-
-  &:hover {
-    background: var(--hover-bg);
-    color: var(--text-primary);
-  }
-}
-
-.content {
-  flex: 1;
-  overflow-y: auto;
-  min-height: 0;
-  pointer-events: auto;
-}
-
-.section {
-  margin-bottom: var(--spacing-lg);
-
-  h3 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin: 0 0 var(--spacing-sm) 0;
-  }
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-}
-
-.description {
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-  margin-bottom: var(--spacing-md);
-}
-
-.form-group {
-  margin-bottom: var(--spacing-md);
-
-  label {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin-bottom: var(--spacing-sm);
-  }
-}
-
-.input {
-  width: 100%;
-  padding: var(--spacing-md);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--card-bg);
-  color: var(--text-primary);
-  font-size: 1rem;
-  transition: all 0.2s;
-
-  &:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px var(--focus-ring);
-  }
-}
-
-.toggles {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-.toggle-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-md) var(--spacing-md);
-  background: var(--hover-bg);
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: 1px solid transparent;
-
-  &:hover {
-    background: var(--border-light);
-    border-color: var(--border-hover);
-  }
-
-  span {
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 2.75rem;
-  height: 1.5rem;
-
-  input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  &.small {
-    width: 2.25rem;
-    height: 1.25rem;
-
-    .slider::before {
-      height: 0.9rem;
-      width: 0.9rem;
-      left: 0.15rem;
-      bottom: 0.15rem;
-    }
-
-    input:checked + .slider::before {
-      transform: translateX(1rem);
-    }
-  }
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--border);
-  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: var(--radius-xl);
-
-  &::before {
-    position: absolute;
-    content: "";
-    height: 1.125rem;
-    width: 1.125rem;
-    left: 0.1875rem;
-    bottom: 0.1875rem;
-    background-color: white;
-    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: var(--radius-full);
-    box-shadow: var(--shadow-sm);
-  }
-}
-
-input:checked + .slider {
-  background-color: var(--primary);
-
-  &::before {
-    transform: translateX(1.25rem);
-  }
-}
-
-.add-alert-btn {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  background: var(--gradient-primary);
-  color: white;
-  border: none;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex-shrink: 0;
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  &:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-colored);
-  }
-}
-
-.empty-alerts {
-  padding: var(--spacing-lg);
-  text-align: center;
-  color: var(--text-secondary);
-  background: var(--hover-bg);
-  border-radius: var(--radius-lg);
-  font-size: 0.875rem;
-
-  p {
-    margin: 0;
-  }
-}
-
-.alerts-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.alert-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-md);
-  background: var(--hover-bg);
-  border-radius: var(--radius-lg);
-  border: 1px solid transparent;
-  transition: all 0.2s;
-
-  &:hover {
-    border-color: var(--border-hover);
-  }
-}
-
-.alert-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  cursor: pointer;
-  flex: 1;
-  min-width: 0;
-}
-
-.alert-name {
-  font-weight: 600;
-  color: var(--text-primary);
-  font-size: 0.9375rem;
-}
-
-.alert-conditions {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-}
-
-.alert-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  flex-shrink: 0;
-}
-
-.delete-alert-btn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: var(--spacing-xs);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-
-  &:hover {
-    background: var(--error);
-    color: white;
-  }
-}
-
-.alert-editor-panel {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--card-bg);
-  z-index: 10;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  pointer-events: auto;
-  cursor: auto;
-}
-
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: var(--spacing-lg);
-  flex-shrink: 0;
-  pointer-events: auto;
-}
-
-.save-btn {
-  background: var(--gradient-primary);
-  color: white;
-  border: none;
-  padding: var(--spacing-md) var(--spacing-lg);
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-
-  &:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-colored);
-  }
-}
-
-/* Transitions */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.slide-enter-active,
-.slide-leave-active {
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.slide-enter-from,
-.slide-leave-to {
-  transform: translateX(100%);
-}
-
-.toast {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  padding: 0.75rem 1rem;
-  background: var(--gradient-success);
-  color: white;
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: 0.9375rem;
-  box-shadow: 0 10px 25px rgba(var(--color-shadow-success), 0.4);
-  z-index: 1100;
-  backdrop-filter: blur(10px);
-  white-space: nowrap;
-  height: max-content;
-  width: max-content;
-  flex-shrink: 0;
-}
-
-.toast-enter-active,
-.toast-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.toast-enter-from,
-.toast-leave-to {
-  opacity: 0;
-  transform: translate(-50%, 1rem);
-}
-</style>

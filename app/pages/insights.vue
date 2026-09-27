@@ -1,42 +1,34 @@
 <template>
-  <div class="page-container">
-    <div class="page-header">
-      <h1 class="page-title">
-        <Icon name="mdi:sparkles" size="28" class="icon-primary" />
-        Insights
-      </h1>
-      <p class="page-subtitle">Patterns and discoveries from your data</p>
-    </div>
+  <div class="page">
+    <header class="mb-6">
+      <h1 class="page-title">Insights</h1>
+      <p class="page-subtitle">What your days have in common.</p>
+    </header>
 
-    <LoadingState v-if="isLoading || isConfigLoading" message="Analyzing your data..." />
+    <LoadingState v-if="isLoading || isConfigLoading" message="Looking for patterns…" />
 
     <div v-else-if="entries.length === 0" class="empty-state">
-      <div class="empty-state-icon">
-        <Icon name="mdi:sparkles" size="48" />
-      </div>
-      <p class="empty-state-title">No data yet</p>
-      <p class="empty-state-description">Start logging entries to unlock insights.</p>
+      <Icon name="mdi:sparkles" size="44" class="text-faint" />
+      <p class="text-lg font-bold text-ink">Nothing to analyze yet</p>
+      <p class="max-w-xs text-sm">Log a few days and patterns will start to show up here.</p>
     </div>
 
-    <div v-else class="insights-content">
-      <div ref="periodSelectorRef">
-        <PeriodSelector v-model="period" :periods="PERIODS" />
+    <div v-else class="flex flex-col gap-8">
+      <div class="flex flex-col gap-4">
+        <div ref="periodSelectorRef">
+          <PeriodSelector v-model="period" :periods="PERIODS" />
+        </div>
+        <InsightPrimaryMetricSelector />
       </div>
 
       <Transition name="slide-down">
-        <div v-if="showStickyHeader" class="sticky-header">
-          <div class="sticky-content">
-            <div class="sticky-period">
-              <PeriodSelector v-model="period" :periods="PERIODS" />
-            </div>
-            <div class="sticky-metric-selector">
-              <InsightPrimaryMetricSelector />
-            </div>
+        <div v-if="showStickyHeader" class="sticky-bar">
+          <div class="flex flex-col gap-3 p-3">
+            <PeriodSelector v-model="period" :periods="PERIODS" />
+            <InsightPrimaryMetricSelector />
           </div>
         </div>
       </Transition>
-
-      <InsightPrimaryMetricSelector />
 
       <InsightPatternDiscovery v-if="primaryMetric" />
       <InsightMostImpactful v-if="impactMetrics.length" />
@@ -49,7 +41,6 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 const {
   entries,
@@ -87,46 +78,3 @@ onMounted(() => {
   onUnmounted(() => window.removeEventListener('scroll', checkSticky));
 });
 </script>
-
-<style scoped lang="scss">
-.page-container {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  position: relative;
-  z-index: 1;
-
-  @media (max-width: 768px) {
-    padding: 1.5rem 1rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 1.5rem 0.75rem;
-  }
-}
-
-.insights-content {
-  animation: fadeIn 0.4s ease;
-}
-
-.sticky-period {
-  padding: 0.625rem 0.75rem;
-
-  :deep(.period-selector) {
-    margin-bottom: 0;
-  }
-}
-
-.sticky-metric-selector {
-  padding: 0.625rem 0.75rem;
-  border-top: 1px solid var(--border);
-
-  :deep(.primary-metric-section) {
-    margin-bottom: 0;
-  }
-
-  :deep(.section-label) {
-    margin-bottom: 0.5rem;
-  }
-}
-</style>
