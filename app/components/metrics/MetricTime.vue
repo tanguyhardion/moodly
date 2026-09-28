@@ -5,7 +5,7 @@
       :value="currentValue"
       :placeholder="config.placeholder ?? 'HH:MM'"
       :aria-label="config.label"
-      class="input h-10 w-32 text-center font-display font-bold tabular-nums"
+      class="input h-10 w-[8.5rem] text-center font-display font-bold tabular-nums"
       @input="handleInput"
     />
   </MetricHeader>

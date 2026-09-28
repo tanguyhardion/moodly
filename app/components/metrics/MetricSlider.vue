@@ -96,11 +96,11 @@ function stepStyle(v: number) {
   if (isMoodMetric.value) {
     const { color, ink } = MOOD_COLORS[moodLevel(v, props.config)];
     return selected
-      ? { background: color, color: ink, boxShadow: `0 0 0 3px var(--surface), 0 0 0 5px ${color}` }
+      ? { background: color, color: ink }
       : { background: `color-mix(in srgb, ${color} 26%, var(--surface))`, color: 'var(--ink)' };
   }
   return selected
-    ? { background: accent.value, color: props.config.color ? '#fff' : 'var(--mood-ink)' }
+    ? { background: accent.value, color: props.config.color ? readableInk(props.config.color) : 'var(--mood-ink)' }
     : { background: 'var(--surface-2)', color: 'var(--muted)' };
 }
 

@@ -76,33 +76,35 @@ const goToNextDay = () => {
     <button class="icon-btn bg-surface shadow-card dark:shadow-none" type="button" title="Previous day" @click="goToPreviousDay">
       <Icon name="solar:alt-arrow-left-bold" size="20" />
     </button>
-    <ClientOnly>
-      <VueDatePicker
-        :model-value="modelValue"
-        :max-date="maxDate"
-        :dark="darkMode"
-        :enable-time-picker="false"
-        auto-apply
-        :clearable="false"
-        @update:model-value="$emit('update:modelValue', $event)"
-      >
-        <template #trigger>
-          <button
-            type="button"
-            class="group flex flex-col items-center rounded-2xl px-3 py-1 text-center transition hover:bg-mood-soft"
-            title="Pick a date"
-          >
-            <span class="font-display font-extrabold leading-tight tracking-tight" :class="simple ? 'text-lg' : 'text-3xl sm:text-4xl'">
-              {{ formatDateDisplay(modelValue) }}
-            </span>
-            <span v-if="!simple && isRelativeDay" class="flex items-center gap-1 text-sm font-medium text-muted group-hover:text-ink">
-              <Icon name="solar:calendar-bold" size="14" />
-              {{ modelValue.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) }}
-            </span>
-          </button>
-        </template>
-      </VueDatePicker>
-    </ClientOnly>
+    <div class="flex min-w-0 flex-1 justify-center">
+      <ClientOnly>
+        <VueDatePicker
+          :model-value="modelValue"
+          :max-date="maxDate"
+          :dark="darkMode"
+          :enable-time-picker="false"
+          auto-apply
+          :clearable="false"
+          @update:model-value="$emit('update:modelValue', $event)"
+        >
+          <template #trigger>
+            <button
+              type="button"
+              class="group flex flex-col items-center rounded-2xl px-3 py-1 text-center transition hover:bg-mood-soft"
+              title="Pick a date"
+            >
+              <span class="font-display font-extrabold leading-tight tracking-tight" :class="simple ? 'text-lg' : 'text-3xl sm:text-4xl'">
+                {{ formatDateDisplay(modelValue) }}
+              </span>
+              <span v-if="!simple && isRelativeDay" class="flex items-center gap-1 text-sm font-medium text-muted group-hover:text-ink">
+                <Icon name="solar:calendar-bold" size="14" />
+                {{ modelValue.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) }}
+              </span>
+            </button>
+          </template>
+        </VueDatePicker>
+      </ClientOnly>
+    </div>
     <button
       class="icon-btn bg-surface shadow-card dark:shadow-none"
       :class="{ 'invisible': !canGoNext }"
@@ -115,3 +117,10 @@ const goToNextDay = () => {
     </button>
   </div>
 </template>
+
+<style scoped>
+/* The picker's root is block-level; shrink it so the trigger centers between the arrows. */
+:deep(.dp__main) {
+  width: auto;
+}
+</style>

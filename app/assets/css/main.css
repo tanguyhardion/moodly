@@ -106,6 +106,19 @@
     transition: background-color 0.4s ease;
   }
 
+  /* Subtle mood gradient behind everything; fixed so it doesn't stretch on long pages. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(120% 70% at 0% 0%, color-mix(in oklab, var(--mood) 22%, transparent), transparent 70%),
+      radial-gradient(90% 60% at 100% 100%, color-mix(in oklab, var(--mood) 12%, transparent), transparent 70%),
+      linear-gradient(to bottom, var(--bg), color-mix(in oklab, var(--mood) 6%, var(--base)));
+  }
+
   h1, h2, h3, h4 {
     @apply font-display tracking-tight text-balance;
   }
@@ -227,7 +240,7 @@
   }
 
   .sticky-bar > * {
-    @apply pointer-events-auto w-full max-w-xl rounded-card bg-surface/90 shadow-pop backdrop-blur-md;
+    @apply pointer-events-auto w-full max-w-xl rounded-card bg-surface/90 shadow-pop backdrop-blur-md dark:shadow-[0_0_0_1px_rgb(255_255_255/0.08),0_24px_48px_-12px_rgb(0_0_0/0.7)];
   }
 
   .empty-state {

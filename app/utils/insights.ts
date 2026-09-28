@@ -1,5 +1,6 @@
 import type { DailyEntry, MetricConfig, SliderMetricConfig, LocationValue } from '~/types';
 import { fmtNum } from '~/utils/insightUtils';
+import { getCurrentDateString, parseLocalDateString } from '~/utils/helpers';
 import { fmtShortDate, getNumericVals, linearSlope, pearson } from '~/utils/statsMath';
 
 // Pure insight calculations for the insights page. `useInsightsData` wires these to reactive state.
@@ -375,8 +376,9 @@ export function computePrediction(filtered: DailyEntry[], pm: MetricConfig | nul
   const recent = vals.slice(-14);
   const nums = recent.map(p => p.v);
   const slope = linearSlope(nums);
-  const lastVal = nums[nums.length - 1]!;
-  let predicted = lastVal + slope;
+  // Extrapolate the fitted trend line one step ahead rather than the last (noisy) value
+  const mean = nums.reduce((a, b) => a + b, 0) / nums.length;
+  let predicted = mean + slope * (nums.length - (nums.length - 1) / 2);
 
   const sliderMin = (pm as SliderMetricConfig).min ?? 0;
   const sliderMax = (pm as SliderMetricConfig).max;
@@ -606,76 +608,48 @@ export function computeHabitEffects(
   if (!pm || checkboxMetrics.length === 0) return effects;
 
   const sorted = [...filtered].sort((a, b) => a.date.localeCompare(b.date));
-  const dateMap = new Map(sorted.map((e, i) => [e.date, i]));
+  const entryByDate = new Map(sorted.map(e => [e.date, e]));
+
+  // Value of the metric `offset` calendar days after `date`; null if that day wasn't logged.
+  const valueAfter = (date: string, offset: number, metricId: string): number | null => {
+    const d = parseLocalDateString(date);
+    d.setDate(d.getDate() + offset);
+    const v = entryByDate.get(getCurrentDateString(d))?.data[metricId];
+    return typeof v === 'number' && !isNaN(v) ? v : null;
+  };
+  const avgOf = (vals: number[]) =>
+    vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length * 10) / 10 : null;
+
+  // Baseline: values on all days
+  const allMetricVals = sorted
+    .map(e => e.data[pm.id])
+    .filter((v): v is number => typeof v === 'number' && !isNaN(v));
+  if (allMetricVals.length < 5) return effects;
+  const baselineAvg = avgOf(allMetricVals)!;
+
+  const metric = numericMetrics.find(m => m.id === pm.id);
+  if (!metric) return effects;
 
   for (const habit of checkboxMetrics) {
-    // Find days when habit was checked vs not checked
-    const checkedDays: number[] = [];
-    const uncheckedDays: number[] = [];
+    if (metric.id === habit.id) continue;
 
-    for (const entry of sorted) {
-      if (entry.data[habit.id] === true) {
-        checkedDays.push(dateMap.get(entry.date) ?? -1);
-      }
-    }
+    const checkedDates = sorted.filter(e => e.data[habit.id] === true).map(e => e.date);
+    const uncheckedCount = sorted.length - checkedDates.length;
+    if (checkedDates.length < 3 || uncheckedCount < 3) continue;
 
-    // Collect unchecked dates (where entry exists but habit not checked)
-    for (const entry of sorted) {
-      if (entry.data[habit.id] === false || entry.data[habit.id] == null) {
-        uncheckedDays.push(dateMap.get(entry.date) ?? -1);
-      }
-    }
+    // Values on days +1, +2, +3 after a checked habit day
+    const after = [1, 2, 3].map(offset =>
+      checkedDates.map(d => valueAfter(d, offset, metric.id)).filter((v): v is number => v !== null)
+    );
+    // Require enough samples per day; sparse days are reported as "no data", not as 0
+    const [day1Avg, day2Avg, day3Avg] = after.map(vals => (vals.length >= 2 ? avgOf(vals) : null));
+    if (day1Avg === null && day2Avg === null) continue;
 
-    if (checkedDays.length < 3 || uncheckedDays.length < 3) continue;
-
-    // For each numeric metric, calculate next-day effects
-    for (const metric of numericMetrics) {
-      if (metric.id === habit.id || metric.id !== pm.id) continue;
-
-      // Values on days +1, +2, +3 after checked habit day
-      const day1AfterChecked: number[] = [];
-      const day2AfterChecked: number[] = [];
-      const day3AfterChecked: number[] = [];
-
-      for (const dayIdx of checkedDays) {
-        if (dayIdx < 0) continue;
-        if (dayIdx + 1 < sorted.length) {
-          const v = sorted[dayIdx + 1]!.data[metric.id];
-          if (typeof v === 'number') day1AfterChecked.push(v as number);
-        }
-        if (dayIdx + 2 < sorted.length) {
-          const v = sorted[dayIdx + 2]!.data[metric.id];
-          if (typeof v === 'number') day2AfterChecked.push(v as number);
-        }
-        if (dayIdx + 3 < sorted.length) {
-          const v = sorted[dayIdx + 3]!.data[metric.id];
-          if (typeof v === 'number') day3AfterChecked.push(v as number);
-        }
-      }
-
-      // Baseline: values on all days
-      const allMetricVals: number[] = [];
-      for (const entry of sorted) {
-        const v = entry.data[metric.id];
-        if (typeof v === 'number') allMetricVals.push(v as number);
-      }
-
-      if (allMetricVals.length < 5 || (day1AfterChecked.length < 2 && day2AfterChecked.length < 2)) continue;
-
-      const day1Avg = day1AfterChecked.length > 0
-        ? Math.round(day1AfterChecked.reduce((a, b) => a + b, 0) / day1AfterChecked.length * 10) / 10
-        : 0;
-      const day2Avg = day2AfterChecked.length > 0
-        ? Math.round(day2AfterChecked.reduce((a, b) => a + b, 0) / day2AfterChecked.length * 10) / 10
-        : 0;
-      const day3Avg = day3AfterChecked.length > 0
-        ? Math.round(day3AfterChecked.reduce((a, b) => a + b, 0) / day3AfterChecked.length * 10) / 10
-        : 0;
-      const baselineAvg = Math.round(allMetricVals.reduce((a, b) => a + b, 0) / allMetricVals.length * 10) / 10;
-
-      const day1Delta = day1Avg ? Math.round((day1Avg - baselineAvg) * 10) / 10 : 0;
-      const day2Delta = day2Avg ? Math.round((day2Avg - baselineAvg) * 10) / 10 : 0;
-      const day3Delta = day3Avg ? Math.round((day3Avg - baselineAvg) * 10) / 10 : 0;
+    {
+      const delta = (avg: number | null) => (avg === null ? 0 : Math.round((avg - baselineAvg) * 10) / 10);
+      const day1Delta = delta(day1Avg);
+      const day2Delta = delta(day2Avg);
+      const day3Delta = delta(day3Avg);
 
       const deltas = [
         { day: 1 as const, delta: day1Delta },
@@ -695,9 +669,9 @@ export function computeHabitEffects(
           metricLabel: metric.label,
           metricIcon: metric.icon ?? '',
           metricColor: metric.color ?? 'var(--primary)',
-          day1Avg,
-          day2Avg,
-          day3Avg,
+          day1Avg: day1Avg ?? 0,
+          day2Avg: day2Avg ?? 0,
+          day3Avg: day3Avg ?? 0,
           baselineAvg,
           day1Delta,
           day2Delta,
@@ -818,22 +792,23 @@ export function computeRecommendations(ctx: RecommendationContext): Recommendati
         if (cbA.id === cbB.id) continue;
         if (list.find(r => r.key === `habit-stack-${cbA.id}-${cbB.id}`)) continue;
 
-        const pairs = Array.from(entryByDate.values(), entry => {
-          return {
-            valA: entry?.data[cbA.id] === true ? 1 : 0,
-            valB: entry?.data[cbB.id] === true ? 1 : 0,
-          };
-        }).filter(p => p.valA !== 0 || p.valB !== 0);
+        // Every logged day counts, including days when neither habit was done —
+        // dropping those would bias the correlation downward.
+        const pairs = Array.from(entryByDate.values(), entry => ({
+          valA: entry.data[cbA.id] === true ? 1 : 0,
+          valB: entry.data[cbB.id] === true ? 1 : 0,
+        }));
 
         if (pairs.length < 10) continue;
 
         const aVals = pairs.map(p => p.valA);
         const bVals = pairs.map(p => p.valB);
+        const aCount = aVals.filter(v => v === 1).length;
+        const bCount = bVals.filter(v => v === 1).length;
+        if (aCount < 3 || bCount < 3) continue;
         const r = pearson(aVals, bVals);
 
         if (r > 0.35 && list.length < 20) {
-          const aCount = aVals.filter(v => v === 1).length;
-          const bCount = bVals.filter(v => v === 1).length;
           const both = pairs.filter(p => p.valA === 1 && p.valB === 1).length;
           const pct = Math.round((both / Math.min(aCount, bCount)) * 100);
 
@@ -951,7 +926,7 @@ export function computeRecommendations(ctx: RecommendationContext): Recommendati
   }
 
   // ── NEW: Personal best challenge ──
-  const pbAchievement = achievements.find(a => a.key.startsWith('pb-'));
+  const pbAchievement = achievements.find(a => a.key === 'record-high');
   if (pbAchievement && list.length < 20) {
     list.push({
       key: 'challenge-personal-best',
@@ -977,13 +952,13 @@ export function computeRecommendations(ctx: RecommendationContext): Recommendati
   }
 
   // ── NEW: Improve low-performing metrics ──
+  // Only sliders have a known scale; number/calculated metrics (e.g. hours, steps) can't be judged "low".
   const lowMetric = numericMetrics.find(m => {
-    if (m.id === pm.id) return false;
+    if (m.id === pm.id || m.type !== 'slider') return false;
     const vals = getNumericVals(m.id, filtered);
     if (vals.length < 5) return false;
     const avg = vals.reduce((s, p) => s + p.v, 0) / vals.length;
-    const range = (m.type === 'slider' && 'max' in m) ? m.max : 10;
-    return avg < range * 0.5; // Below 50% of max
+    return avg < m.min + (m.max - m.min) * 0.5; // Below the midpoint of the scale
   });
   if (lowMetric && list.length < 20) {
     const vals = getNumericVals(lowMetric.id, filtered);
