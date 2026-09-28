@@ -5,7 +5,7 @@
 
     <Navbar @openSettings="showSettings = true" />
 
-    <main class="pb-24 sm:pb-0">
+    <main class="overflow-x-clip pb-24 sm:pb-0">
       <slot />
     </main>
   </div>

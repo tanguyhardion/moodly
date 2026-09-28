@@ -16,16 +16,18 @@
             <p class="text-sm tabular-nums text-muted">avg {{ fmtNum(dayOfWeekInfo.worstVal, primaryMetric) }}</p>
           </div>
         </div>
-        <BarChart
-          :data="dayOfWeekChartData"
-          :height="140"
-          :categories="{ v: { name: primaryMetric!.label, color: primaryMetric!.color || moodColor } }"
-          :yAxis="['v']"
-          :xFormatter="(i: number) => DAY_NAMES[i] ?? ''"
-          :hideLegend="true"
-          :barPadding="0.3"
-          :padding="{ top: 10, right: 10, bottom: 30, left: 30 }"
-        />
+        <DeferredMount :height="140">
+          <LazyBarChart
+            :data="dayOfWeekChartData"
+            :height="140"
+            :categories="{ v: { name: primaryMetric!.label, color: primaryMetric!.color || moodColor } }"
+            :yAxis="['v']"
+            :xFormatter="(i: number) => DAY_NAMES[i] ?? ''"
+            :hideLegend="true"
+            :barPadding="0.3"
+            :padding="{ top: 10, right: 10, bottom: 30, left: 30 }"
+          />
+        </DeferredMount>
       </template>
       <p v-else class="flex items-center gap-2 text-sm text-muted">
         <Icon name="solar:info-circle-bold" size="16" />

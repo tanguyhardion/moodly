@@ -39,7 +39,16 @@ const primaryMetricId = ref('');
 // ── Composable ────────────────────────────────────────────────────────────────
 // Reactive wiring only; the calculations live in ~/utils/insights.
 
+// Every insight section calls this, so the computeds are built once in a detached
+// scope and shared — otherwise each caller would redo the whole analysis.
+let shared: ReturnType<typeof createInsightsData> | null = null;
+
 export function useInsightsData() {
+  if (!shared) shared = effectScope(true).run(createInsightsData)!;
+  return shared;
+}
+
+function createInsightsData() {
   const { entries, isLoading, isConfigLoading, metricConfigs } = useMoodly();
 
   // ── Period & filtered entries ──────────────────────────────────────────────

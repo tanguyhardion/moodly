@@ -811,16 +811,14 @@ export function computeRecommendations(ctx: RecommendationContext): Recommendati
 
   // ── NEW: Habit stacking (checkbox correlations) ──
   if (checkboxMetrics.length >= 2) {
-    const allDates = filtered.map(e => e.date);
-    const uniqueDates = Array.from(new Set(allDates));
+    const entryByDate = new Map(filtered.map(e => [e.date, e]));
 
     for (const cbA of checkboxMetrics) {
       for (const cbB of checkboxMetrics) {
         if (cbA.id === cbB.id) continue;
         if (list.find(r => r.key === `habit-stack-${cbA.id}-${cbB.id}`)) continue;
 
-        const pairs = uniqueDates.map(date => {
-          const entry = filtered.find(e => e.date === date);
+        const pairs = Array.from(entryByDate.values(), entry => {
           return {
             valA: entry?.data[cbA.id] === true ? 1 : 0,
             valB: entry?.data[cbB.id] === true ? 1 : 0,

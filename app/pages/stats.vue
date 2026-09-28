@@ -63,7 +63,7 @@
 
       <!-- Per-metric cards -->
       <div v-else class="flex flex-col gap-4">
-        <article v-for="stats in metricStatsCards" :key="stats.metric.id" class="card flex flex-col gap-4">
+        <article v-for="stats in metricStatsCards" :key="stats.metric.id" class="card flex min-w-0 flex-col gap-4 overflow-hidden">
           <div class="flex items-center gap-3">
             <span
               class="grid size-10 shrink-0 place-items-center rounded-xl"
@@ -88,19 +88,20 @@
                 <Icon v-else-if="stats.trend === 'down'" name="solar:arrow-down-bold" size="14" class="text-danger" />
               </StatTile>
             </div>
-            <AreaChart
-              v-if="stats.chartData.length >= 2"
-              :data="stats.chartData"
-              :height="180"
-              :categories="{ v: { name: stats.metric.label, color: stats.metric.color || moodColor } }"
-              :xFormatter="(i: number) => fmtShortDate(stats.chartDates[i] ?? '')"
-              :yFormatter="(v: number) => fmtNum(v, stats.metric)"
-              :xNumTicks="5"
-              :yNumTicks="4"
-              :hideLegend="true"
-              :padding="{ top: 10, right: 10, bottom: 30, left: 42 }"
-              :lineWidth="2"
-            />
+            <DeferredMount v-if="stats.chartData.length >= 2" :height="180">
+              <LazyAreaChart
+                :data="stats.chartData"
+                :height="180"
+                :categories="{ v: { name: stats.metric.label, color: stats.metric.color || moodColor } }"
+                :xFormatter="(i: number) => fmtShortDate(stats.chartDates[i] ?? '')"
+                :yFormatter="(v: number) => fmtNum(v, stats.metric)"
+                :xNumTicks="5"
+                :yNumTicks="4"
+                :hideLegend="true"
+                :padding="{ top: 10, right: 10, bottom: 30, left: 42 }"
+                :lineWidth="2"
+              />
+            </DeferredMount>
             <p v-else class="text-sm text-muted">A chart appears after 2 entries ({{ stats.chartData.length }} so far).</p>
           </template>
 
@@ -116,19 +117,20 @@
               <StatTile label="Days done" :value="stats.checkCount" />
               <StatTile label="Best streak" :value="`${stats.longestStreak} days`" />
             </div>
-            <BarChart
-              v-if="stats.chartData.length >= 2"
-              :data="stats.chartData"
-              :height="110"
-              :categories="{ v: { name: stats.metric.label, color: stats.metric.color || moodColor } }"
-              :yAxis="['v']"
-              :xFormatter="(i: number) => fmtShortDate(stats.chartDates[i] ?? '')"
-              :xNumTicks="5"
-              :yNumTicks="2"
-              :hideLegend="true"
-              :barPadding="0.3"
-              :padding="{ top: 10, right: 10, bottom: 30, left: 25 }"
-            />
+            <DeferredMount v-if="stats.chartData.length >= 2" :height="110">
+              <LazyBarChart
+                :data="stats.chartData"
+                :height="110"
+                :categories="{ v: { name: stats.metric.label, color: stats.metric.color || moodColor } }"
+                :yAxis="['v']"
+                :xFormatter="(i: number) => fmtShortDate(stats.chartDates[i] ?? '')"
+                :xNumTicks="5"
+                :yNumTicks="2"
+                :hideLegend="true"
+                :barPadding="0.3"
+                :padding="{ top: 10, right: 10, bottom: 30, left: 25 }"
+              />
+            </DeferredMount>
           </template>
 
           <!-- Time -->
@@ -138,19 +140,20 @@
               <StatTile label="Earliest" :value="stats.earliestTime || '—'" />
               <StatTile label="Latest" :value="stats.latestTime || '—'" />
             </div>
-            <AreaChart
-              v-if="stats.chartData.length >= 2"
-              :data="stats.chartData"
-              :height="180"
-              :categories="{ v: { name: stats.metric.label, color: stats.metric.color || moodColor } }"
-              :xFormatter="(i: number) => fmtShortDate(stats.chartDates[i] ?? '')"
-              :yFormatter="(v: number) => minsToTime(v)"
-              :xNumTicks="5"
-              :yNumTicks="4"
-              :hideLegend="true"
-              :padding="{ top: 10, right: 10, bottom: 30, left: 52 }"
-              :lineWidth="2"
-            />
+            <DeferredMount v-if="stats.chartData.length >= 2" :height="180">
+              <LazyAreaChart
+                :data="stats.chartData"
+                :height="180"
+                :categories="{ v: { name: stats.metric.label, color: stats.metric.color || moodColor } }"
+                :xFormatter="(i: number) => fmtShortDate(stats.chartDates[i] ?? '')"
+                :yFormatter="(v: number) => minsToTime(v)"
+                :xNumTicks="5"
+                :yNumTicks="4"
+                :hideLegend="true"
+                :padding="{ top: 10, right: 10, bottom: 30, left: 52 }"
+                :lineWidth="2"
+              />
+            </DeferredMount>
             <p v-else class="text-sm text-muted">A chart appears after 2 entries ({{ stats.chartData.length }} so far).</p>
           </template>
 
