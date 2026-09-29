@@ -1,5 +1,7 @@
 import type { DailyEntry, MetricConfig, AppSettings, ApiResponse, WeatherData, EmailAlert, ScheduledLetter, SessionToken } from "~/types";
 
+const LEGACY_DEFAULT_COLOR = "#1e40af";
+
 const SESSION_TOKEN_KEY = "moodly-session-token";
 
 let apiBase = "";
@@ -77,8 +79,14 @@ export const moodlyBackendService = {
     apiDelete<{ id: string }>("/api/entries", { id }),
 
   // --- Metric Configuration ---
-  getMetricConfig: (): Promise<{ metrics: MetricConfig[]; updatedAt: string | null }> =>
-    apiGet<{ metrics: MetricConfig[]; updatedAt: string | null }>("/api/metric-config"),
+  getMetricConfig: async (): Promise<{ metrics: MetricConfig[]; updatedAt: string | null }> => {
+    const res = await apiGet<{ metrics: MetricConfig[]; updatedAt: string | null }>("/api/metric-config");
+    // Drop the legacy default blue so these metrics follow the dynamic mood color
+    res.metrics = res.metrics.map((m) =>
+      m.color?.toLowerCase() === LEGACY_DEFAULT_COLOR ? { ...m, color: undefined } : m,
+    );
+    return res;
+  },
 
   saveMetricConfig: (metrics: MetricConfig[]): Promise<{ success: boolean }> =>
     apiPost<{ success: boolean }>("/api/metric-config", { metrics }),
