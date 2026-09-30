@@ -95,9 +95,10 @@ function stepStyle(v: number) {
   const selected = v === currentValue.value;
   if (isMoodMetric.value) {
     const { color, ink } = MOOD_COLORS[moodLevel(v, props.config)];
+    // Unselected values stay faintly tinted; the selected one is solid with an offset ring so it reads at a glance
     return selected
-      ? { background: color, color: ink }
-      : { background: `color-mix(in srgb, ${color} 26%, var(--surface))`, color: 'var(--ink)' };
+      ? { background: color, color: ink, boxShadow: `0 0 0 2px var(--surface), 0 0 0 4px ${color}` }
+      : { background: `color-mix(in srgb, ${color} 12%, var(--surface))`, color: `color-mix(in srgb, ${color} 55%, var(--muted))` };
   }
   return selected
     ? { background: accent.value, color: props.config.color ? readableInk(props.config.color) : 'var(--mood-ink)' }
