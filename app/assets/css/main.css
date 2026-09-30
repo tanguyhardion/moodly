@@ -103,6 +103,8 @@
 
   body {
     @apply bg-bg font-sans text-ink antialiased;
+    /* Day slides move content sideways; never let that create a horizontal scrollbar */
+    overflow-x: clip;
     transition: background-color 0.4s ease;
   }
 
@@ -328,10 +330,18 @@
 .toast-enter-from, .toast-leave-to { opacity: 0; transform: translate(-50%, -12px); }
 
 /* Day-to-day swipe on the Today screen */
+/* Both days animate at once; the leaving one is lifted out of flow so nothing jumps */
+.day-stage { position: relative; transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease; }
+.day-stage.dragging { transition: none; }
 .slide-left-enter-active, .slide-left-leave-active,
-.slide-right-enter-active, .slide-right-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
-.slide-left-enter-from, .slide-right-leave-to { opacity: 0; transform: translateX(32px); }
-.slide-left-leave-to, .slide-right-enter-from { opacity: 0; transform: translateX(-32px); }
+.slide-right-enter-active, .slide-right-leave-active {
+  transition: opacity 0.32s ease, transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
+}
+.slide-left-leave-active, .slide-right-leave-active { position: absolute; inset: 0 0 auto 0; pointer-events: none; }
+.slide-left-leave-active, .slide-right-leave-active { transition-duration: 0.2s, 0.38s; }
+.slide-left-enter-from, .slide-right-leave-to { opacity: 0; transform: translateX(56px); }
+.slide-left-leave-to, .slide-right-enter-from { opacity: 0; transform: translateX(-56px); }
 
 .fab-enter-active, .fab-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
 .fab-enter-from, .fab-leave-to { opacity: 0; transform: translateY(12px) scale(0.95); }

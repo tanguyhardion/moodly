@@ -1,5 +1,11 @@
 <template>
-  <div class="page" @touchstart="handleTouchStart" @touchend="handleSwipeEnd">
+  <div
+    class="page"
+    @touchstart="handleTouchStart"
+    @touchmove="handleTouchMove"
+    @touchend="handleSwipeEnd"
+    @touchcancel="resetDrag"
+  >
     <!-- Date + configure -->
     <div class="mb-6 flex flex-col gap-4">
       <div class="flex items-center justify-between">
@@ -25,12 +31,8 @@
 
     <LoadingState v-if="isLoading || isConfigLoading" message="Loading your day…" />
 
-    <Transition
-      v-else
-      :name="swipeDirection === 'left' ? 'slide-left' : 'slide-right'"
-      mode="out-in"
-      @enter="swipeDirection = null"
-    >
+    <div v-else class="day-stage" :class="{ dragging: isDragging }" :style="dragStyle">
+    <Transition :name="swipeDirection === 'left' ? 'slide-left' : 'slide-right'">
       <!-- No metrics configured -->
       <div v-if="!hasMetrics" :key="`empty-${selectedDateString}`" class="card flex flex-col items-center gap-3 px-6 py-12 text-center">
         <span class="grid size-16 place-items-center rounded-full bg-mood-soft text-mood-strong">
@@ -95,6 +97,7 @@
         </button>
       </div>
     </Transition>
+    </div>
 
     <!-- Floating save, shown once the main button scrolls away -->
     <Transition name="fab">
@@ -152,42 +155,77 @@ function metricRuns(metrics: MetricConfig[]) {
 }
 
 // --- Swipe Gestures ---
+const swipeThreshold = 50;
+const swipeDirection = ref<'left' | 'right'>('left');
 const touchStartX = ref(0);
 const touchStartY = ref(0);
-const swipeThreshold = 50;
-const swipeDirection = ref<'left' | 'right' | null>(null);
+const dragX = ref(0);
+const isDragging = ref(false);
+// Axis is locked on the first significant movement so vertical scrolls never drag the day
+let dragAxis: 'x' | 'y' | null = null;
+let ignoreTouch = false;
+
+const dragStyle = computed(() =>
+  dragX.value ? { transform: `translateX(${dragX.value}px)`, opacity: 1 - Math.min(Math.abs(dragX.value) / 400, 0.3) } : undefined,
+);
+
+function resetDrag() {
+  isDragging.value = false;
+  dragX.value = 0;
+  dragAxis = null;
+}
 
 function handleTouchStart(e: TouchEvent) {
-  touchStartX.value = e.changedTouches[0]!.screenX;
-  touchStartY.value = e.changedTouches[0]!.screenY;
+  // Leave horizontal gestures on sliders and text fields alone
+  ignoreTouch = !!(e.target as HTMLElement | null)?.closest('input[type="range"], textarea, .dp__menu');
+  touchStartX.value = e.changedTouches[0]!.clientX;
+  touchStartY.value = e.changedTouches[0]!.clientY;
+  dragAxis = null;
+}
+
+function handleTouchMove(e: TouchEvent) {
+  if (ignoreTouch || dragAxis === 'y') return;
+  const dx = e.changedTouches[0]!.clientX - touchStartX.value;
+  const dy = e.changedTouches[0]!.clientY - touchStartY.value;
+  if (!dragAxis) {
+    if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+    dragAxis = Math.abs(dx) > Math.abs(dy) * 1.5 ? 'x' : 'y';
+    if (dragAxis === 'y') return;
+  }
+  isDragging.value = true;
+  // Resist dragging towards a day that can't be reached
+  const blocked = dx < 0 && !canGoNext();
+  dragX.value = blocked ? dx * 0.2 : dx * 0.6;
 }
 
 function handleSwipeEnd(e: TouchEvent) {
-  const touchEndX = e.changedTouches[0]!.screenX;
-  const touchEndY = e.changedTouches[0]!.screenY;
-  const diffX = touchStartX.value - touchEndX;
-  const diffY = Math.abs(touchStartY.value - touchEndY);
-  const absDiffX = Math.abs(diffX);
+  const dx = e.changedTouches[0]!.clientX - touchStartX.value;
+  const wasHorizontal = dragAxis === 'x';
+  resetDrag();
+  if (ignoreTouch || !wasHorizontal || Math.abs(dx) < swipeThreshold) return;
 
-  // Only trigger if horizontal distance exceeds threshold and is more than 2x the vertical distance
-  if (absDiffX < swipeThreshold || absDiffX <= diffY * 2) return;
-
-  const direction = diffX > 0 ? 'left' : 'right';
-  swipeDirection.value = direction;
-
-  if (direction === 'left') {
+  if (dx < 0) {
     // Swipe left = next day
-    const nextDate = new Date(selectedDate.value);
-    nextDate.setDate(nextDate.getDate() + 1);
-    if (nextDate <= maxDate.value) {
-      selectedDate.value = nextDate;
-    }
-  } else if (direction === 'right') {
+    if (canGoNext()) shiftDay(1);
+  } else {
     // Swipe right = previous day
-    const prevDate = new Date(selectedDate.value);
-    prevDate.setDate(prevDate.getDate() - 1);
-    selectedDate.value = prevDate;
+    shiftDay(-1);
   }
+}
+
+function canGoNext() {
+  const next = new Date(selectedDate.value);
+  next.setDate(next.getDate() + 1);
+  next.setHours(0, 0, 0, 0);
+  const max = new Date(maxDate.value);
+  max.setHours(0, 0, 0, 0);
+  return next <= max;
+}
+
+function shiftDay(delta: number) {
+  const d = new Date(selectedDate.value);
+  d.setDate(d.getDate() + delta);
+  selectedDate.value = d;
 }
 
 // --- Date ---
@@ -203,6 +241,11 @@ const selectedDate = ref(new Date());
 const selectedDateString = computed(() =>
   getCurrentDateString(selectedDate.value)
 );
+
+// Slide direction follows the date change, whatever triggered it (swipe, arrows, picker)
+watch(selectedDateString, (next, prev) => {
+  if (prev) swipeDirection.value = next > prev ? 'left' : 'right';
+}, { flush: 'sync' });
 
 // --- Draft management ---
 const { getDraft, saveDraft, clearDraft, cleanupOldDrafts } = useDraftEntry();
