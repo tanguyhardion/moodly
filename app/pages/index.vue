@@ -214,14 +214,10 @@ const entryData = ref<MetricDataMap>({});
 
 // --- Mood tint follows the entry being edited ---
 const { moodMetric, setLiveMoodValue } = useMoodTheme();
-// Sliders default to their minimum, so only tint once the mood value is real
-// (saved, restored from a draft, or touched), not on a blank day.
-const hasMoodValue = ref(false);
-
 watchEffect(() => {
   const id = moodMetric.value?.id;
   const value = id ? entryData.value[id] : null;
-  setLiveMoodValue(hasMoodValue.value && typeof value === 'number' ? value : null);
+  setLiveMoodValue(typeof value === 'number' ? value : null);
 });
 
 onUnmounted(() => setLiveMoodValue(null));
@@ -337,11 +333,6 @@ function loadEntryForDate(dateStr: string, options: { ignoreDraft?: boolean } = 
     defaults[m.id] = getDefaultValueForType(m);
   }
 
-  const moodId = moodMetric.value?.id;
-  hasMoodValue.value = !!moodId && (
-    typeof draft?.[moodId] === 'number' || typeof existing?.data[moodId] === 'number'
-  );
-
   if (draft) {
     entryData.value = { ...defaults, ...(existing?.data ?? {}), ...draft };
     isRestoredDraft.value = true;
@@ -360,7 +351,6 @@ function loadEntryForDate(dateStr: string, options: { ignoreDraft?: boolean } = 
 }
 
 function updateMetricValue(metricId: string, value: MetricValue) {
-  if (metricId === moodMetric.value?.id) hasMoodValue.value = true;
   entryData.value = { ...entryData.value, [metricId]: value };
 }
 

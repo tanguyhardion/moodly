@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-3">
     <MetricHeader :config="config">
       <span class="font-display text-xl font-bold tabular-nums">
-        {{ currentValue }}<span class="text-sm font-medium text-faint">/{{ config.max }}</span>
+        {{ currentValue ?? '–' }}<span class="text-sm font-medium text-faint">/{{ config.max }}</span>
       </span>
     </MetricHeader>
 
@@ -37,7 +37,7 @@
       :min="config.min"
       :max="config.max"
       :step="config.step"
-      :value="currentValue"
+      :value="currentValue ?? config.min"
       :aria-label="config.label"
       class="range"
       :style="{ '--p': `${progress}%`, '--accent': accent }"
@@ -68,7 +68,7 @@ const { moodMetric } = useMoodTheme();
 
 const currentValue = computed(() => {
   const v = props.modelValue;
-  return typeof v === 'number' ? v : props.config.min;
+  return typeof v === 'number' ? v : null;
 });
 
 const steps = computed(() => {
@@ -83,7 +83,7 @@ const steps = computed(() => {
 
 const progress = computed(() => {
   const range = props.config.max - props.config.min;
-  if (range === 0) return 0;
+  if (range === 0 || currentValue.value === null) return 0;
   return ((currentValue.value - props.config.min) / range) * 100;
 });
 

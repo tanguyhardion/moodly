@@ -12,7 +12,8 @@ export * from './shared';
 export function getDefaultValueForType(config: MetricConfig): MetricValue {
   switch (config.type) {
     case 'slider':
-      return config.min;
+      // Unset until the user picks a value, so an untouched scale isn't saved as its minimum
+      return null;
     case 'checkbox':
       return false;
     case 'number':
