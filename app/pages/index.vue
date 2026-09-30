@@ -32,7 +32,7 @@
     <LoadingState v-if="isLoading || isConfigLoading" message="Loading your day…" />
 
     <div v-else class="day-stage" :class="{ dragging: isDragging }" :style="dragStyle">
-    <Transition :name="swipeDirection === 'left' ? 'slide-left' : 'slide-right'">
+    <Transition :css="false" @before-leave="onDayBeforeLeave" @leave="onDayLeave" @enter="onDayEnter">
       <!-- No metrics configured -->
       <div v-if="!hasMetrics" :key="`empty-${selectedDateString}`" class="card flex flex-col items-center gap-3 px-6 py-12 text-center">
         <span class="grid size-16 place-items-center rounded-full bg-mood-soft text-mood-strong">
@@ -201,16 +201,57 @@ function handleTouchMove(e: TouchEvent) {
 function handleSwipeEnd(e: TouchEvent) {
   const dx = e.changedTouches[0]!.clientX - touchStartX.value;
   const wasHorizontal = dragAxis === 'x';
-  resetDrag();
-  if (ignoreTouch || !wasHorizontal || Math.abs(dx) < swipeThreshold) return;
-
-  if (dx < 0) {
-    // Swipe left = next day
-    if (canGoNext()) shiftDay(1);
-  } else {
-    // Swipe right = previous day
-    shiftDay(-1);
+  // Swipe left = next day, swipe right = previous day
+  const delta = dx < 0 ? (canGoNext() ? 1 : 0) : -1;
+  if (ignoreTouch || !wasHorizontal || Math.abs(dx) < swipeThreshold || !delta) {
+    resetDrag();
+    return;
   }
+
+  // Hand the dragged offset over to the leaving day so it keeps going the same way,
+  // and snap the stage back without animating (otherwise it visibly bounces back)
+  releaseX = dragX.value;
+  dragX.value = 0;
+  dragAxis = null;
+  shiftDay(delta);
+  requestAnimationFrame(() => requestAnimationFrame(() => { isDragging.value = false; }));
+}
+
+// --- Day transition (Web Animations so the leaving day can start from the drag offset) ---
+let releaseX = 0;
+const EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)';
+const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function onDayBeforeLeave(el: Element) {
+  // Lift the leaving day out of flow so both days animate in place at once
+  Object.assign((el as HTMLElement).style, { position: 'absolute', top: '0', left: '0', right: '0', pointerEvents: 'none' });
+}
+
+function onDayLeave(el: Element, done: () => void) {
+  const sign = swipeDirection.value === 'left' ? -1 : 1;
+  const from = releaseX;
+  releaseX = 0;
+  const startOpacity = 1 - Math.min(Math.abs(from) / 400, 0.3);
+  const to = sign * (Math.abs(from) + 72);
+  el.animate(
+    [
+      { transform: `translateX(${from}px)`, opacity: startOpacity },
+      { transform: `translateX(${to}px)`, opacity: 0 },
+    ],
+    { duration: reducedMotion() ? 1 : 260, easing: 'ease-out', fill: 'forwards' },
+  ).onfinish = done;
+}
+
+function onDayEnter(el: Element, done: () => void) {
+  // The new day slides in from the opposite side, moving the same way as the old one
+  const from = swipeDirection.value === 'left' ? 56 : -56;
+  el.animate(
+    [
+      { transform: `translateX(${from}px)`, opacity: 0 },
+      { transform: 'translateX(0)', opacity: 1 },
+    ],
+    { duration: reducedMotion() ? 1 : 380, easing: EASE_OUT },
+  ).onfinish = done;
 }
 
 function canGoNext() {
