@@ -42,8 +42,8 @@
 
 :root.dark {
   --base: color-mix(in oklab, var(--mood) 5%, #0b0b0d);
-  --surface: color-mix(in oklab, var(--mood) 9%, #131315);
-  --surface-2: color-mix(in oklab, var(--mood) 13%, #1b1b1e);
+  --surface: color-mix(in oklab, var(--mood) 9%, #1c1c20);
+  --surface-2: color-mix(in oklab, var(--mood) 13%, #26262b);
   --line: color-mix(in oklab, var(--mood) 22%, transparent);
   --ink: color-mix(in oklab, var(--mood) 6%, #f7f7f8);
   --muted: color-mix(in oklab, var(--mood) 14%, #a4a4ab);
@@ -89,7 +89,7 @@
   --font-display: "Bricolage Grotesque", "Figtree", ui-sans-serif, system-ui, sans-serif;
 
   --radius-card: 1.5rem;
-  --shadow-card: 0 1px 2px rgb(27 22 34 / 0.05), 0 8px 24px -12px rgb(27 22 34 / 0.12);
+  --shadow-card: 0 1px 2px rgb(27 22 34 / 0.07), 0 10px 28px -12px rgb(27 22 34 / 0.2);
   --shadow-pop: 0 24px 48px -16px rgb(27 22 34 / 0.35);
 }
 
@@ -215,15 +215,28 @@
   }
 
   .segmented {
-    @apply inline-flex rounded-full bg-surface p-1 shadow-card dark:shadow-none;
+    @apply relative inline-flex rounded-full bg-surface-2 p-1;
   }
 
   .segmented > button {
-    @apply rounded-full px-4 py-1.5 text-sm font-semibold text-muted transition hover:text-ink;
+    @apply relative rounded-full px-4 py-1.5 text-sm font-semibold text-ink/70 transition-colors hover:text-ink;
   }
 
   .segmented > button.is-active {
-    @apply bg-mood text-mood-ink hover:text-mood-ink;
+    @apply text-mood-ink hover:text-mood-ink;
+  }
+
+  /* Sliding highlight placed by the `v-slide-pill` directive (plugins/slide-pill.ts) */
+  .segmented-pill {
+    @apply pointer-events-none absolute top-0 left-0 rounded-full bg-mood opacity-0;
+    will-change: transform, width;
+  }
+
+  .segmented-pill-ready {
+    transition:
+      transform 0.4s cubic-bezier(0.34, 1.2, 0.5, 1),
+      width 0.4s cubic-bezier(0.34, 1.2, 0.5, 1),
+      opacity 0.2s;
   }
 
   .overlay {

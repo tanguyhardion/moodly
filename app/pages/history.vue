@@ -5,7 +5,7 @@
         <h1 class="page-title">History</h1>
         <p class="page-subtitle">{{ view === 'year' ? 'Your year, one day per square.' : "Every day you've logged, newest first." }}</p>
       </div>
-      <div class="segmented" role="group" aria-label="History view">
+      <div v-slide-pill class="segmented" role="group" aria-label="History view">
         <button type="button" :class="{ 'is-active': view === 'list' }" :aria-pressed="view === 'list'" @click="view = 'list'">List</button>
         <button type="button" :class="{ 'is-active': view === 'year' }" :aria-pressed="view === 'year'" @click="view = 'year'">Year</button>
       </div>
@@ -25,14 +25,8 @@
       <article
         v-for="entry in displayedEntries"
         :key="entry.id"
-        class="card relative overflow-hidden p-4 pl-5"
+        class="card relative overflow-hidden p-4"
       >
-        <span
-          class="absolute inset-y-0 left-0 w-1.5"
-          :style="{ background: entryMood(entry)?.color ?? 'var(--line)' }"
-          aria-hidden="true"
-        />
-
         <div class="flex items-center gap-3">
           <div class="min-w-0 flex-1">
             <h2 class="text-lg font-extrabold">{{ formatDate(entry.date) }}</h2>

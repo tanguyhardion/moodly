@@ -10,7 +10,7 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="segmented" role="group" aria-label="Time period">
+  <div v-slide-pill class="segmented" role="group" aria-label="Time period">
     <button
       v-for="period in periods"
       :key="period.days"

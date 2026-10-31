@@ -17,7 +17,7 @@
         <div>
           <span class="field-label mb-0">Send the email when</span>
         </div>
-        <div class="segmented self-start shadow-none ring-1 ring-line" role="radiogroup" aria-label="Match">
+        <div v-slide-pill class="segmented self-start" role="radiogroup" aria-label="Match">
           <button type="button" role="radio" :aria-checked="localAlert.conditionLogic === 'all'" :class="{ 'is-active': localAlert.conditionLogic === 'all' }" @click="localAlert.conditionLogic = 'all'">
             All match
           </button>

@@ -167,7 +167,7 @@
                 </div>
                 <div>
                   <span class="field-label">Result in</span>
-                  <div class="segmented shadow-none ring-1 ring-line">
+                  <div v-slide-pill class="segmented">
                     <button type="button" :class="{ 'is-active': formData.calcUnit === 'hours' }" @click="formData.calcUnit = 'hours'">Hours</button>
                     <button type="button" :class="{ 'is-active': formData.calcUnit === 'minutes' }" @click="formData.calcUnit = 'minutes'">Minutes</button>
                   </div>
