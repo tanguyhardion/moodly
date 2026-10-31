@@ -98,6 +98,16 @@ export const moodlyBackendService = {
   saveSettings: (settings: AppSettings): Promise<{ success: boolean }> =>
     apiPost<{ success: boolean }>("/api/settings", settings),
 
+  // --- Push notifications ---
+  getPushPublicKey: async (): Promise<string> =>
+    (await apiGet<{ publicKey: string }>("/api/push-subscription")).publicKey,
+
+  savePushSubscription: (subscription: PushSubscriptionJSON): Promise<{ success: boolean }> =>
+    apiPost<{ success: boolean }>("/api/push-subscription", subscription),
+
+  deletePushSubscription: (endpoint: string): Promise<{ success: boolean }> =>
+    apiDelete<{ success: boolean }>("/api/push-subscription", { endpoint }),
+
   // --- Location Search ---
   searchLocation: (query: string): Promise<unknown> =>
     apiGet<unknown>("/api/search-location", { q: query }),

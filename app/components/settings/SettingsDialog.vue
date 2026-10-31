@@ -45,6 +45,23 @@
                 </ToggleSwitch>
               </section>
 
+              <section v-if="push.supported" class="flex flex-col gap-3">
+                <div>
+                  <h3 class="text-lg font-bold">Notifications</h3>
+                  <p class="text-sm text-muted">Reminders on this device.</p>
+                </div>
+                <p v-if="push.needsInstall" class="rounded-2xl bg-surface-2 p-4 text-sm text-muted">
+                  On iPhone, add Moodly to your Home Screen and open it from there to turn on notifications.
+                </p>
+                <p v-else-if="push.denied" class="rounded-2xl bg-surface-2 p-4 text-sm text-muted">
+                  Notifications are blocked. Allow them for Moodly in your device settings.
+                </p>
+                <ToggleSwitch v-else :model-value="push.enabled" :disabled="push.busy" @update:model-value="togglePush">
+                  Push notifications
+                  <template #description>The daily reminder shows up on this device too</template>
+                </ToggleSwitch>
+              </section>
+
               <section class="flex flex-col gap-3">
                 <div class="flex items-start justify-between gap-3">
                   <div>
@@ -133,6 +150,17 @@ const settings = ref<AppSettings>({
   timeZone,
 });
 
+const push = usePushNotifications();
+
+async function togglePush(on: boolean) {
+  try {
+    await (on ? push.enable() : push.disable());
+  } catch (error) {
+    console.error("Failed to update push notifications", error);
+    notify("Couldn't update notifications. Try again.", "error");
+  }
+}
+
 const alerts = ref<EmailAlert[]>([]);
 const metrics = ref<MetricConfig[]>([]);
 
@@ -183,6 +211,7 @@ const loadSettings = async () => {
   } finally {
     loading.value = false;
   }
+  push.refresh();
 };
 
 const save = async () => {
