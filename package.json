@@ -8,13 +8,15 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "typecheck": "nuxt typecheck"
   },
   "dependencies": {
     "@nuxt/fonts": "^0.11.4",
     "@nuxt/icon": "^2.1.0",
     "@nuxt/image": "^1.11.0",
     "@vuepic/vue-datepicker": "^12.0.5",
+    "leaflet": "^1.9.4",
     "nuxt": "^4.2.0",
     "nuxt-charts": "^2.0.0",
     "uuid": "^13.0.0",
@@ -24,8 +26,12 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
+    "@types/leaflet": "^1.9.20",
     "@types/node": "^24.10.1",
     "@types/uuid": "^9.0.1",
-    "tailwindcss": "^4.3.3"
+    "@vite-pwa/nuxt": "^1.1.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3",
+    "vue-tsc": "^3.1.8"
   }
 }

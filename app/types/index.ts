@@ -17,7 +17,8 @@ export function getDefaultValueForType(config: MetricConfig): MetricValue {
     case 'checkbox':
       return false;
     case 'number':
-      return config.min ?? 0;
+      // Unset until the user enters a value, so an untouched field isn't saved as its minimum
+      return null;
     case 'time':
       return '';
     case 'location':

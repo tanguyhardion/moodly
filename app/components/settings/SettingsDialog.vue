@@ -33,7 +33,7 @@
                 </div>
                 <ToggleSwitch v-model="settings.dailyReminders">
                   Daily reminder
-                  <template #description>In the evening, if you haven't checked in</template>
+                  <template #description>In the evening, if today's check-in is missing or incomplete</template>
                 </ToggleSwitch>
                 <ToggleSwitch v-model="settings.weeklyReports">
                   Weekly report
@@ -122,11 +122,15 @@ const isOpen = computed({
   set: (val) => emit("update:modelValue", val),
 });
 
+// Saved with the settings so the email crons know what "today" is for you
+const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 const settings = ref<AppSettings>({
   email: "",
   dailyReminders: false,
   weeklyReports: false,
   monthlyReports: false,
+  timeZone,
 });
 
 const alerts = ref<EmailAlert[]>([]);
@@ -184,7 +188,7 @@ const loadSettings = async () => {
 const save = async () => {
   saving.value = true;
   try {
-    await moodlyBackendService.saveSettings(settings.value);
+    await moodlyBackendService.saveSettings({ ...settings.value, timeZone });
     notify("Settings saved", "success", close);
   } catch (error) {
     console.error("Failed to save settings", error);

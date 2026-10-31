@@ -14,6 +14,17 @@
     </div>
 
     <div v-else class="flex flex-col gap-8">
+      <NuxtLink
+        v-if="wrappedYear"
+        :to="{ path: '/wrapped', query: { year: String(wrappedYear) } }"
+        class="flex items-center gap-3 rounded-card p-4 font-semibold text-white shadow-card"
+        style="background: linear-gradient(135deg, #f2a93b, #f2677a 55%, #5b6cd6)"
+      >
+        <Icon name="solar:gift-bold" size="24" />
+        <span class="flex-1">Your {{ wrappedYear }} Wrapped is ready</span>
+        <Icon name="solar:alt-arrow-right-bold" size="18" />
+      </NuxtLink>
+
       <div class="flex flex-col gap-4">
         <div ref="periodSelectorRef">
           <PeriodSelector v-model="period" :periods="PERIODS" />
@@ -56,6 +67,14 @@ const {
   locationInsights,
   habitEffects,
 } = useInsightsData();
+
+// The yearly recap is promoted in December (this year) and January (last year)
+const wrappedYear = computed(() => {
+  const now = new Date();
+  if (now.getMonth() === 11) return now.getFullYear();
+  if (now.getMonth() === 0) return now.getFullYear() - 1;
+  return null;
+});
 
 const PERIODS = [
   { label: '7d', days: 7 },

@@ -642,7 +642,7 @@ export function computeHabitEffects(
       checkedDates.map(d => valueAfter(d, offset, metric.id)).filter((v): v is number => v !== null)
     );
     // Require enough samples per day; sparse days are reported as "no data", not as 0
-    const [day1Avg, day2Avg, day3Avg] = after.map(vals => (vals.length >= 2 ? avgOf(vals) : null));
+    const [day1Avg = null, day2Avg = null, day3Avg = null] = after.map(vals => (vals.length >= 2 ? avgOf(vals) : null));
     if (day1Avg === null && day2Avg === null) continue;
 
     {

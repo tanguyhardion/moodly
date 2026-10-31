@@ -1,6 +1,7 @@
 <template>
   <div class="flex flex-col gap-8">
     <InsightSection title="Places" icon="solar:map-point-bold" color="var(--pink)">
+      <InsightMoodMap />
       <div v-for="loc in locationInsights" :key="loc.metricId" class="card p-3">
         <p class="eyebrow px-2 pt-1 pb-2">{{ loc.metricLabel }}</p>
         <ul class="flex flex-col">

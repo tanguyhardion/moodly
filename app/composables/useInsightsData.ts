@@ -145,6 +145,7 @@ function createInsightsData() {
 
   return {
     entries,
+    filteredEntries,
     isLoading,
     isConfigLoading,
     period,
