@@ -11,7 +11,7 @@
           :min="config.min"
           :max="config.max"
           :step="config.step ?? 1"
-          :placeholder="config.placeholder ?? '0'"
+          :placeholder="config.placeholder ?? '–'"
           :aria-label="config.label"
           class="w-12 appearance-none bg-transparent text-center font-display text-lg font-bold tabular-nums outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           @input="handleInput"

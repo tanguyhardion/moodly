@@ -95,6 +95,8 @@
           <Icon :name="isSaving ? 'svg-spinners:ring-resize' : 'solar:check-circle-bold'" size="22" />
           {{ isSaving ? 'Saving…' : 'Save entry' }}
         </button>
+
+        <OnThisDay :date="selectedDateString" @select="selectedDate = parseLocalDateString($event)" />
       </div>
     </Transition>
     </div>
