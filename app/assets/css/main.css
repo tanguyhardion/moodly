@@ -13,12 +13,13 @@
   --mood-ink: #2a1a05;
 
   --base: #ffffff;
-  --surface: #ffffff;
-  --surface-2: #f5f3f7;
-  --line: rgb(27 22 34 / 0.09);
-  --ink: #1b1622;
-  --muted: #6f6878;
-  --faint: #a39cad;
+  /* Neutrals are tinted with the current mood so cards pick up its shade. */
+  --surface: color-mix(in oklab, var(--mood) 4%, #ffffff);
+  --surface-2: color-mix(in oklab, var(--mood) 9%, #f6f6f6);
+  --line: color-mix(in oklab, var(--mood) 18%, transparent);
+  --ink: color-mix(in oklab, var(--mood) 12%, #15151a);
+  --muted: color-mix(in oklab, var(--mood) 14%, #6c6c74);
+  --faint: color-mix(in oklab, var(--mood) 18%, #a6a6ac);
 
   --success: #2f9e6b;
   --danger: #e5484d;
@@ -40,13 +41,13 @@
 }
 
 :root.dark {
-  --base: #141219;
-  --surface: #1f1c26;
-  --surface-2: #28242f;
-  --line: rgb(255 255 255 / 0.08);
-  --ink: #f6f2f8;
-  --muted: #a59eb0;
-  --faint: #756e80;
+  --base: color-mix(in oklab, var(--mood) 5%, #0b0b0d);
+  --surface: color-mix(in oklab, var(--mood) 9%, #131315);
+  --surface-2: color-mix(in oklab, var(--mood) 13%, #1b1b1e);
+  --line: color-mix(in oklab, var(--mood) 22%, transparent);
+  --ink: color-mix(in oklab, var(--mood) 6%, #f7f7f8);
+  --muted: color-mix(in oklab, var(--mood) 14%, #a4a4ab);
+  --faint: color-mix(in oklab, var(--mood) 16%, #737379);
 
   --success: #4cc38a;
   --danger: #ff6b6f;
