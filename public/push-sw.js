@@ -5,7 +5,9 @@ self.addEventListener("push", (event) => {
     self.registration.showNotification(title, {
       body,
       icon: "pwa-192x192.png",
-      badge: "pwa-192x192.png",
+      // Android shows only this image's transparency in the status bar, so it must be a
+      // white silhouette on a transparent background (an opaque icon becomes a white square)
+      badge: "notification-badge.png",
       data: { url },
     }),
   );
