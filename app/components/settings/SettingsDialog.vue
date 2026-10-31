@@ -33,7 +33,7 @@
                 </div>
                 <ToggleSwitch v-model="settings.dailyReminders">
                   Daily reminder
-                  <template #description>If today's check-in is missing or incomplete</template>
+                  <template #description>In the evening, if today's check-in is missing or incomplete</template>
                 </ToggleSwitch>
                 <ToggleSwitch v-model="settings.weeklyReports">
                   Weekly report
@@ -43,15 +43,6 @@
                   Monthly report
                   <template #description>On the last day of the month</template>
                 </ToggleSwitch>
-                <div>
-                  <label for="settings-reminder-hour" class="field-label">Send at</label>
-                  <select id="settings-reminder-hour" v-model.number="settings.reminderHour" class="input">
-                    <option v-for="hour in 24" :key="hour - 1" :value="hour - 1">
-                      {{ String(hour - 1).padStart(2, "0") }}:00
-                    </option>
-                  </select>
-                  <p class="mt-1 text-[13px] text-muted">For the reminder and reports, in your time zone ({{ timeZone }})</p>
-                </div>
               </section>
 
               <section class="flex flex-col gap-3">
@@ -131,7 +122,7 @@ const isOpen = computed({
   set: (val) => emit("update:modelValue", val),
 });
 
-// Settings are always saved with this device's zone, so "Send at" means local time here
+// Saved with the settings so the email crons know what "today" is for you
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 const settings = ref<AppSettings>({
@@ -139,7 +130,6 @@ const settings = ref<AppSettings>({
   dailyReminders: false,
   weeklyReports: false,
   monthlyReports: false,
-  reminderHour: 21,
   timeZone,
 });
 
