@@ -53,13 +53,21 @@ const handlePasskey = async () => {
   try {
     await loginWithPasskey();
   } catch (error) {
-    // Cancelling the prompt lands here too; the password form stays available
-    console.error("Passkey authentication error:", error);
-    showError.value = true;
+    // Cancelling the prompt (or the browser refusing it without a tap) isn't an error to show;
+    // the button and the password form stay available
+    if ((error as Error).name !== "NotAllowedError") {
+      console.error("Passkey authentication error:", error);
+      showError.value = true;
+    }
   } finally {
     isValidating.value = false;
   }
 };
+
+// Ask for Face ID / fingerprint straight away when this device has a passkey
+onMounted(() => {
+  if (!isAuthenticated.value && passkey.supported && passkey.enabled.value) handlePasskey();
+});
 
 const handleSubmit = async () => {
   isValidating.value = true;
