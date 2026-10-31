@@ -166,6 +166,10 @@ export interface AppSettings {
   dailyReminders: boolean;
   weeklyReports: boolean;
   monthlyReports: boolean;
+  /** Hour (0-23, in `timeZone`) at which the daily reminder and reports are sent */
+  reminderHour: number;
+  /** IANA time zone, e.g. "Europe/Paris" */
+  timeZone: string;
   theme?: 'light' | 'dark' | 'system';
 }
 
