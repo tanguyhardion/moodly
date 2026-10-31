@@ -1,8 +1,14 @@
 <template>
   <div class="page">
-    <header class="mb-6">
-      <h1 class="page-title">History</h1>
-      <p class="page-subtitle">Every day you've logged, newest first.</p>
+    <header class="mb-6 flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <h1 class="page-title">History</h1>
+        <p class="page-subtitle">{{ view === 'year' ? 'Your year, one day per square.' : "Every day you've logged, newest first." }}</p>
+      </div>
+      <div class="segmented" role="group" aria-label="History view">
+        <button type="button" :class="{ 'is-active': view === 'list' }" :aria-pressed="view === 'list'" @click="view = 'list'">List</button>
+        <button type="button" :class="{ 'is-active': view === 'year' }" :aria-pressed="view === 'year'" @click="view = 'year'">Year</button>
+      </div>
     </header>
 
     <LoadingState v-if="isLoading" message="Loading your history…" />
@@ -12,6 +18,8 @@
       <p class="text-lg font-bold text-ink">No entries yet</p>
       <p class="max-w-xs text-sm">Check in on the Today tab and your days will show up here.</p>
     </div>
+
+    <YearPixels v-else-if="view === 'year'" />
 
     <div v-else class="flex flex-col gap-3">
       <article
@@ -96,6 +104,13 @@ const { entries, isLoading, deleteEntry, groupedMetrics } = useMoodly();
 const { moodMetric } = useMoodTheme();
 
 const pendingDeleteId = ref<string | null>(null);
+
+// List or Year in pixels, kept in the URL so the home screen shortcut can open the year view
+const route = useRoute();
+const view = computed<'list' | 'year'>({
+  get: () => (route.query.view === 'year' ? 'year' : 'list'),
+  set: (value) => navigateTo({ query: value === 'year' ? { view: 'year' } : {} }, { replace: true }),
+});
 
 /** The entry's mood value with its mood color, or null when it has none. */
 function entryMood(entry: DailyEntry) {
