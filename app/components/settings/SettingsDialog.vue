@@ -33,7 +33,7 @@
                 </div>
                 <ToggleSwitch v-model="settings.dailyReminders">
                   Daily reminder
-                  <template #description>In the evening, if you haven't checked in</template>
+                  <template #description>In the evening, if today's check-in is missing or incomplete</template>
                 </ToggleSwitch>
                 <ToggleSwitch v-model="settings.weeklyReports">
                   Weekly report
