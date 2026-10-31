@@ -2,7 +2,7 @@
 // Moodly - Shared Domain Types
 //
 // This file is duplicated byte-for-byte in:
-//   moodly-frontend/app/types/shared.ts
+//   moodly/app/types/shared.ts
 //   moodly-backend/types/shared.ts
 // Edit one, copy it to the other, and run `npm run check:types` in moodly-backend.
 // Keep it dependency-free: types only, no runtime code.
