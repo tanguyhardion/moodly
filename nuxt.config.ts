@@ -71,6 +71,21 @@ export default defineNuxtConfig({
         { src: "pwa-192x192.png", sizes: "192x192", type: "image/png" },
         { src: "pwa-512x512.png", sizes: "512x512", type: "image/png" },
       ],
+      // Long-press the home screen icon
+      shortcuts: [
+        {
+          name: "Log today's mood",
+          short_name: "Log mood",
+          url: "/moodly/",
+          icons: [{ src: "pwa-192x192.png", sizes: "192x192", type: "image/png" }],
+        },
+        {
+          name: "Year in pixels",
+          short_name: "Year",
+          url: "/moodly/history?view=year",
+          icons: [{ src: "pwa-192x192.png", sizes: "192x192", type: "image/png" }],
+        },
+      ],
     },
     workbox: {
       navigateFallback: "/moodly/",
