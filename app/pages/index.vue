@@ -279,7 +279,17 @@ const maxDate = computed(() => {
   }
   return d;
 });
-const selectedDate = ref(new Date());
+const route = useRoute();
+
+/** `?date=YYYY-MM-DD` (from emails, Year in pixels, Wrapped) opens that day, if it can be checked in. */
+function dateFromQuery(): Date {
+  const q = route.query.date;
+  if (typeof q !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(q)) return new Date();
+  const d = parseLocalDateString(q);
+  return isNaN(d.getTime()) || d > maxDate.value ? new Date() : d;
+}
+
+const selectedDate = ref(dateFromQuery());
 
 const selectedDateString = computed(() =>
   getCurrentDateString(selectedDate.value)
