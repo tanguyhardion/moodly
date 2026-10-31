@@ -23,12 +23,16 @@
           <Icon :name="isValidating ? 'svg-spinners:ring-resize' : 'solar:login-3-bold'" size="20" />
           {{ isValidating ? "Checking…" : "Unlock" }}
         </button>
+        <button v-if="passkey.supported && passkey.enabled.value" type="button" class="btn btn-secondary h-14 text-base" :disabled="isValidating" @click="handlePasskey">
+          <Icon name="solar:shield-check-bold" size="20" />
+          Unlock with Face ID / fingerprint
+        </button>
       </form>
 
       <Transition name="error">
         <p v-if="showError" class="mt-4 flex items-center justify-center gap-1.5 text-sm font-medium text-danger">
           <Icon name="solar:danger-circle-bold" size="18" />
-          That password didn't work. Try again.
+          That didn't work. Try again.
         </p>
       </Transition>
     </div>
@@ -41,7 +45,21 @@ const showError = ref(false);
 const isValidating = ref(false);
 const passwordInput = ref<HTMLInputElement | null>(null);
 
-const { isAuthenticated, login } = useAuth();
+const { isAuthenticated, login, loginWithPasskey } = useAuth();
+const passkey = usePasskey();
+
+const handlePasskey = async () => {
+  isValidating.value = true;
+  try {
+    await loginWithPasskey();
+  } catch (error) {
+    // Cancelling the prompt lands here too; the password form stays available
+    console.error("Passkey authentication error:", error);
+    showError.value = true;
+  } finally {
+    isValidating.value = false;
+  }
+};
 
 const handleSubmit = async () => {
   isValidating.value = true;

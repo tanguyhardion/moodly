@@ -1,3 +1,5 @@
+import { startAuthentication, startRegistration } from "@simplewebauthn/browser";
+import type { PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON } from "@simplewebauthn/browser";
 import type { DailyEntry, MetricConfig, AppSettings, ApiResponse, WeatherData, EmailAlert, ScheduledLetter, SessionToken } from "~/types";
 
 const LEGACY_DEFAULT_COLOR = "#1e40af";
@@ -67,6 +69,31 @@ export const moodlyBackendService = {
     const session = await apiPost<SessionToken>("/api/verify-password", { password });
     sessionStorage.setItem(SESSION_TOKEN_KEY, session.token);
   },
+
+  // --- Passkeys (Face ID / fingerprint) ---
+  /** Prompts for Face ID / fingerprint, then exchanges the signed result for a session token. */
+  loginWithPasskey: async (): Promise<void> => {
+    const { options, challengeToken } = await apiPost<{ options: PublicKeyCredentialRequestOptionsJSON; challengeToken: string }>(
+      "/api/passkey",
+      { action: "login-options" },
+    );
+    const response = await startAuthentication({ optionsJSON: options });
+    const session = await apiPost<SessionToken>("/api/passkey", { action: "login-verify", challengeToken, response });
+    sessionStorage.setItem(SESSION_TOKEN_KEY, session.token);
+  },
+
+  /** Registers a passkey on this device and returns its id. Needs a session. */
+  registerPasskey: async (): Promise<string> => {
+    const { options, challengeToken } = await apiPost<{ options: PublicKeyCredentialCreationOptionsJSON; challengeToken: string }>(
+      "/api/passkey",
+      { action: "register-options" },
+    );
+    const response = await startRegistration({ optionsJSON: options });
+    return (await apiPost<{ id: string }>("/api/passkey", { action: "register-verify", challengeToken, response })).id;
+  },
+
+  removePasskey: (id: string): Promise<{ success: boolean }> =>
+    apiPost<{ success: boolean }>("/api/passkey", { action: "remove", id }),
 
   // --- Entries ---
   getEntries: (params?: { from?: string; to?: string; date?: string }): Promise<DailyEntry[]> =>

@@ -45,6 +45,17 @@
                 </ToggleSwitch>
               </section>
 
+              <section v-if="passkey.supported" class="flex flex-col gap-3">
+                <div>
+                  <h3 class="text-lg font-bold">Unlock</h3>
+                  <p class="text-sm text-muted">Skip the password on this device.</p>
+                </div>
+                <ToggleSwitch :model-value="passkey.enabled.value" :disabled="passkeyBusy" @update:model-value="togglePasskey">
+                  Face ID / fingerprint
+                  <template #description>Your password still works as a fallback</template>
+                </ToggleSwitch>
+              </section>
+
               <section v-if="push.supported" class="flex flex-col gap-3">
                 <div>
                   <h3 class="text-lg font-bold">Notifications</h3>
@@ -149,6 +160,21 @@ const settings = ref<AppSettings>({
   monthlyReports: false,
   timeZone,
 });
+
+const passkey = usePasskey();
+const passkeyBusy = ref(false);
+
+async function togglePasskey(on: boolean) {
+  passkeyBusy.value = true;
+  try {
+    await (on ? passkey.enable() : passkey.disable());
+  } catch (error) {
+    console.error("Failed to update passkey", error);
+    notify(on ? "Couldn't set up Face ID / fingerprint." : "Couldn't turn it off. Try again.", "error");
+  } finally {
+    passkeyBusy.value = false;
+  }
+}
 
 const push = usePushNotifications();
 

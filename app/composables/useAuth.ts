@@ -14,6 +14,11 @@ export function useAuth() {
     isAuthenticated.value = true;
   };
 
+  const loginWithPasskey = async () => {
+    await moodlyBackendService.loginWithPasskey();
+    isAuthenticated.value = true;
+  };
+
   const logout = () => {
     clearSessionToken();
     isAuthenticated.value = false;
@@ -23,6 +28,7 @@ export function useAuth() {
     isAuthenticated: readonly(isAuthenticated),
     restoreSession,
     login,
+    loginWithPasskey,
     logout,
   };
 }
