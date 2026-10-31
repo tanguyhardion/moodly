@@ -74,26 +74,26 @@ export const moodlyBackendService = {
   /** Prompts for Face ID / fingerprint, then exchanges the signed result for a session token. */
   loginWithPasskey: async (): Promise<void> => {
     const { options, challengeToken } = await apiPost<{ options: PublicKeyCredentialRequestOptionsJSON; challengeToken: string }>(
-      "/api/passkey",
+      "/api/verify-password",
       { action: "login-options" },
     );
     const response = await startAuthentication({ optionsJSON: options });
-    const session = await apiPost<SessionToken>("/api/passkey", { action: "login-verify", challengeToken, response });
+    const session = await apiPost<SessionToken>("/api/verify-password", { action: "login-verify", challengeToken, response });
     sessionStorage.setItem(SESSION_TOKEN_KEY, session.token);
   },
 
   /** Registers a passkey on this device and returns its id. Needs a session. */
   registerPasskey: async (): Promise<string> => {
     const { options, challengeToken } = await apiPost<{ options: PublicKeyCredentialCreationOptionsJSON; challengeToken: string }>(
-      "/api/passkey",
+      "/api/verify-password",
       { action: "register-options" },
     );
     const response = await startRegistration({ optionsJSON: options });
-    return (await apiPost<{ id: string }>("/api/passkey", { action: "register-verify", challengeToken, response })).id;
+    return (await apiPost<{ id: string }>("/api/verify-password", { action: "register-verify", challengeToken, response })).id;
   },
 
   removePasskey: (id: string): Promise<{ success: boolean }> =>
-    apiPost<{ success: boolean }>("/api/passkey", { action: "remove", id }),
+    apiPost<{ success: boolean }>("/api/verify-password", { action: "remove", id }),
 
   // --- Entries ---
   getEntries: (params?: { from?: string; to?: string; date?: string }): Promise<DailyEntry[]> =>
@@ -126,14 +126,15 @@ export const moodlyBackendService = {
     apiPost<{ success: boolean }>("/api/settings", settings),
 
   // --- Push notifications ---
+  // Served by the settings function (`?push=1`) to stay within the host's function limit
   getPushPublicKey: async (): Promise<string> =>
-    (await apiGet<{ publicKey: string }>("/api/push-subscription")).publicKey,
+    (await apiGet<{ publicKey: string }>("/api/settings", { push: "1" })).publicKey,
 
   savePushSubscription: (subscription: PushSubscriptionJSON): Promise<{ success: boolean }> =>
-    apiPost<{ success: boolean }>("/api/push-subscription", subscription),
+    request<{ success: boolean }>("POST", "/api/settings", { params: { push: "1" }, body: subscription }),
 
   deletePushSubscription: (endpoint: string): Promise<{ success: boolean }> =>
-    apiDelete<{ success: boolean }>("/api/push-subscription", { endpoint }),
+    request<{ success: boolean }>("DELETE", "/api/settings", { params: { push: "1" }, body: { endpoint } }),
 
   // --- Location Search ---
   searchLocation: (query: string): Promise<unknown> =>
