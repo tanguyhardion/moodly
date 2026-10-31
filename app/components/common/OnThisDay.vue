@@ -9,7 +9,7 @@
     <Icon name="solar:history-bold" size="16" class="shrink-0" />
     <span class="shrink-0 font-semibold">{{ lookBack.label }}</span>
     <span v-if="lookBack.moodColor" class="size-2.5 shrink-0 rounded-full" :style="{ background: lookBack.moodColor }" />
-    <span v-if="lookBack.note" class="truncate italic">“{{ lookBack.note }}”</span>
+    <span v-if="lookBack.summary" class="truncate">{{ lookBack.summary }}</span>
   </button>
 </template>
 
@@ -49,16 +49,24 @@ const lookBack = computed(() => {
 
     const mood = findMoodMetric(metricConfigs.value);
     const moodValue = mood ? entry.data[mood.id] : null;
+    // Where you were, what you ticked, then a note if there is one; the line truncates what doesn't fit
+    const parts: string[] = [];
+    for (const m of metricConfigs.value) {
+      const v = entry.data[m.id];
+      if (m.type === 'location' && v && typeof v === 'object') parts.unshift(v.name.split(',')[0]!);
+      if (m.type === 'checkbox' && v === true) parts.push(m.label);
+    }
     const note = metricConfigs.value
       .filter(m => m.type === 'text')
       .map(m => entry.data[m.id])
       .find((v): v is string => typeof v === 'string' && v.trim() !== '');
+    if (note) parts.push(`“${note.trim()}”`);
 
     return {
       label,
       date,
       moodColor: mood && typeof moodValue === 'number' ? MOOD_COLORS[moodLevel(moodValue, mood)].color : null,
-      note: note?.trim() ?? null,
+      summary: parts.join(' · '),
     };
   }
   return null;
