@@ -94,6 +94,16 @@ export default defineNuxtConfig({
     },
   },
 
+  // Bundle icons into the app instead of fetching them from the Iconify API at runtime.
+  // In the installed PWA those fetches can fail (e.g. the save spinner showing a stale icon).
+  icon: {
+    clientBundle: {
+      scan: true,
+      icons: ["svg-spinners:ring-resize"],
+      sizeLimitKb: 512,
+    },
+  },
+
   css: ["~/assets/css/main.css"],
 
   vite: {
