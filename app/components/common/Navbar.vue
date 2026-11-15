@@ -161,7 +161,8 @@ defineEmits<{
     0 0 0 1px rgb(27 22 34 / 0.06);
   transition: padding 0.3s cubic-bezier(0.34, 1.2, 0.5, 1);
 }
-:global(.dark) .floating-nav {
+/* Plain descendant selector: scoped CSS only tags the last part, and `:global(.dark) .x` would drop `.x` */
+.dark .floating-nav {
   background: color-mix(in oklab, var(--surface) 68%, transparent);
   box-shadow:
     inset 0 0 0 1px rgb(255 255 255 / 0.035),
