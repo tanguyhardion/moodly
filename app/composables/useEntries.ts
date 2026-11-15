@@ -52,6 +52,13 @@ export function useEntries() {
         entries.value.unshift(saved);
       }
 
+      // A reminder still sitting in the notification tray is stale now; if the check-in is
+      // only partly done, the next hourly nudge brings it back
+      navigator.serviceWorker?.ready
+        .then((registration) => registration.getNotifications({ tag: "daily-reminder" }))
+        .then((notifications) => notifications.forEach((n) => n.close()))
+        .catch(() => {});
+
       // Check and send email alerts for this entry (non-blocking)
       if (shouldCheckEntryAlerts(date)) {
         moodlyBackendService.checkEntryAlerts(date)

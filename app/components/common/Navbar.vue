@@ -36,15 +36,15 @@
     </div>
   </header>
 
-  <!-- Mobile tab bar -->
+  <!-- Mobile tab bar: a floating glass pill, detached from the screen edges -->
   <nav
     ref="mobileNav"
-    class="fixed inset-x-3 bottom-3 z-[100] grid grid-cols-5 rounded-card bg-surface/95 p-1.5 shadow-pop backdrop-blur-md sm:hidden"
-    style="margin-bottom: env(safe-area-inset-bottom, 0px)"
+    class="floating-nav fixed left-1/2 z-[100] grid w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 grid-cols-5 rounded-full p-1.5 sm:hidden"
+    :class="{ compact }"
     aria-label="Main"
   >
     <span
-      class="pill-indicator pointer-events-none absolute left-0 top-1.5 bottom-1.5 rounded-2xl bg-mood"
+      class="pill-indicator pointer-events-none absolute left-0 top-1.5 bottom-1.5 rounded-full bg-mood shadow-[0_4px_14px_-4px_var(--mood)]"
       :class="{ 'pill-ready': ready }"
       :style="mobileStyle"
       aria-hidden="true"
@@ -53,11 +53,11 @@
       v-for="link in links"
       :key="link.to"
       :to="link.to"
-      class="relative flex flex-col items-center gap-0.5 rounded-2xl py-2 text-[11px] font-semibold transition-colors"
-      :class="isActive(link) ? 'text-mood-ink' : 'text-ink/70'"
+      class="tab relative flex flex-col items-center justify-center rounded-full text-[10.5px] font-semibold transition-[color,transform] active:scale-90"
+      :class="isActive(link) ? 'text-mood-ink' : 'text-ink/60'"
     >
       <Icon :name="link.icon" size="22" />
-      {{ link.label }}
+      <span class="tab-label">{{ link.label }}</span>
     </NuxtLink>
   </nav>
 </template>
@@ -84,7 +84,19 @@ const mobileStyle = ref<Record<string, string>>({ opacity: '0' });
 const ready = ref(false);
 let resizeObserver: ResizeObserver | null = null;
 
-const pillStyle = (nav: HTMLElement | null) => {
+// Like iOS tab bars, the mobile bar tucks its labels away while scrolling down and brings
+// them back on scroll up or near the top, so it covers less content while reading
+const compact = ref(false);
+let lastScrollY = 0;
+const onScroll = () => {
+  const y = window.scrollY;
+  if (Math.abs(y - lastScrollY) < 8) return;
+  compact.value = y > lastScrollY && y > 80;
+  lastScrollY = y;
+};
+watch(() => route.path, () => (compact.value = false));
+
+const pillStyle = (nav: HTMLElement | null): Record<string, string> => {
   const index = links.findIndex(isActive);
   const el = nav?.querySelectorAll('a')[index] as HTMLElement | undefined;
   // Hidden navs (display: none) report a zero width
@@ -108,6 +120,7 @@ onMounted(() => {
   // Enable transitions only after the first placement so the pill doesn't fly in on load
   requestAnimationFrame(() => (ready.value = true));
   window.addEventListener('resize', updatePills);
+  window.addEventListener('scroll', onScroll, { passive: true });
   document.fonts?.ready.then(updatePills);
   // Icons and fonts settle after mount and change link widths, so re-measure on any size change
   resizeObserver = new ResizeObserver(updatePills);
@@ -120,6 +133,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updatePills);
+  window.removeEventListener('scroll', onScroll);
   resizeObserver?.disconnect();
 });
 
@@ -131,6 +145,52 @@ defineEmits<{
 <style scoped>
 .pill-indicator {
   will-change: transform, width;
+}
+.floating-nav {
+  bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  /* Frosted glass: translucent surface, blur and a saturation boost of what scrolls behind */
+  background: color-mix(in oklab, var(--surface) 72%, transparent);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  /* Hairline edge + top highlight + layered drop shadow so the bar reads as lifted off the page */
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.55),
+    inset 0 1px 0 rgb(255 255 255 / 0.7),
+    0 1px 2px rgb(27 22 34 / 0.08),
+    0 12px 32px -8px rgb(27 22 34 / 0.28),
+    0 0 0 1px rgb(27 22 34 / 0.06);
+  transition: padding 0.3s cubic-bezier(0.34, 1.2, 0.5, 1);
+}
+:global(.dark) .floating-nav {
+  background: color-mix(in oklab, var(--surface) 68%, transparent);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.1),
+    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    0 16px 40px -8px rgb(0 0 0 / 0.7);
+}
+.tab {
+  height: 3.25rem;
+  gap: 0.125rem;
+  transition:
+    height 0.3s cubic-bezier(0.34, 1.2, 0.5, 1),
+    color 0.2s,
+    transform 0.15s;
+}
+.tab-label {
+  max-height: 1rem;
+  line-height: 1rem;
+  overflow: hidden;
+  transition:
+    max-height 0.3s cubic-bezier(0.34, 1.2, 0.5, 1),
+    opacity 0.2s;
+}
+.compact .tab {
+  height: 2.75rem;
+  gap: 0;
+}
+.compact .tab-label {
+  max-height: 0;
+  opacity: 0;
 }
 .pill-ready {
   transition:

@@ -69,7 +69,7 @@
                 </p>
                 <ToggleSwitch v-else :model-value="push.enabled" :disabled="push.busy" @update:model-value="togglePush">
                   Push notifications
-                  <template #description>The daily reminder shows up on this device too</template>
+                  <template #description>Reminders on this device, every hour from 6 to 11 pm until you check in</template>
                 </ToggleSwitch>
               </section>
 

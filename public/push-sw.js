@@ -1,9 +1,14 @@
 // Imported into the generated service worker (see `pwa.workbox.importScripts` in nuxt.config.ts).
 self.addEventListener("push", (event) => {
-  const { title = "Moodly", body = "", url = "" } = event.data?.json() ?? {};
+  const { title = "Moodly", body = "", url = "", tag } = event.data?.json() ?? {};
   event.waitUntil(
     self.registration.showNotification(title, {
       body,
+      // Repeated reminders share a tag: each replaces the previous one instead of piling up,
+      // and `renotify` makes the replacement buzz again rather than updating silently
+      ...(tag && { tag, renotify: true }),
+      // Desktop browsers keep it on screen until it is dealt with instead of fading out
+      requireInteraction: !!tag,
       icon: "pwa-192x192.png",
       // Android shows only this image's transparency in the status bar, so it must be a
       // white silhouette on a transparent background (an opaque icon becomes a white square)
